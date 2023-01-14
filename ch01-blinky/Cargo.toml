@@ -1,0 +1,24 @@
+[package]
+name = "ch01-blinky"
+version = "0.1.0"
+authors = ["Shane Mattner <shanemmattner@gmail.com>"]
+edition = "2021"
+resolver = "2"
+
+[profile.release]
+opt-level = "s"
+
+[profile.dev]
+debug = true # Symbols are nice and they don't increase the size on Flash
+opt-level = "z"
+
+[features]
+pio = ["esp-idf-sys/pio"]
+
+[dependencies]
+esp-idf-sys = { version = "0.31.11", features = ["binstart"] }
+esp-idf-hal = "0.38"
+embedded-hal = "0.2"
+
+[build-dependencies]
+embuild = "0.30.4"
