@@ -3,6 +3,9 @@ use esp_idf_hal::prelude::*;
 use embedded_hal::digital::v2::OutputPin;
 use std::{thread, time::Duration};
 
+
+static BLINKY_STACK_SIZE: usize = 5000;
+
 fn main() {
     // It is necessary to call this function once. Otherwise some patches to the runtime
     // implemented by esp-idf-sys might not link properly. See https://github.com/esp-rs/esp-idf-template/issues/71
@@ -10,13 +13,18 @@ fn main() {
 
     let peripherals = Peripherals::take().unwrap();
     let mut led = peripherals.pins.gpio8.into_output().unwrap();
-
-    loop{
-        led.set_high().unwrap();
+    
+    let _blinky_thread = std::thread::Builder::new()
+    .stack_size(BLINKY_STACK_SIZE)
+    .spawn(move || {
+        loop{
         thread::sleep(Duration::from_millis(500));
         println!("LED ON");
-        led.set_low().unwrap();
+        led.set_high().unwrap();
         thread::sleep(Duration::from_millis(500));
         println!("LED OFF");
-    }
+        led.set_low().unwrap();
+        }
+    }).unwrap();
+
 }

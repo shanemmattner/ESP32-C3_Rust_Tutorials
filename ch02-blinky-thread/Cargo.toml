@@ -1,7 +1,7 @@
 [package]
-name = "ch02-blinky-improved"
+name = "ch02-blinky-thread"
 version = "0.1.0"
-authors = ["Shane Mattner <shanemmattner@gmail.com>"]
+authors = ["Shane Mattner <shanemmattner@gmail.com.com>"]
 edition = "2021"
 resolver = "2"
 
@@ -17,6 +17,8 @@ pio = ["esp-idf-sys/pio"]
 
 [dependencies]
 esp-idf-sys = { version = "0.31.11", features = ["binstart"] }
+esp-idf-hal = "0.38"
+embedded-hal = "0.2"
 
 
 [build-dependencies]
