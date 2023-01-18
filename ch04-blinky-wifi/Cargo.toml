@@ -1,0 +1,32 @@
+[package]
+name = "ch04-blinky-wifi"
+version = "0.1.0"
+authors = ["Shane Mattner <shanemmattner@gmail.com.com>"]
+edition = "2021"
+resolver = "2"
+
+[profile.release]
+opt-level = "s"
+
+[profile.dev]
+debug = true # Symbols are nice and they don't increase the size on Flash
+opt-level = "z"
+
+[features]
+pio = ["esp-idf-sys/pio"]
+
+[dependencies]
+esp-idf-sys = { version = "0.31", features = ["binstart"] }
+esp-idf-hal = "0.38"
+embedded-hal = "0.2"
+esp-idf-svc="0.42"
+nb = "1.0.0"
+log="0.4"
+embedded-svc = "0.22"
+anyhow = "1"
+
+
+[build-dependencies]
+embuild = "0.30.4"
+anyhow = "1"
+
