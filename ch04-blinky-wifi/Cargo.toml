@@ -24,6 +24,7 @@ nb = "1.0.0"
 log="0.4"
 embedded-svc = "0.22"
 anyhow = "1"
+statig = "0.2.0"
 
 
 [build-dependencies]
