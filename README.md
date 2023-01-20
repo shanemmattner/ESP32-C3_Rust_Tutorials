@@ -32,36 +32,19 @@ Classic blinky program where we'll dig into the basics of initializing a pin and
 ## Chapter 2 - Blinky thread
 We'll take our blinky example and move it into a thread.  
 
-## Chapter 3 - Blinky state machine
-Next we'll put the blinky logic into a state machine using the [statig crate](https://github.com/mdeloof/statig).
+## Chapter 3 - Blinky FSM
+Next we'll put the blinky logic into a FSM using the [statig crate](https://github.com/mdeloof/statig).
 
-## Chapter 4 - Blinky + Button Hierarchical State Machine
-Add a layer above the blinky that will monitor for a GPIO interrupt and turns the blinky on/off
+## Chapter 4 - Blinky + WiFi
+Blinky, but now we're connected to WiFi
 
-## Chapter 5 - Timer 
-Use a timer to generate blinky
+## Roadmap:
 
-## Chapter 6 - ADC Reading
-Read a single ADC which turns the blinky on/off
-
-## Chapter 7 - ADC reader state machine
-Make a state machine that will read all of the enabled ADC's at some frequency, and make that data queriable from other parts of the program
-
-## Chapter 8 - DMA transfer
-Show how to use DMA transfer
-
-## Chapter 9 - Wi-Fi connection
-
-## Chapter 10 - MQTT transfer
-
-## Chapter 11 - SPI 
-Read/write to SD card
-
-## Chapter 12 - I2C
-Interract with SX1509 GPIO expander
-
-## Chapter 13 - LED PWM controller
-
-## Chapter 14 - UART CLI
-
-## Chapter 15 - 
+- MQTT transfer
+- Blinky + Button Hierarchical State Machine
+- Timer to generate blinky
+- ADC-to-pwm blinky
+- DMA
+- SPI
+- I2C connect to GPIO expander
+- CLI
