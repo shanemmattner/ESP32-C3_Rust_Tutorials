@@ -1,12 +1,11 @@
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
 
-use esp_idf_hal::{gpio,prelude::*};
 use embedded_hal::digital::v2::OutputPin;
+use esp_idf_hal::{gpio, prelude::*};
+use statig::{prelude::*, InitializedStatemachine};
 use std::{thread, time::Duration};
-use statig::prelude::*;
 
-
-static BLINKY_STACK_SIZE: usize = 5000;
+static BLINKY_STACK_SIZE: usize = 2000;
 
 fn main() {
     // It is necessary to call this function once. Otherwise some patches to the runtime
@@ -15,25 +14,26 @@ fn main() {
 
     let peripherals = Peripherals::take().unwrap();
     let led = peripherals.pins.gpio8.into_output().unwrap();
-    let mut state_machine = Blinky { led }.state_machine().init();
-
+    let state_machine = Blinky { led }.state_machine().init();
 
     let _blinky_thread = std::thread::Builder::new()
         .stack_size(BLINKY_STACK_SIZE)
-        .spawn(move || {
-            loop{
-            thread::sleep(Duration::from_millis(500));
-            state_machine.handle(&Event::TimerElapsed);
-            thread::sleep(Duration::from_millis(500));
-            state_machine.handle(&Event::TimerElapsed);
-            }
-        }).unwrap();
-
-
+        .spawn(move || blinky_fsm_thread(state_machine))
+        .unwrap();
 }
+
+fn blinky_fsm_thread(mut fsm: InitializedStatemachine<Blinky>) {
+    loop {
+        thread::sleep(Duration::from_millis(500));
+        fsm.handle(&Event::TimerElapsed);
+        thread::sleep(Duration::from_millis(500));
+        fsm.handle(&Event::TimerElapsed);
+    }
+}
+
 // #[derive(Debug, Default)]
 pub struct Blinky {
-     led: gpio::Gpio8<gpio::Output>,
+    led: gpio::Gpio8<gpio::Output>,
 }
 
 // The event that will be handled by the state machine.
@@ -73,7 +73,6 @@ impl Blinky {
             _ => Super,
         }
     }
-
 }
 
 impl Blinky {
