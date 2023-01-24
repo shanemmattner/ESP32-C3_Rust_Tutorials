@@ -12,8 +12,8 @@ use esp_idf_svc::sysloop::*;
 use esp_idf_svc::wifi::*;
 use std::{cell::RefCell, env, sync::atomic::*, sync::Arc, thread, time::*};
 
-const WIFI_SSID: &str = "TheHolyGrail";
-const WIFI_PASS: &str = "DevelopersDevelopers";
+const WIFI_SSID: &str = env!("RUST_ESP32_STD_WIFI_SSID");
+const WIFI_PASS: &str = env!("RUST_ESP32_STD_WIFI_PASS");
 
 pub fn test_wifi() -> Result<String> {
     let netif_stack = Arc::new(EspNetifStack::new()?);

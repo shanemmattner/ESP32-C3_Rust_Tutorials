@@ -13,6 +13,8 @@ use statig::prelude::*;
 use std::sync::Arc;
 use std::{thread, time::Duration};
 
+mod wifi;
+
 static BLINKY_STACK_SIZE: usize = 5000;
 
 fn main() {
@@ -22,6 +24,10 @@ fn main() {
 
     let peripherals = Peripherals::take().unwrap();
 
+    match wifi::test_wifi() {
+        Ok(x) => println!("IP: {}", x),
+        Err(x) => println!("{}", x),
+    }
     // let mut led = PinDriver::output(peripherals.pins.gpio8).unwrap();
     // let mut state_machine = Blinky { led }.state_machine().init();
 
