@@ -41,6 +41,7 @@ Blinky, but now we're connected to WiFi
 ## Roadmap:
 
 - MQTT transfer
+- Pub/sub
 - Blinky + Button Hierarchical State Machine
 - Timer to generate blinky
 - ADC-to-pwm blinky
