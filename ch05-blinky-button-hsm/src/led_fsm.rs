@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+#![allow(unused_variables, unused_imports)]
 use embedded_hal::digital::v2::OutputPin;
 use esp_idf_hal::gpio;
 use statig::prelude::*;
@@ -11,6 +13,7 @@ pub struct Blinky {
 #[derive(Debug)]
 pub enum Event {
     TimerElapsed,
+    ButtonPressed,
 }
 
 #[state_machine(
@@ -24,7 +27,7 @@ impl Blinky {
         self.led.set_high().unwrap();
     }
 
-    #[state(entry_action = "enter_on")]
+    #[state(entry_action = "enter_on", superstate = "blinking")]
     fn led_on(&mut self, event: &Event) -> Response<State> {
         match event {
             Event::TimerElapsed => Transition(State::led_off()),
@@ -37,10 +40,28 @@ impl Blinky {
         self.led.set_low().unwrap();
     }
 
-    #[state(entry_action = "enter_off")]
+    #[state(entry_action = "enter_off", superstate = "blinking")]
     fn led_off(&mut self, event: &Event) -> Response<State> {
         match event {
             Event::TimerElapsed => Transition(State::led_on()),
+            _ => Super,
+        }
+    }
+
+    #[superstate]
+    fn blinking(event: &Event) -> Response<State> {
+        match event {
+            Event::ButtonPressed => Transition(State::not_blinking()),
+            _ => Super,
+        }
+    }
+
+    #[state]
+    fn not_blinking(event: &Event) -> Response<State> {
+        match event {
+            Event::ButtonPressed => Transition(State::led_on()),
+            // Altough this state has no superstate, we can still defer the event which
+            // will cause the event to be handled by an implicit `top` superstate.
             _ => Super,
         }
     }

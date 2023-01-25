@@ -1,5 +1,5 @@
 [package]
-name = "ch03-blinky-thread"
+name = "ch05-blinky-button-hsm"
 version = "0.1.0"
 authors = ["Shane Mattner <shanemmattner@gmail.com.com>"]
 edition = "2021"
