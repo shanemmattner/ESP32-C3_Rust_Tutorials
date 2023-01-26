@@ -47,7 +47,7 @@ fn blinky_fsm_thread(mut fsm: InitializedStatemachine<led_fsm::Blinky>, rx: Rece
         }
         match rx.try_recv() {
             Ok(_) => fsm.handle(&led_fsm::Event::ButtonPressed),
-            Err(e) => println!("{}", e),
+            Err(_) => {}
         }
 
         thread::sleep(Duration::from_millis(100));
