@@ -9,7 +9,6 @@ use std::sync::mpsc;
 use std::{thread, time::Duration};
 
 static BLINKY_STACK_SIZE: usize = 2000;
-static BUTTON_STACK_SIZE: usize = 2000;
 
 mod led_fsm;
 

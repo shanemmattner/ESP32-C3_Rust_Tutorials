@@ -5,8 +5,7 @@ use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, alway
 use embedded_hal::digital::v2::{InputPin, OutputPin};
 use esp_idf_hal::{gpio, prelude::*};
 use statig::{prelude::*, InitializedStatemachine};
-use std::sync::mpsc;
-use std::{thread, time::Duration};
+use std::{sync::mpsc::*, thread, time::Duration};
 
 static BLINKY_STACK_SIZE: usize = 2000;
 static BUTTON_STACK_SIZE: usize = 2000;
@@ -24,17 +23,21 @@ fn main() {
 
     let led_fsm = led_fsm::Blinky { led }.state_machine().init();
 
+    let (tx, rx): (Sender<bool>, Receiver<bool>) = channel();
+    print_type_of(&tx);
+
     let _blinky_thread = std::thread::Builder::new()
         .stack_size(BLINKY_STACK_SIZE)
-        .spawn(move || blinky_fsm_thread(led_fsm, btn))
+        .spawn(move || blinky_fsm_thread(led_fsm, rx))
+        .unwrap();
+
+    let _button_thread = std::thread::Builder::new()
+        .stack_size(BUTTON_STACK_SIZE)
+        .spawn(move || button_thread(btn, tx))
         .unwrap();
 }
 
-fn blinky_fsm_thread(
-    mut fsm: InitializedStatemachine<led_fsm::Blinky>,
-    btn: gpio::Gpio6<gpio::Input>,
-) {
-    let mut btn_state = true;
+fn blinky_fsm_thread(mut fsm: InitializedStatemachine<led_fsm::Blinky>, rx: Receiver<bool>) {
     let mut led_count = 0;
     loop {
         led_count += 1;
@@ -42,11 +45,22 @@ fn blinky_fsm_thread(
             led_count = 0;
             fsm.handle(&led_fsm::Event::TimerElapsed);
         }
+        match rx.try_recv() {
+            Ok(_) => fsm.handle(&led_fsm::Event::ButtonPressed),
+            Err(e) => println!("{}", e),
+        }
 
+        thread::sleep(Duration::from_millis(100));
+    }
+}
+
+fn button_thread(btn: gpio::Gpio6<gpio::Input>, tx: Sender<bool>) {
+    let mut btn_state = true;
+    loop {
         if btn.is_high().unwrap() {
             if !btn_state {
                 btn_state = true;
-                fsm.handle(&led_fsm::Event::ButtonPressed);
+                tx.send(btn_state).unwrap();
             }
         } else {
             btn_state = false;
@@ -54,4 +68,8 @@ fn blinky_fsm_thread(
 
         thread::sleep(Duration::from_millis(100));
     }
+}
+
+fn print_type_of<T>(_: &T) {
+    println!("{}", std::any::type_name::<T>())
 }
