@@ -38,19 +38,14 @@ fn main() {
 }
 
 fn blinky_fsm_thread(mut fsm: InitializedStatemachine<led_fsm::Blinky>, rx: Receiver<bool>) {
-    let mut led_count = 0;
     loop {
-        led_count += 1;
-        if led_count > 10 {
-            led_count = 0;
-            fsm.handle(&led_fsm::Event::TimerElapsed);
-        }
+        fsm.handle(&led_fsm::Event::TimerElapsed);
         match rx.try_recv() {
             Ok(_) => fsm.handle(&led_fsm::Event::ButtonPressed),
             Err(_) => {}
         }
 
-        thread::sleep(Duration::from_millis(100));
+        thread::sleep(Duration::from_millis(1000));
     }
 }
 
