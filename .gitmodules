@@ -1,0 +1,6 @@
+[submodule "submodules/nuts"]
+	path = submodules/nuts
+	url = git@github.com:jakmeier/nuts.git
+[submodule "submodules/statig"]
+	path = submodules/statig
+	url = git@github.com:mdeloof/statig.git

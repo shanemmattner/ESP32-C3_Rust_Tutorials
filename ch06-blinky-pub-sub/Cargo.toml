@@ -23,8 +23,5 @@ statig = "0.2.0"
 critical-section = "1"
 nuts = "0.2"
 
-
-
-
 [build-dependencies]
 embuild = "0.30.4"
