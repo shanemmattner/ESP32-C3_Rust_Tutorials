@@ -45,10 +45,10 @@ Move the button logic into another thread and send a message to the blinky threa
 Blinky, but now we're connected to WiFi
 
 ## Roadmap:
-
+- Logging (https://github.com/knurling-rs/defmt)
+- Debug project (https://github.com/knurling-rs/probe-run)
 - MQTT transfer
-- Pub/sub
-- Blinky + Button Hierarchical State Machine
+- Pub/sub (https://github.com/jakmeier/nuts)
 - Timer to generate blinky
 - ADC-to-pwm blinky
 - DMA
