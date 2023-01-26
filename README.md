@@ -35,11 +35,14 @@ We'll take our blinky example and move it into a thread.
 ## Chapter 3 - Blinky FSM
 Next we'll put the blinky logic into a FSM using the [statig crate](https://github.com/mdeloof/statig).
 
-## Chapter 4 - Blinky + WiFi
-Blinky, but now we're connected to WiFi
-
-## Chapter 5 - Blinky + Button HSM
+## Chapter 4 - Blinky + Button HSM
 Add a button to the blinky program and make a hierarchical state machine using the [statig crate](https://github.com/mdeloof/statig).
+
+## Chapter 5 - Blinky + Button Pub/Sub
+Add a button to the blinky program and use pub/sub to talk between an LED fsm and button fsm
+
+## Chapter 6 - Blinky + WiFi
+Blinky, but now we're connected to WiFi
 
 ## Roadmap:
 

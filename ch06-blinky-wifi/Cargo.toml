@@ -1,5 +1,5 @@
 [package]
-name = "ch05-blinky-button-hsm"
+name = "blinky-wifi"
 version = "0.1.0"
 authors = ["Shane Mattner <shanemmattner@gmail.com.com>"]
 edition = "2021"
@@ -16,10 +16,18 @@ opt-level = "z"
 pio = ["esp-idf-sys/pio"]
 
 [dependencies]
-esp-idf-sys = { version = "0.31.11", features = ["binstart"] }
+esp-idf-sys = { version = "0.31", features = ["binstart"] }
 esp-idf-hal = "0.38"
 embedded-hal = "0.2"
+esp-idf-svc="0.42"
+nb = "1.0.0"
+log="0.4"
+embedded-svc = "0.22"
+anyhow = "1"
 statig = "0.2.0"
+
 
 [build-dependencies]
 embuild = "0.30.4"
+anyhow = "1"
+
