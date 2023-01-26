@@ -38,6 +38,9 @@ Next we'll put the blinky logic into a FSM using the [statig crate](https://gith
 ## Chapter 4 - Blinky + WiFi
 Blinky, but now we're connected to WiFi
 
+## Chapter 5 - Blinky + Button HSM
+Add a button to the blinky program and make a hierarchical state machine using the [statig crate](https://github.com/mdeloof/statig).
+
 ## Roadmap:
 
 - MQTT transfer
