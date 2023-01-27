@@ -1,0 +1,27 @@
+[package]
+name = "blinky-mpmc"
+version = "0.1.0"
+authors = ["Shane Mattner <shanemmattner@gmail.com.com>"]
+edition = "2021"
+resolver = "2"
+
+[profile.release]
+opt-level = "s"
+
+[profile.dev]
+debug = true # Symbols are nice and they don't increase the size on Flash
+opt-level = "z"
+
+[features]
+pio = ["esp-idf-sys/pio"]
+
+[dependencies]
+esp-idf-sys = { version = "0.31.11", features = ["binstart"] }
+esp-idf-hal = "0.38"
+embedded-hal = "0.2"
+statig = "0.2.0"
+crossbeam = "0.8"
+crossbeam-channel = "0.5"
+
+[build-dependencies]
+embuild = "0.30.4"

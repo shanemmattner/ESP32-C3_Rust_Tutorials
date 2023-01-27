@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 #![allow(unused_variables, unused_imports)]
+
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
 
 use embedded_hal::digital::v2::{InputPin, OutputPin};

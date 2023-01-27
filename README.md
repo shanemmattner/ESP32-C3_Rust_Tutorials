@@ -41,7 +41,10 @@ Add a button to the blinky program and make a hierarchical state machine using t
 ## Chapter 5 - Blinky + Button Multi-thread
 Move the button logic into another thread and send a message to the blinky thread when the button is pressed
 
-## Chapter 6 - Blinky + WiFi
+## Chapter 6 - Blinky + Button Multi-thread with MPMC
+Take the logic from chapter 5 and add another thread which will require use `multi-producer multi-consumer` crate called [crossbeam](https://docs.rs/crossbeam/latest/crossbeam/)
+
+## Chapter 8 - Blinky + WiFi
 Blinky, but now we're connected to WiFi
 
 ## Roadmap:

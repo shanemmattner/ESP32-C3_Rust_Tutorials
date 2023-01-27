@@ -1,0 +1,1 @@
+{"rustc":13908069380412719891,"features":"","target":0,"profile":0,"path":0,"deps":[[17115693669385569923,"build_script_build",false,1174495162969614069]],"local":[{"RerunIfChanged":{"output":"riscv32imc-esp-espidf/debug/build/compiler_builtins-068ac370ad4c5f88/output","paths":["build.rs"]}}],"rustflags":[],"metadata":0,"config":0,"compile_kind":0}

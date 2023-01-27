@@ -1,0 +1,11 @@
+/home/shane/Desktop/Rust/Projects/esp32c3_rust_tutorials/ch06-blinky-wifi/target/debug/deps/cargo_metadata-54c0a12e26c33495.rmeta: /home/shane/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/lib.rs /home/shane/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/dependency.rs /home/shane/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/diagnostic.rs /home/shane/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/errors.rs /home/shane/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/messages.rs
+
+/home/shane/Desktop/Rust/Projects/esp32c3_rust_tutorials/ch06-blinky-wifi/target/debug/deps/libcargo_metadata-54c0a12e26c33495.rlib: /home/shane/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/lib.rs /home/shane/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/dependency.rs /home/shane/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/diagnostic.rs /home/shane/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/errors.rs /home/shane/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/messages.rs
+
+/home/shane/Desktop/Rust/Projects/esp32c3_rust_tutorials/ch06-blinky-wifi/target/debug/deps/cargo_metadata-54c0a12e26c33495.d: /home/shane/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/lib.rs /home/shane/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/dependency.rs /home/shane/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/diagnostic.rs /home/shane/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/errors.rs /home/shane/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/messages.rs
+
+/home/shane/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/lib.rs:
+/home/shane/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/dependency.rs:
+/home/shane/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/diagnostic.rs:
+/home/shane/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/errors.rs:
+/home/shane/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/messages.rs:
