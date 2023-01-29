@@ -4,3 +4,6 @@
 [submodule "submodules/statig"]
 	path = submodules/statig
 	url = git@github.com:mdeloof/statig.git
+[submodule "submodules/riscv-embassy-mess-work"]
+	path = submodules/riscv-embassy-mess-work
+	url = git@github.com:osobiehl/riscv-embassy-mess-work.git

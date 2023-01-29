@@ -8,7 +8,10 @@ This will be a series of embedded Rust tutorials.  I'm making this repo as a way
     - Make sure to `sudo chmod +x export-esp.sh`
 2. Start a project using the [esp-idf-template](https://github.com/esp-rs/esp-idf-template) from the private repo home `dir`. I chose all the default options
 ```
-cargo generate --vcs none --git https://github.com/esp-rs/esp-idf-template cargo
+# STD Project
+cargo generate https://github.com/esp-rs/esp-idf-template cargo
+# NO-STD (Bare-metal) Project
+cargo generate https://github.com/esp-rs/esp-template
 ```
 3. Build the `Hello World` program by running `cargo build` in the new project dir. This will take a while to build the first time:
 ```
