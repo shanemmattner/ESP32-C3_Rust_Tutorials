@@ -1,9 +1,12 @@
-[submodule "submodules/nuts"]
-	path = submodules/nuts
-	url = git@github.com:jakmeier/nuts.git
 [submodule "submodules/statig"]
 	path = submodules/statig
 	url = git@github.com:mdeloof/statig.git
 [submodule "submodules/riscv-embassy-mess-work"]
 	path = submodules/riscv-embassy-mess-work
 	url = git@github.com:osobiehl/riscv-embassy-mess-work.git
+[submodule "submodules/reference_projects/smart-watch"]
+	path = submodules/reference_projects/smart-watch
+	url = git@github.com:simmsb/smart-watch.git
+[submodule "submodules/reference_projects/esp32-rmt-ws2812b"]
+	path = submodules/reference_projects/esp32-rmt-ws2812b
+	url = git@github.com:karlri/esp32-rmt-ws2812b.git
