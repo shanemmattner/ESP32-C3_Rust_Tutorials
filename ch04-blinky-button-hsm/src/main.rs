@@ -1,12 +1,10 @@
 #![allow(dead_code)]
 #![allow(unused_variables, unused_imports)]
+use esp_idf_hal::{gpio::{Output, PinDriver, Input, InputMode}, prelude::*};
+use esp_idf_hal::gpio;
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
-
-use embedded_hal::digital::v2::{InputPin, OutputPin};
-use esp_idf_hal::{gpio, prelude::*};
-use statig::{prelude::*, InitializedStatemachine};
-use std::sync::mpsc;
 use std::{thread, time::Duration};
+use statig::{prelude::*, InitializedStatemachine};
 
 static BLINKY_STACK_SIZE: usize = 2000;
 
@@ -18,8 +16,8 @@ fn main() {
     esp_idf_sys::link_patches();
 
     let peripherals = Peripherals::take().unwrap();
-    let led = peripherals.pins.gpio8.into_output().unwrap();
-    let btn = peripherals.pins.gpio6.into_input().unwrap();
+    let led = PinDriver::output(peripherals.pins.gpio8).unwrap();
+    let btn = PinDriver::input(peripherals.pins.gpio6).unwrap();
 
     let led_fsm = led_fsm::Blinky { led }.state_machine().init();
 
@@ -29,9 +27,9 @@ fn main() {
         .unwrap();
 }
 
-fn blinky_fsm_thread(
+fn blinky_fsm_thread<'a>(
     mut fsm: InitializedStatemachine<led_fsm::Blinky>,
-    btn: gpio::Gpio6<gpio::Input>,
+    btn: PinDriver<'_, gpio::Gpio6, Input>, 
 ) {
     let mut btn_state = true;
     let mut led_count = 0;
@@ -42,7 +40,7 @@ fn blinky_fsm_thread(
             fsm.handle(&led_fsm::Event::TimerElapsed);
         }
 
-        if btn.is_high().unwrap() {
+        if btn.is_high(){
             if !btn_state {
                 btn_state = true;
                 fsm.handle(&led_fsm::Event::ButtonPressed);
