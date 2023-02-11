@@ -1,10 +1,8 @@
 #![allow(dead_code)]
 #![allow(unused_variables, unused_imports)]
-
+use esp_idf_hal::{gpio::{Output, PinDriver, Input, InputMode}, prelude::*};
+use esp_idf_hal::gpio;
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
-
-use embedded_hal::digital::v2::{InputPin, OutputPin};
-use esp_idf_hal::{gpio, prelude::*};
 use statig::{prelude::*, InitializedStatemachine};
 use std::{sync::mpsc::*, thread, time::Duration};
 
@@ -19,8 +17,9 @@ fn main() {
     esp_idf_sys::link_patches();
 
     let peripherals = Peripherals::take().unwrap();
-    let led = peripherals.pins.gpio8.into_output().unwrap();
-    let btn = peripherals.pins.gpio6.into_input().unwrap();
+    let led = PinDriver::output(peripherals.pins.gpio8).unwrap();
+    let btn = PinDriver::input(peripherals.pins.gpio6).unwrap();
+
 
     let led_fsm = led_fsm::Blinky { led }.state_machine().init();
 
@@ -45,15 +44,14 @@ fn blinky_fsm_thread(mut fsm: InitializedStatemachine<led_fsm::Blinky>, rx: Rece
             Ok(_) => fsm.handle(&led_fsm::Event::ButtonPressed),
             Err(_) => {}
         }
-
         thread::sleep(Duration::from_millis(1000));
     }
 }
 
-fn button_thread(btn: gpio::Gpio6<gpio::Input>, tx: Sender<bool>) {
+fn button_thread(btn: PinDriver<'_, gpio::Gpio6, Input>, tx: Sender<bool>) {
     let mut btn_state = true;
     loop {
-        if btn.is_high().unwrap() {
+        if btn.is_high(){
             if !btn_state {
                 btn_state = true;
                 tx.send(btn_state).unwrap();
