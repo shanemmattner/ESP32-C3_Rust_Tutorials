@@ -58,3 +58,18 @@
 [submodule "submodules/reference_projects/atom-motion-balance"]
 	path = submodules/reference_projects/atom-motion-balance
 	url = git@github.com:tana/atom-motion-balance.git
+[submodule "submodules/reference_projects/rued"]
+	path = submodules/reference_projects/rued
+	url = git@github.com:bsodmike/rued.git
+[submodule "submodules/reference_projects/M5-go"]
+	path = submodules/reference_projects/M5-go
+	url = git@github.com:Newintel/M5-go.git
+[submodule "submodules/reference_projects/esp32-file-server"]
+	path = submodules/reference_projects/esp32-file-server
+	url = git@github.com:hammer90/esp32-file-server.git
+[submodule "submodules/reference_projects/ruwm"]
+	path = submodules/reference_projects/ruwm
+	url = git@github.com:ivmarkov/ruwm.git
+[submodule "submodules/reference_projects/rust-esp32-std-demo"]
+	path = submodules/reference_projects/rust-esp32-std-demo
+	url = git@github.com:ivmarkov/rust-esp32-std-demo.git
