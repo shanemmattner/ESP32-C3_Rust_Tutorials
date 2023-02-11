@@ -28,7 +28,6 @@ pub enum Superstate {
 
 
 impl StateMachine for Blinky<'_> {
-
     type State = State;
     type Superstate<'a> = Superstate;
     type Event<'a> = Event;
@@ -56,6 +55,14 @@ impl statig::State<Blinky<'_>> for State{
             State::NotBlinking => None,
         }
     }
+
+    fn call_entry_action(&mut self, blinky: &mut Blinky) {
+        match self {
+            State::LedOn  => blinky.enter_led_on(),
+            State::LedOff  => blinky.enter_led_off(),
+            _ => (),
+        }
+    }
 }
 
 impl statig::Superstate<Blinky<'_>> for Superstate {
@@ -67,6 +74,15 @@ impl statig::Superstate<Blinky<'_>> for Superstate {
 }
 
 impl Blinky<'_>{
+
+    fn enter_led_on(&mut self){
+        self.led.set_high().unwrap();
+    }
+
+    fn enter_led_off(&mut self){
+        self.led.set_low().unwrap();
+    }
+
     fn led_on(event: &Event) -> Response<State> {
         match event {
             Event::TimerElapsed => Transition(State::LedOff),
@@ -76,7 +92,7 @@ impl Blinky<'_>{
 
     fn led_off(event: &Event) -> Response<State> {
         match event {
-            Event::TimerElapsed => Transition(State::LedOff),
+            Event::TimerElapsed => Transition(State::LedOn),
             _ => Super,
         }
     }
