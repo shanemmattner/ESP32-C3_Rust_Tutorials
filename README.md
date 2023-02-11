@@ -29,6 +29,12 @@ espflash /dev/ttyACM0 target/riscv32imc-esp-espidf/debug/project
 espmonitor /dev/ttyACM0
 ```
 
+## Other
+Pull in code for submodules with:
+```
+git submodule update --init --recursive
+```
+
 ## Chapter 1 - Blinky
 Classic blinky program where we'll dig into the basics of initializing a pin and looping while blining on/off
 

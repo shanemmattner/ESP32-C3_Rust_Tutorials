@@ -10,3 +10,33 @@
 [submodule "submodules/reference_projects/esp32-rmt-ws2812b"]
 	path = submodules/reference_projects/esp32-rmt-ws2812b
 	url = git@github.com:karlri/esp32-rmt-ws2812b.git
+[submodule "submodules/reference_projects/rust_esp32_std_amg8833"]
+	path = submodules/reference_projects/rust_esp32_std_amg8833
+	url = git@github.com:srbpavel/rust_esp32_std_amg8833.git
+[submodule "submodules/reference_projects/pulse-loop_firmware"]
+	path = submodules/reference_projects/pulse-loop_firmware
+	url = git@github.com:pulse-loop/firmware.git
+[submodule "submodules/reference_projects/esp-ambient"]
+	path = submodules/reference_projects/esp-ambient
+	url = git@github.com:horvbalint/esp-ambient.git
+[submodule "submodules/reference_projects/esp32-c3-rust-example"]
+	path = submodules/reference_projects/esp32-c3-rust-example
+	url = git@github.com:alepez/esp32-c3-rust-example.git
+[submodule "submodules/reference_projects/bosch-bme680"]
+	path = submodules/reference_projects/bosch-bme680
+	url = git@github.com:JakobLachermeier/bosch-bme680.git
+[submodule "submodules/reference_projects/rust_esp32_std_dallas"]
+	path = submodules/reference_projects/rust_esp32_std_dallas
+	url = git@github.com:srbpavel/rust_esp32_std_dallas.git
+[submodule "submodules/reference_projects/iot-wifi-setup"]
+	path = submodules/reference_projects/iot-wifi-setup
+	url = git@github.com:maxwase/iot-wifi-setup.git
+[submodule "submodules/reference_projects/gepsonka_TDK"]
+	path = submodules/reference_projects/gepsonka_TDK
+	url = git@github.com:Gepsonka/TDK.git
+[submodule "submodules/reference_projects/esp32-image-display"]
+	path = submodules/reference_projects/esp32-image-display
+	url = git@github.com:lily-mara/esp32-image-display.git
+[submodule "submodules/reference_projects/fishtank-rust"]
+	path = submodules/reference_projects/fishtank-rust
+	url = git@github.com:brianmay/fishtank-rust.git
