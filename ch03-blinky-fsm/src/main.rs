@@ -2,12 +2,11 @@
 #![allow(dead_code)]
 #[allow(unused)]
 
+use esp_idf_hal::{gpio::{Output, PinDriver}, prelude::*};
+use esp_idf_hal::gpio;
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
-
-use embedded_hal::digital::v2::OutputPin;
-use esp_idf_hal::{gpio, prelude::*};
-use statig::{prelude::*, InitializedStatemachine};
 use std::{thread, time::Duration};
+use statig::{prelude::*, InitializedStatemachine};
 
 static BLINKY_STACK_SIZE: usize = 2000;
 
@@ -19,8 +18,8 @@ fn main() {
     esp_idf_sys::link_patches();
 
     let peripherals = Peripherals::take().unwrap();
-    let led = peripherals.pins.gpio8.into_output().unwrap();
-    let state_machine = fsm::Blinky::default().state_machine().init();
+    let led = PinDriver::output(peripherals.pins.gpio8).unwrap();
+    let state_machine = fsm::Blinky{led}.state_machine().init();
 
     let _blinky_thread = std::thread::Builder::new()
         .stack_size(BLINKY_STACK_SIZE)

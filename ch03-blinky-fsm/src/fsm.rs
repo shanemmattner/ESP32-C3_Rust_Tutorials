@@ -2,14 +2,13 @@
 #![allow(dead_code)]
 #[allow(unused)]
 
-use embedded_hal::digital::v2::OutputPin;
+use esp_idf_hal::{gpio::{Output, PinDriver}, prelude::*};
 use esp_idf_hal::gpio;
 use statig::prelude::*;
 
-#[derive(Debug, Default)]
-pub struct Blinky {
-    // pub led: gpio::Gpio8<gpio::Output>,
-    pub led: bool,
+// #[derive(Debug, Default)]
+pub struct Blinky<'a> {
+    pub led: PinDriver<'a, gpio::Gpio8, Output>,
 }
 
 // The event that will be handled by the state machine.
@@ -24,7 +23,7 @@ pub enum State {
     Off,
 }
 
-impl StateMachine for Blinky {
+impl StateMachine for Blinky<'_> {
 
     type State = State;
     type Superstate<'a> = ();
@@ -36,7 +35,7 @@ impl StateMachine for Blinky {
  
 }
 
-impl statig::State<Blinky> for State{
+impl statig::State<Blinky<'_>> for State{
     fn call_handler(&mut self, blinky: &mut Blinky, event: &Event) -> Response<Self>{
         match self{
             State::On => blinky.on(event),
@@ -45,52 +44,19 @@ impl statig::State<Blinky> for State{
     }
 }
 
-impl Blinky{
-
+impl Blinky<'_>{
     fn on(&mut self, event: &Event) -> Response<State> {
-        self.led = false;
-        // Transition to the `off` state.
+        self.led.set_low().unwrap();
         Transition(State::Off)
     }
 
     fn off(&mut self, event: &Event) -> Response<State> {
-        self.led = true;
-        // Transition to the `on` state.
+        self.led.set_high().unwrap();
         Transition(State::On)
     }
 
-}
-
-/*
-   #[action]
-    fn enter_on(&mut self) {
-        self.led.set_high().unwrap();
-    }
-
-    #[state(entry_action = "enter_on")]
-    fn led_on(&mut self, event: &Event) -> Response<State> {
-        match event {
-            Event::TimerElapsed => Transition(State::led_off()),
-            _ => Super,
-        }
-    }
-
-    #[action]
-    fn enter_off(&mut self) {
-        self.led.set_low().unwrap();
-    }
-
-    #[state(entry_action = "enter_off")]
-    fn led_off(&mut self, event: &Event) -> Response<State> {
-        match event {
-            Event::TimerElapsed => Transition(State::led_on()),
-            _ => Super,
-        }
-    }
-    */
-impl Blinky {
-    // The `on_transition` callback that will be called after every transition.
     fn on_transition(&mut self, source: &State, target: &State) {
         println!("transitioned from `{:?}` to `{:?}`", source, target);
     }
+
 }
