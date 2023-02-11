@@ -1,5 +1,5 @@
-use embedded_hal::digital::v2::OutputPin;
-use esp_idf_hal::{gpio, prelude::*};
+use esp_idf_hal::{gpio::{Output, PinDriver}, prelude::*};
+use esp_idf_hal::gpio;
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
 use std::{thread, time::Duration};
 
@@ -11,15 +11,30 @@ fn main() {
     esp_idf_sys::link_patches();
 
     let peripherals = Peripherals::take().unwrap();
-    let led = peripherals.pins.gpio8.into_output().unwrap();
+    let led = PinDriver::output(peripherals.pins.gpio8).unwrap();
+    // print_type_of(&led);
 
     let _blinky_thread = std::thread::Builder::new()
         .stack_size(BLINKY_STACK_SIZE)
         .spawn(move || blinky_thread(led))
         .unwrap();
+
+    loop{
+    //     thread::sleep(Duration::from_millis(500));
+    //     println!("LED ON");
+    //     led.set_high().unwrap();
+    //     thread::sleep(Duration::from_millis(500));
+    //     println!("LED OFF");
+    //     led.set_low().unwrap();
+    }
 }
 
-fn blinky_thread(mut led: gpio::Gpio8<gpio::Output>) {
+// fn print_type_of<T>(_: &T) {
+//     println!("{}", std::any::type_name::<T>())
+// }
+
+fn blinky_thread(mut led: PinDriver<'_, gpio::Gpio8, Output>) 
+{
     loop {
         thread::sleep(Duration::from_millis(500));
         println!("LED ON");
