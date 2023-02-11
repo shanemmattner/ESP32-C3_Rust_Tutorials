@@ -1,3 +1,7 @@
+#![allow(unused_imports)]
+#![allow(dead_code)]
+#[allow(unused)]
+
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
 
 use embedded_hal::digital::v2::OutputPin;
@@ -16,7 +20,7 @@ fn main() {
 
     let peripherals = Peripherals::take().unwrap();
     let led = peripherals.pins.gpio8.into_output().unwrap();
-    let state_machine = fsm::Blinky { led }.state_machine().init();
+    let state_machine = fsm::Blinky::default().state_machine().init();
 
     let _blinky_thread = std::thread::Builder::new()
         .stack_size(BLINKY_STACK_SIZE)
