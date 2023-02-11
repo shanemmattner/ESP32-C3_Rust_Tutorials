@@ -40,3 +40,21 @@
 [submodule "submodules/reference_projects/fishtank-rust"]
 	path = submodules/reference_projects/fishtank-rust
 	url = git@github.com:brianmay/fishtank-rust.git
+[submodule "submodules/reference_projects/BykeEmbedded"]
+	path = submodules/reference_projects/BykeEmbedded
+	url = git@github.com:Newintel/BykeEmbedded.git
+[submodule "submodules/reference_projects/rust-esp-idf-http-temp"]
+	path = submodules/reference_projects/rust-esp-idf-http-temp
+	url = git@github.com:schphil/rust-esp-idf-http-temp.git
+[submodule "submodules/reference_projects/esp-rust-lighting"]
+	path = submodules/reference_projects/esp-rust-lighting
+	url = git@github.com:MabaKalox/esp-rust-lighting.git
+[submodule "submodules/reference_projects/temp-monitor"]
+	path = submodules/reference_projects/temp-monitor
+	url = git@github.com:kj800x/temp-monitor.git
+[submodule "submodules/reference_projects/sensilo-v2"]
+	path = submodules/reference_projects/sensilo-v2
+	url = git@github.com:dbrgn/sensilo-v2.git
+[submodule "submodules/reference_projects/atom-motion-balance"]
+	path = submodules/reference_projects/atom-motion-balance
+	url = git@github.com:tana/atom-motion-balance.git
