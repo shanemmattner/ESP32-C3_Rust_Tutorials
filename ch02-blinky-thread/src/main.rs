@@ -18,20 +18,7 @@ fn main() {
         .stack_size(BLINKY_STACK_SIZE)
         .spawn(move || blinky_thread(led))
         .unwrap();
-
-    loop{
-    //     thread::sleep(Duration::from_millis(500));
-    //     println!("LED ON");
-    //     led.set_high().unwrap();
-    //     thread::sleep(Duration::from_millis(500));
-    //     println!("LED OFF");
-    //     led.set_low().unwrap();
-    }
 }
-
-// fn print_type_of<T>(_: &T) {
-//     println!("{}", std::any::type_name::<T>())
-// }
 
 fn blinky_thread(mut led: PinDriver<'_, gpio::Gpio8, Output>) 
 {
