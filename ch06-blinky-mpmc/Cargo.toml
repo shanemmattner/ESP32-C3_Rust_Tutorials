@@ -16,12 +16,13 @@ opt-level = "z"
 pio = ["esp-idf-sys/pio"]
 
 [dependencies]
-esp-idf-sys = { version = "0.31.11", features = ["binstart"] }
-esp-idf-hal = "0.38"
-embedded-hal = "0.2"
+esp-idf-sys = { version = "0.32", features = ["binstart"] }
+esp-idf-hal = "0.40"
+embedded-hal = {version = "1.0.0-alpha.9"}
+embedded-hal-0-2 = { package = "embedded-hal", version = "0.2.7", features = ["unproven"] }
 statig = "0.2.0"
 crossbeam = "0.8"
 crossbeam-channel = "0.5"
 
 [build-dependencies]
-embuild = "0.30.4"
+embuild = "0.31"

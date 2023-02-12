@@ -19,8 +19,7 @@ fn main() {
     let peripherals = Peripherals::take().unwrap();
     let led = PinDriver::output(peripherals.pins.gpio8).unwrap();
     let btn = PinDriver::input(peripherals.pins.gpio6).unwrap();
-
-
+    
     let led_fsm = led_fsm::Blinky { led }.state_machine().init();
 
     let (tx, rx): (Sender<bool>, Receiver<bool>) = channel();

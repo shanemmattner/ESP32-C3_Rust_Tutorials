@@ -23,4 +23,4 @@ embedded-hal-0-2 = { package = "embedded-hal", version = "0.2.7", features = ["u
 statig = "0.2.0"
 
 [build-dependencies]
-embuild = "0.30.4"
+embuild = "0.31"

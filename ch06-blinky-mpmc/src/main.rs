@@ -3,17 +3,11 @@
 extern crate crossbeam;
 extern crate crossbeam_channel;
 
-use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
-
 use crossbeam_channel::bounded;
-use embedded_hal::digital::v2::{InputPin, OutputPin};
-use esp_idf_hal::{gpio, prelude::*};
+use esp_idf_hal::{gpio,gpio::{Output, PinDriver, Input, InputMode}, prelude::*};
+use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
 use statig::{prelude::*, InitializedStatemachine};
-use std::{
-    sync::{mpsc::*, Arc},
-    thread,
-    time::Duration,
-};
+use std::{sync::mpsc::*, thread, time::Duration};
 
 static BLINKY_STACK_SIZE: usize = 2000;
 static BUTTON_STACK_SIZE: usize = 2000;
@@ -26,9 +20,9 @@ fn main() {
     esp_idf_sys::link_patches();
 
     let peripherals = Peripherals::take().unwrap();
-    let led = peripherals.pins.gpio8.into_output().unwrap();
-    let btn = peripherals.pins.gpio6.into_input().unwrap();
-
+    let led = PinDriver::output(peripherals.pins.gpio8).unwrap();
+    let btn = PinDriver::input(peripherals.pins.gpio6).unwrap();
+    
     let led_fsm = led_fsm::Blinky { led }.state_machine().init();
 
     let (tx, rx) = bounded(1);
@@ -60,10 +54,13 @@ fn blinky_fsm_thread(
     }
 }
 
-fn button_thread(btn: gpio::Gpio6<gpio::Input>, tx: crossbeam_channel::Sender<bool>) {
+fn button_thread(
+    btn: PinDriver<'_, gpio::Gpio6, Input>, 
+    tx: crossbeam_channel::Sender<bool>
+) {
     let mut btn_state = true;
     loop {
-        if btn.is_high().unwrap() {
+        if btn.is_high(){
             if !btn_state {
                 btn_state = true;
                 tx.send(btn_state).unwrap();

@@ -1,75 +1,114 @@
+
 #![allow(dead_code)]
 #![allow(unused_variables, unused_imports)]
-use embedded_hal::digital::v2::OutputPin;
+
+use esp_idf_hal::{gpio::{Output, PinDriver}, prelude::*};
 use esp_idf_hal::gpio;
 use statig::prelude::*;
 
 // #[derive(Debug, Default)]
-pub struct Blinky {
-    pub led: gpio::Gpio8<gpio::Output>,
+pub struct Blinky<'a> {
+    pub led: PinDriver<'a, gpio::Gpio8, Output>,
 }
 
 // The event that will be handled by the state machine.
-#[derive(Debug)]
 pub enum Event {
     TimerElapsed,
     ButtonPressed,
 }
+#[derive(Debug)]
+pub enum State {
+    LedOn,
+    LedOff,
+    NotBlinking,
+}
 
-#[state_machine(
-    initial = "State::led_on()",
-    state(derive(Debug)),
-    on_transition = "Self::on_transition"
-)]
-impl Blinky {
-    #[action]
-    fn enter_on(&mut self) {
-        self.led.set_high().unwrap();
-    }
+pub enum Superstate {
+    Blinking,
+}
 
-    #[state(entry_action = "enter_on", superstate = "blinking")]
-    fn led_on(&mut self, event: &Event) -> Response<State> {
-        match event {
-            Event::TimerElapsed => Transition(State::led_off()),
-            _ => Super,
+
+impl StateMachine for Blinky<'_> {
+    type State = State;
+    type Superstate<'a> = Superstate;
+    type Event<'a> = Event;
+    const INITIAL: State = State::LedOff;
+    const ON_TRANSITION: fn(&mut Self, &Self::State, &Self::State) = |_, source, target| {
+        println!("Transitioned from {source:?} to {target:?}");
+    };
+ 
+}
+
+impl statig::State<Blinky<'_>> for State{
+
+    fn call_handler(&mut self, blinky: &mut Blinky, event: &Event) -> Response<Self> {
+        match self {
+            State::LedOn => Blinky::led_on(event),
+            State::LedOff => Blinky::led_off(event),
+            State::NotBlinking => Blinky::not_blinking(event),
         }
     }
 
-    #[action]
-    fn enter_off(&mut self) {
-        self.led.set_low().unwrap();
-    }
-
-    #[state(entry_action = "enter_off", superstate = "blinking")]
-    fn led_off(&mut self, event: &Event) -> Response<State> {
-        match event {
-            Event::TimerElapsed => Transition(State::led_on()),
-            _ => Super,
+    fn superstate(&mut self) -> Option<Superstate> {
+        match self {
+            State::LedOn => Some(Superstate::Blinking),
+            State::LedOff => Some(Superstate::Blinking),
+            State::NotBlinking => None,
         }
     }
 
-    #[superstate]
-    fn blinking(event: &Event) -> Response<State> {
-        match event {
-            Event::ButtonPressed => Transition(State::not_blinking()),
-            _ => Super,
-        }
-    }
-
-    #[state]
-    fn not_blinking(event: &Event) -> Response<State> {
-        match event {
-            Event::ButtonPressed => Transition(State::led_on()),
-            // Altough this state has no superstate, we can still defer the event which
-            // will cause the event to be handled by an implicit `top` superstate.
-            _ => Super,
+    fn call_entry_action(&mut self, blinky: &mut Blinky) {
+        match self {
+            State::LedOn  => blinky.enter_led_on(),
+            State::LedOff  => blinky.enter_led_off(),
+            _ => (),
         }
     }
 }
 
-impl Blinky {
-    // The `on_transition` callback that will be called after every transition.
-    fn on_transition(&mut self, source: &State, target: &State) {
-        println!("transitioned from `{:?}` to `{:?}`", source, target);
+impl statig::Superstate<Blinky<'_>> for Superstate {
+    fn call_handler(&mut self, blinky: &mut Blinky, event: &Event) -> Response<State> {
+        match self {
+            Superstate::Blinking => Blinky::blinking(event),
+        }
+    }
+}
+
+impl Blinky<'_>{
+
+    fn enter_led_on(&mut self){
+        self.led.set_high().unwrap();
+    }
+
+    fn enter_led_off(&mut self){
+        self.led.set_low().unwrap();
+    }
+
+    fn led_on(event: &Event) -> Response<State> {
+        match event {
+            Event::TimerElapsed => Transition(State::LedOff),
+            _ => Super,
+        }
+    }
+
+    fn led_off(event: &Event) -> Response<State> {
+        match event {
+            Event::TimerElapsed => Transition(State::LedOn),
+            _ => Super,
+        }
+    }
+
+    fn blinking(event: &Event) -> Response<State> {
+        match event {
+            Event::ButtonPressed => Transition(State::NotBlinking),
+            _ => Super,
+        }
+    }
+
+    fn not_blinking(event: &Event) -> Response<State> {
+        match event {
+            Event::ButtonPressed => Transition(State::LedOn),
+            _ => Super,
+        }
     }
 }
