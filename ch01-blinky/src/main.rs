@@ -1,47 +1,25 @@
-#![no_std]
-#![no_main]
-
-use esp32c3_hal::{
-    clock::ClockControl, gpio::IO, peripherals::Peripherals, prelude::*, timer::TimerGroup, Delay,
-    Rtc,
+use esp_idf_hal::gpio;
+use esp_idf_hal::{
+    gpio::{Output, PinDriver},
+    prelude::*,
 };
-use esp_backtrace as _;
-use esp_println::println;
+use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
+use std::{thread, time::Duration};
 
-#[riscv_rt::entry]
-fn main() -> ! {
-    let peripherals = Peripherals::take();
-    let system = peripherals.SYSTEM.split();
-    let clocks = ClockControl::boot_defaults(system.clock_control).freeze();
+fn main() {
+    // It is necessary to call this function once. Otherwise some patches to the runtime
+    // implemented by esp-idf-sys might not link properly. See https://github.com/esp-rs/esp-idf-template/issues/71
+    esp_idf_sys::link_patches();
 
-    // Disable the RTC and TIMG watchdog timers
-    let mut rtc = Rtc::new(peripherals.RTC_CNTL);
-    let timer_group0 = TimerGroup::new(peripherals.TIMG0, &clocks);
-    let mut wdt0 = timer_group0.wdt;
-    let timer_group1 = TimerGroup::new(peripherals.TIMG1, &clocks);
-    let mut wdt1 = timer_group1.wdt;
-
-    rtc.swd.disable();
-    rtc.rwdt.disable();
-    wdt0.disable();
-    wdt1.disable();
-
-    // Set GPIO5 as an output, and set its state high initially.
-    let io = IO::new(peripherals.GPIO, peripherals.IO_MUX);
-    let mut led = io.pins.gpio8.into_push_pull_output();
-
-    led.set_high().unwrap();
-
-    // Initialize the Delay peripheral, and use it to toggle the LED state in a
-    // loop.
-    let mut delay = Delay::new(&clocks);
+    let peripherals = Peripherals::take().unwrap();
+    let mut led = PinDriver::output(peripherals.pins.gpio8).unwrap();
 
     loop {
-        led.set_high().unwrap();
-        delay.delay_ms(500u32);
+        thread::sleep(Duration::from_millis(500));
         println!("LED ON");
-        led.set_low().unwrap();
-        delay.delay_ms(500u32);
+        led.set_high().unwrap();
+        thread::sleep(Duration::from_millis(500));
         println!("LED OFF");
+        led.set_low().unwrap();
     }
 }

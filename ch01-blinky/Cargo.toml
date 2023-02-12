@@ -1,16 +1,26 @@
 [package]
 name = "blinky"
 version = "0.1.0"
-authors = ["Shane Mattner <shanemmattner@gmail.com>"]
+authors = ["Shane"]
 edition = "2021"
-license = "MIT OR Apache-2.0"
+resolver = "2"
 
-[dependencies]
-esp32c3-hal = "0.5.0"
-esp-backtrace = { version = "0.5.0", features = ["esp32c3", "panic-handler", "print-uart"] }
-riscv-rt = { version = "0.11", optional = true }
-esp-println = { version = "0.3.1", features = ["esp32c3"] }
+[profile.release]
+opt-level = "s"
+
+[profile.dev]
+debug = true # Symbols are nice and they don't increase the size on Flash
+opt-level = "z"
 
 [features]
-default = ["rt"]
-rt = ["riscv-rt"]
+pio = ["esp-idf-sys/pio"]
+
+[dependencies]
+esp-idf-sys = { version = "0.32", features = ["binstart"] }
+esp-idf-hal = "0.40"
+embedded-hal = {version = "1.0.0-alpha.9"}
+embedded-hal-0-2 = { package = "embedded-hal", version = "0.2.7", features = ["unproven"] }
+
+
+[build-dependencies]
+embuild = "0.30.4"

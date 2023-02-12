@@ -1,5 +1,8 @@
-use esp_idf_hal::{gpio::{Output, PinDriver}, prelude::*};
 use esp_idf_hal::gpio;
+use esp_idf_hal::{
+    gpio::{Output, PinDriver},
+    prelude::*,
+};
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
 use std::{thread, time::Duration};
 
@@ -20,8 +23,7 @@ fn main() {
         .unwrap();
 }
 
-fn blinky_thread(mut led: PinDriver<'_, gpio::Gpio8, Output>) 
-{
+fn blinky_thread(mut led: PinDriver<'_, gpio::Gpio8, Output>) {
     loop {
         thread::sleep(Duration::from_millis(500));
         println!("LED ON");
