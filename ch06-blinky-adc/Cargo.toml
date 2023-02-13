@@ -1,7 +1,7 @@
 [package]
-name = "blinky-crossbeams"
+name = "ch06-blinky-adc"
 version = "0.1.0"
-authors = ["Shane Mattner <shanemmattner@gmail.com.com>"]
+authors = ["Shane"]
 edition = "2021"
 resolver = "2"
 
@@ -23,6 +23,7 @@ embedded-hal-0-2 = { package = "embedded-hal", version = "0.2.7", features = ["u
 statig = "0.2.0"
 crossbeam = "0.8"
 crossbeam-channel = "0.5"
+
 
 [build-dependencies]
 embuild = "0.31"

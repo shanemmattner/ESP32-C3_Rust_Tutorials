@@ -1,3 +1,0 @@
-cargo:rerun-if-changed=build.rs
-cargo:rustc-env=STD_ENV_ARCH=riscv32
-cargo:rustc-cfg=backtrace_in_libstd
