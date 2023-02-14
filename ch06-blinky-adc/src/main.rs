@@ -23,6 +23,8 @@ use std::{
 static BLINKY_STACK_SIZE: usize = 2000;
 static BUTTON_STACK_SIZE: usize = 2000;
 
+static ADC_MAX_COUNTS: u32 = 2850;
+
 mod led_fsm;
 
 fn main() {
@@ -67,19 +69,16 @@ fn main() {
     .unwrap();
 
     let max_duty = channel0.get_max_duty();
-    let mut pwm_prcnt = 0;
     loop {
         match adc.read(&mut a2) {
-            Ok(x) => println!("adc: {}\n", x),
-            Err(e) => println!("err\n"),
+            Ok(x) => {
+                println!("adc: {}\n", x);
+                let pwm = (x as u32 * max_duty) / ADC_MAX_COUNTS;
+                channel0.set_duty(pwm);
+            }
+            Err(e) => println!("err: {e}\n"),
         }
 
-        let pwm = (pwm_prcnt * max_duty) / 100;
-        channel0.set_duty(pwm);
-        pwm_prcnt += 10;
-        if pwm_prcnt > 100 {
-            pwm_prcnt = 0;
-        }
         thread::sleep(Duration::from_millis(100));
     }
 }
