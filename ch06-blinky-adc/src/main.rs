@@ -5,8 +5,8 @@ extern crate crossbeam_channel;
 
 use crossbeam_channel::bounded;
 use esp_idf_hal::{
-    gpio,
-    gpio::{Input, InputMode, Output, PinDriver},
+    adc::{self, config::Config, AdcDriver, Atten11dB, *},
+    gpio::{self, Input, InputMode, Output, PinDriver, *},
     prelude::*,
 };
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
@@ -25,7 +25,7 @@ fn main() {
 
     let peripherals = Peripherals::take().unwrap();
     let led = PinDriver::output(peripherals.pins.gpio8).unwrap();
-    let btn = PinDriver::input(peripherals.pins.gpio6).unwrap();
+    let btn = PinDriver::input(peripherals.pins.gpio9).unwrap();
 
     let led_fsm = led_fsm::Blinky { led }.state_machine().init();
 
@@ -41,6 +41,24 @@ fn main() {
         .stack_size(BUTTON_STACK_SIZE)
         .spawn(move || button_thread(btn, tx))
         .unwrap();
+
+    let mut a2 =
+        adc::AdcChannelDriver::<_, adc::Atten0dB<adc::ADC1>>::new(peripherals.pins.gpio3).unwrap();
+
+    let mut adc = AdcDriver::new(
+        peripherals.adc1,
+        &adc::config::Config::new().calibration(true),
+    )
+    .unwrap();
+
+    loop {
+        match adc.read(&mut a2) {
+            Ok(x) => println!("adc: {}\n", x),
+            Err(e) => println!("err\n"),
+        }
+
+        thread::sleep(Duration::from_millis(100));
+    }
 }
 
 fn blinky_fsm_thread(
@@ -58,7 +76,7 @@ fn blinky_fsm_thread(
     }
 }
 
-fn button_thread(btn: PinDriver<'_, gpio::Gpio6, Input>, tx: crossbeam_channel::Sender<bool>) {
+fn button_thread(btn: PinDriver<'_, gpio::Gpio9, Input>, tx: crossbeam_channel::Sender<bool>) {
     let mut btn_state = true;
     loop {
         if btn.is_high() {
@@ -77,4 +95,3 @@ fn button_thread(btn: PinDriver<'_, gpio::Gpio6, Input>, tx: crossbeam_channel::
 fn print_type_of<T>(_: &T) {
     println!("{}", std::any::type_name::<T>())
 }
-

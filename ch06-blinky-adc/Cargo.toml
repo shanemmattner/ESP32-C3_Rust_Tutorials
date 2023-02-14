@@ -1,5 +1,5 @@
 [package]
-name = "ch06-blinky-adc"
+name = "blinky-adc"
 version = "0.1.0"
 authors = ["Shane"]
 edition = "2021"
