@@ -4,14 +4,21 @@ extern crate crossbeam;
 extern crate crossbeam_channel;
 
 use crossbeam_channel::bounded;
+use embedded_hal_0_2::PwmPin;
+use esp_idf_hal::ledc::config::TimerConfig;
 use esp_idf_hal::{
     adc::{self, config::Config, AdcDriver, Atten11dB, *},
     gpio::{self, Input, InputMode, Output, PinDriver, *},
+    ledc::*,
     prelude::*,
 };
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
 use statig::{prelude::*, InitializedStatemachine};
-use std::{sync::mpsc::*, thread, time::Duration};
+use std::{
+    sync::{mpsc::*, Arc},
+    thread,
+    time::Duration,
+};
 
 static BLINKY_STACK_SIZE: usize = 2000;
 static BUTTON_STACK_SIZE: usize = 2000;
@@ -24,7 +31,7 @@ fn main() {
     esp_idf_sys::link_patches();
 
     let peripherals = Peripherals::take().unwrap();
-    let led = PinDriver::output(peripherals.pins.gpio8).unwrap();
+    let led = PinDriver::output(peripherals.pins.gpio10).unwrap();
     let btn = PinDriver::input(peripherals.pins.gpio9).unwrap();
 
     let led_fsm = led_fsm::Blinky { led }.state_machine().init();
@@ -42,8 +49,16 @@ fn main() {
         .spawn(move || button_thread(btn, tx))
         .unwrap();
 
+    let config = TimerConfig::new().frequency(25.kHz().into());
+    let timer = Arc::new(LedcTimerDriver::new(peripherals.ledc.timer0, &config).unwrap());
+    let mut channel0 = LedcDriver::new(
+        peripherals.ledc.channel0,
+        timer.clone(),
+        peripherals.pins.gpio8,
+    )
+    .unwrap();
     let mut a2 =
-        adc::AdcChannelDriver::<_, adc::Atten0dB<adc::ADC1>>::new(peripherals.pins.gpio3).unwrap();
+        adc::AdcChannelDriver::<_, adc::Atten11dB<adc::ADC1>>::new(peripherals.pins.gpio3).unwrap();
 
     let mut adc = AdcDriver::new(
         peripherals.adc1,
@@ -51,12 +66,20 @@ fn main() {
     )
     .unwrap();
 
+    let max_duty = channel0.get_max_duty();
+    let mut pwm_prcnt = 0;
     loop {
         match adc.read(&mut a2) {
             Ok(x) => println!("adc: {}\n", x),
             Err(e) => println!("err\n"),
         }
 
+        let pwm = (pwm_prcnt * max_duty) / 100;
+        channel0.set_duty(pwm);
+        pwm_prcnt += 10;
+        if pwm_prcnt > 100 {
+            pwm_prcnt = 0;
+        }
         thread::sleep(Duration::from_millis(100));
     }
 }
