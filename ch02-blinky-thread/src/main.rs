@@ -14,7 +14,6 @@ fn main() {
 
     let peripherals = Peripherals::take().unwrap();
     let led = PinDriver::output(peripherals.pins.gpio8.downgrade_output()).unwrap();
-    // print_type_of(&led);
 
     let _blinky_thread = std::thread::Builder::new()
         .stack_size(BLINKY_STACK_SIZE)
