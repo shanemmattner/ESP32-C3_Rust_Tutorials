@@ -5,8 +5,7 @@ extern crate crossbeam_channel;
 
 use crossbeam_channel::bounded;
 use esp_idf_hal::{
-    gpio,
-    gpio::{Input, InputMode, Output, PinDriver},
+    gpio::{AnyInputPin, AnyOutputPin, Input, InputMode, InputPin, Output, OutputPin, PinDriver},
     prelude::*,
 };
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
@@ -24,8 +23,8 @@ fn main() {
     esp_idf_sys::link_patches();
 
     let peripherals = Peripherals::take().unwrap();
-    let led = PinDriver::output(peripherals.pins.gpio8).unwrap();
-    let btn = PinDriver::input(peripherals.pins.gpio6).unwrap();
+    let led = PinDriver::output(peripherals.pins.gpio8.downgrade_output()).unwrap();
+    let btn = PinDriver::input(peripherals.pins.gpio6.downgrade_input()).unwrap();
 
     let led_fsm = led_fsm::Blinky { led }.state_machine().init();
 
@@ -58,7 +57,7 @@ fn blinky_fsm_thread(
     }
 }
 
-fn button_thread(btn: PinDriver<'_, gpio::Gpio6, Input>, tx: crossbeam_channel::Sender<bool>) {
+fn button_thread(btn: PinDriver<'_, AnyInputPin, Input>, tx: crossbeam_channel::Sender<bool>) {
     let mut btn_state = true;
     loop {
         if btn.is_high() {

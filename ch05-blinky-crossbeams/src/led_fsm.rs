@@ -1,14 +1,15 @@
-
 #![allow(dead_code)]
 #![allow(unused_variables, unused_imports)]
 
-use esp_idf_hal::{gpio::{Output, PinDriver}, prelude::*};
-use esp_idf_hal::gpio;
+use esp_idf_hal::{
+    gpio::{AnyOutputPin, Output, OutputPin, PinDriver},
+    prelude::*,
+};
 use statig::prelude::*;
 
 // #[derive(Debug, Default)]
 pub struct Blinky<'a> {
-    pub led: PinDriver<'a, gpio::Gpio8, Output>,
+    pub led: PinDriver<'a, AnyOutputPin, Output>,
 }
 
 // The event that will be handled by the state machine.
@@ -27,7 +28,6 @@ pub enum Superstate {
     Blinking,
 }
 
-
 impl StateMachine for Blinky<'_> {
     type State = State;
     type Superstate<'a> = Superstate;
@@ -36,11 +36,9 @@ impl StateMachine for Blinky<'_> {
     const ON_TRANSITION: fn(&mut Self, &Self::State, &Self::State) = |_, source, target| {
         println!("Transitioned from {source:?} to {target:?}");
     };
- 
 }
 
-impl statig::State<Blinky<'_>> for State{
-
+impl statig::State<Blinky<'_>> for State {
     fn call_handler(&mut self, blinky: &mut Blinky, event: &Event) -> Response<Self> {
         match self {
             State::LedOn => Blinky::led_on(event),
@@ -59,8 +57,8 @@ impl statig::State<Blinky<'_>> for State{
 
     fn call_entry_action(&mut self, blinky: &mut Blinky) {
         match self {
-            State::LedOn  => blinky.enter_led_on(),
-            State::LedOff  => blinky.enter_led_off(),
+            State::LedOn => blinky.enter_led_on(),
+            State::LedOff => blinky.enter_led_off(),
             _ => (),
         }
     }
@@ -74,13 +72,12 @@ impl statig::Superstate<Blinky<'_>> for Superstate {
     }
 }
 
-impl Blinky<'_>{
-
-    fn enter_led_on(&mut self){
+impl Blinky<'_> {
+    fn enter_led_on(&mut self) {
         self.led.set_high().unwrap();
     }
 
-    fn enter_led_off(&mut self){
+    fn enter_led_off(&mut self) {
         self.led.set_low().unwrap();
     }
 
