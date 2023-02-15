@@ -1,5 +1,5 @@
 [package]
-name = "ch02-blinky-thread"
+name = "blinky-thread"
 version = "0.1.0"
 authors = ["Shane Mattner <shanemmattner@gmail.com.com>"]
 edition = "2021"
