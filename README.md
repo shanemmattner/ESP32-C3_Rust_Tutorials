@@ -29,7 +29,7 @@ espflash /dev/ttyACM0 target/riscv32imc-esp-espidf/debug/project
 espmonitor /dev/ttyACM0
 ```
 
-## Other
+## Misc Reference
 Pull in code for submodules with:
 ```
 git submodule update --init --recursive
