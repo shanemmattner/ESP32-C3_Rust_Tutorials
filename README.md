@@ -1,4 +1,4 @@
-# ESP32C3 Rust Tutorials
+# ESP32-C3 Rust Tutorials
 
 This will be a series of embedded Rust tutorials using the [Olimex ESP32-C3 Dev kit](https://www.olimex.com/Products/IoT/ESP32-C3/ESP32-C3-DevKit-Lipo/open-source-hardware). I'm making this repo as a way to record everything I learn so I don't forget it and hopefully others will find it beneficial, too.
 
