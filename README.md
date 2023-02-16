@@ -1,9 +1,21 @@
-# esp32c3_rust_tutorials
+# ESP32C3 Rust Tutorials
 
-This will be a series of embedded Rust tutorials.  I'm making this repo as a way to record everything I learn so I don't forget it and hopefully it'll help other people.  Embedded Rust is mature enough for a general embedded user, but there's not as many examples out there to follow.
+This will be a series of embedded Rust tutorials using the [Olimex ESP32-C3 Dev kit](https://www.olimex.com/Products/IoT/ESP32-C3/ESP32-C3-DevKit-Lipo/open-source-hardware). I'm making this repo as a way to record everything I learn so I don't forget it and hopefully others will find it beneficial, too.
+
+## Tutorials
+The tutorials are meant to be followed in order.  Each chapter consists of a short example that builds off the previous chapter.
+
+- `Chapter 1: Blinky` - The "Hellow World" of embedded.  We'll blink an LED on and off
+- `Chapter 2: Blinky Thread` - Take the blinky code from the previous chapter and make it run in it's own thread
+- `Chapter 3: Blinky FSM` - Move the blinky logic into a [finite state machine](https://brilliant.org/wiki/finite-state-machines)
+- `Chapter 4: Blinky + Button HSM` - Add a button to the previous example which will start and stop the `blinky state machine` in a [hierarchical state machine](https://www.eventhelix.com/design-patterns/hierarchical-state-machine)
+- `Chapter 5: Blinky HSM + MPMC` - Use a [crossbeams channel](https://docs.rs/crossbeam/latest/crossbeam/channel/index.html) to pass data from the button thread to the `blinky fsm` thread
+- `Chapter 6: Blinky HSM + ADC LED PWM` - Take ADC readings and adjust the PWM of the LED we are blinking on/off in previous examples
 
 
-## Steps to set up a new ESP32 Rust project
+<details>
+  <summary>Development environment setup</summary>
+  
 1. [Install](https://github.com/esp-rs/rust-build) Rust and Xtensa build tools
     - Make sure to `sudo chmod +x export-esp.sh`
 2. Start a project using the [esp-idf-template](https://github.com/esp-rs/esp-idf-template) from the private repo home `dir`. I chose all the default options
@@ -28,35 +40,20 @@ espflash /dev/ttyACM0 target/riscv32imc-esp-espidf/debug/project
 ```
 espmonitor /dev/ttyACM0
 ```
+  
+</details>
 
-## Misc Reference
+<details>
+  <summary>Misc</summary>
+  
 Pull in code for submodules with:
 ```
 git submodule update --init --recursive
 ```
+</details>
 
-## Chapter 1 - Blinky
-Classic blinky program where we'll dig into the basics of initializing a pin and looping while blining on/off
-
-## Chapter 2 - Blinky thread
-We'll take our blinky example and move it into a thread.  
-
-## Chapter 3 - Blinky FSM
-Next we'll put the blinky logic into a FSM using the [statig crate](https://github.com/mdeloof/statig).
-
-## Chapter 4 - Blinky + Button HSM
-Add a button to the blinky program and make a hierarchical state machine using the [statig crate](https://github.com/mdeloof/statig).
-
-## Chapter 5 - Blinky + Button Multi-thread
-Move the button logic into another thread and send a message to the blinky thread when the button is pressed
-
-## Chapter 6 - Blinky + Button Multi-thread with MPMC
-Take the logic from chapter 5 and add another thread which will require use `multi-producer multi-consumer` crate called [crossbeam](https://docs.rs/crossbeam/latest/crossbeam/)
-
-## Chapter 8 - Blinky + WiFi
-Blinky, but now we're connected to WiFi
-
-## Roadmap:
+<details>
+  <summary>Roadmap</summary>
 - Logging (https://github.com/knurling-rs/defmt)
 - Debug project (https://github.com/knurling-rs/probe-run)
 - MQTT transfer
@@ -67,3 +64,5 @@ Blinky, but now we're connected to WiFi
 - SPI
 - I2C connect to GPIO expander
 - CLI
+</details>
+
