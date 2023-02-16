@@ -2,6 +2,10 @@
 
 This will be a series of embedded Rust tutorials using the [Olimex ESP32-C3 Dev kit](https://www.olimex.com/Products/IoT/ESP32-C3/ESP32-C3-DevKit-Lipo/open-source-hardware). I'm making this repo as a way to record everything I learn so I don't forget it and hopefully others will find it beneficial, too.
 
+## Notes:
+- `submodules/reference_projects` contains a bunch of promising ESP32 Rust projects.  Since there's a lack of tutorials out on the web today I scoured Github for any project using `esp-idf-hal`.
+- These tutorials are all using `std`.  Eventually I'll probably make some `no-std` examples but I'm still learning Rust so `std` is easier
+
 ## Tutorials
 The tutorials are meant to be followed in order.  Each chapter consists of a short example that builds off the previous chapter.
 
@@ -44,16 +48,8 @@ espmonitor /dev/ttyACM0
 </details>
 
 <details>
-  <summary>Misc</summary>
-  
-Pull in code for submodules with:
-```
-git submodule update --init --recursive
-```
-</details>
-
-<details>
   <summary>Roadmap</summary>
+  
 - Logging (https://github.com/knurling-rs/defmt)
 - Debug project (https://github.com/knurling-rs/probe-run)
 - MQTT transfer
@@ -64,5 +60,15 @@ git submodule update --init --recursive
 - SPI
 - I2C connect to GPIO expander
 - CLI
+
 </details>
 
+
+<details>
+  <summary>Misc</summary>
+  
+Pull in code for submodules with:
+```
+git submodule update --init --recursive
+```
+</details>
