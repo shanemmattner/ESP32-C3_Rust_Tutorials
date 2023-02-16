@@ -55,11 +55,11 @@ espmonitor /dev/ttyACM0
 - MQTT transfer
 - Pub/sub (https://github.com/jakmeier/nuts)
 - Timer to generate blinky
-- ADC-to-pwm blinky
 - DMA
 - SPI
-- I2C connect to GPIO expander
+- I2C
 - CLI
+- UART
 
 </details>
 
