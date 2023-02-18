@@ -1,5 +1,7 @@
 #![allow(dead_code)]
 #![allow(unused_variables, unused_imports)]
+extern crate crossbeam;
+extern crate crossbeam_channel;
 use esp_idf_hal::{
     gpio::{
         AnyInputPin, AnyOutputPin, Input, InputMode, InputPin, InterruptType, Output, OutputPin,
@@ -7,6 +9,8 @@ use esp_idf_hal::{
     },
     prelude::*,
 };
+
+use crossbeam_channel::bounded;
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
 use esp_println::println;
 use statig::{prelude::*, InitializedStatemachine};
@@ -27,13 +31,14 @@ fn main() {
     let led = PinDriver::output(peripherals.pins.gpio8.downgrade_output()).unwrap();
     let btn = PinDriver::input(peripherals.pins.gpio7.downgrade_input()).unwrap();
 
+    let (tx, rx) = bounded(1);
     let mut led2 = PinDriver::output(peripherals.pins.gpio6.downgrade_output()).unwrap();
     let mut btn2 = PinDriver::input(peripherals.pins.gpio0).unwrap();
-    btn2.set_pull(Pull::Up).unwrap();
-    btn2.set_interrupt_type(InterruptType::AnyEdge).unwrap();
+    btn2.set_pull(Pull::Down).unwrap();
+    btn2.set_interrupt_type(InterruptType::PosEdge).unwrap();
 
     unsafe {
-        btn2.subscribe(|| btn_int()).unwrap();
+        btn2.subscribe(move || btn_int(tx.clone())).unwrap();
     }
 
     let led_fsm = led_fsm::Blinky { led }.state_machine().init();
@@ -44,6 +49,11 @@ fn main() {
         .unwrap();
 
     loop {
+        match rx.try_recv() {
+            Ok(_) => println!("int received\n"),
+            Err(_) => {}
+        }
+
         unsafe {
             println!("counter {COUNTER}\n");
         }
@@ -51,9 +61,9 @@ fn main() {
     }
 }
 
-fn btn_int() {
-    //log::error!("int");
+fn btn_int(tx: crossbeam_channel::Sender<bool>) {
     unsafe {
+        log::error!("int");
         COUNTER += 1;
     }
     //    println!("int\n");

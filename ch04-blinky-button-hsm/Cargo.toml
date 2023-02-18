@@ -26,6 +26,9 @@ log = "0.4"
 esp-println = { version = "0.3.1", features = ["esp32c3"] }
 embedded-hal-0-2 = { package = "embedded-hal", version = "0.2.7", features = ["unproven"] }
 statig = "0.2.0"
+crossbeam = "0.8"
+crossbeam-channel = "0.5"
+
 
 [build-dependencies]
 embuild = "0.30.4"
