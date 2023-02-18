@@ -5,6 +5,7 @@ use esp_idf_hal::{
     gpio::{AnyOutputPin, Output, OutputPin, PinDriver},
     prelude::*,
 };
+use esp_println::println;
 use statig::prelude::*;
 
 // #[derive(Debug, Default)]
