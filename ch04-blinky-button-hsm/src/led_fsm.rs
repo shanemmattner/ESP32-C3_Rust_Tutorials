@@ -74,11 +74,13 @@ impl statig::Superstate<Blinky<'_>> for Superstate {
 
 impl Blinky<'_> {
     fn enter_led_on(&mut self) {
-        self.led.set_high().unwrap();
+        // Setting the pin high turns the LED off on my dev board
+        self.led.set_low().unwrap();
     }
 
     fn enter_led_off(&mut self) {
-        self.led.set_low().unwrap();
+        // Setting the pin low turns the LED on for my dev board
+        self.led.set_high().unwrap();
     }
 
     fn led_on(event: &Event) -> Response<State> {
