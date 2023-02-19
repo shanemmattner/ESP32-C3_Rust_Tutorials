@@ -11,28 +11,33 @@ use std::{thread, time::Duration};
 
 static BLINKY_STACK_SIZE: usize = 2000;
 
-mod fsm;
+mod led_fsm;
 
 fn main() {
     // It is necessary to call this function once. Otherwise some patches to the runtime
     // implemented by esp-idf-sys might not link properly. See https://github.com/esp-rs/esp-idf-template/issues/71
     esp_idf_sys::link_patches();
 
+    // Get all the peripherals
     let peripherals = Peripherals::take().unwrap();
+    // Initialize an output pin to drive the LED
     let led = PinDriver::output(peripherals.pins.gpio8.downgrade_output()).unwrap();
-    let state_machine = fsm::Blinky { led }.state_machine().init();
-
+    // Create and initialize the finitie state machine. Pass in the LED gpio pin
+    let blinky_fsm = led_fsm::Blinky { led }.state_machine().init();
+    // Create thread in which the fsm will run
     let _blinky_thread = std::thread::Builder::new()
         .stack_size(BLINKY_STACK_SIZE)
-        .spawn(move || blinky_fsm_thread(state_machine))
+        .spawn(move || blinky_fsm_thread(blinky_fsm))
         .unwrap();
 }
 
-fn blinky_fsm_thread(mut fsm: InitializedStatemachine<fsm::Blinky>) {
+// Thread logic that will trigger TimerElapsed events in the blinky FSM which will
+// blinky the LED on/off
+fn blinky_fsm_thread(mut fsm: InitializedStatemachine<led_fsm::Blinky>) {
     loop {
         thread::sleep(Duration::from_millis(500));
-        fsm.handle(&fsm::Event::TimerElapsed);
+        fsm.handle(&led_fsm::Event::TimerElapsed);
         thread::sleep(Duration::from_millis(500));
-        fsm.handle(&fsm::Event::TimerElapsed);
+        fsm.handle(&led_fsm::Event::TimerElapsed);
     }
 }

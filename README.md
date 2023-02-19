@@ -51,6 +51,7 @@ espmonitor /dev/ttyACM0
   <summary>Roadmap</summary>
   
 - Logging (https://github.com/knurling-rs/defmt)
+- uSD card
 - Debug project (https://github.com/knurling-rs/probe-run)
 - MQTT transfer
 - Pub/sub (https://github.com/jakmeier/nuts)
@@ -61,6 +62,9 @@ espmonitor /dev/ttyACM0
 - CLI
 - UART
 
+Other interesting crates/ideas:
+- [static assertions](https://github.com/nvzqz/static-assertions-rs)
+- [lazy static](https://github.com/rust-lang-nursery/lazy-static.rs)
 </details>
 
 

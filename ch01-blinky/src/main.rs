@@ -11,9 +11,12 @@ fn main() {
     // implemented by esp-idf-sys might not link properly. See https://github.com/esp-rs/esp-idf-template/issues/71
     esp_idf_sys::link_patches();
 
+    // Get all the peripherals
     let peripherals = Peripherals::take().unwrap();
+    // Initialize Pin 8 as an output to drive the LED
     let mut led = PinDriver::output(peripherals.pins.gpio8).unwrap();
 
+    // Loop forever blinking the LED on/off every 500ms
     loop {
         thread::sleep(Duration::from_millis(500));
         println!("LED ON");

@@ -17,19 +17,23 @@ fn main() {
     // implemented by esp-idf-sys might not link properly. See https://github.com/esp-rs/esp-idf-template/issues/71
     esp_idf_sys::link_patches();
 
+    // Get all the peripherals
     let peripherals = Peripherals::take().unwrap();
+    // Initialize an output pin to drive the LED
     let led = PinDriver::output(peripherals.pins.gpio8.downgrade_output()).unwrap();
+    // Initialize an input pin for the button
     let btn = PinDriver::input(peripherals.pins.gpio6.downgrade_input()).unwrap();
-
+    // Create and initialize the finitie state machine. Pass in the LED gpio pin
     let led_fsm = led_fsm::Blinky { led }.state_machine().init();
 
+    // Create thread in which the fsm will run and the button status will be monitored
     let _blinky_thread = std::thread::Builder::new()
         .stack_size(BLINKY_STACK_SIZE)
         .spawn(move || blinky_fsm_thread(led_fsm, btn))
         .unwrap();
 }
 
-fn blinky_fsm_thread<'a>(
+fn blinky_fsm_thread(
     mut fsm: InitializedStatemachine<led_fsm::Blinky>,
     btn: PinDriver<AnyInputPin, Input>,
 ) {
