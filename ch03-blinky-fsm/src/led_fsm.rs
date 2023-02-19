@@ -46,16 +46,16 @@ impl statig::State<Blinky<'_>> for State {
 
 impl Blinky<'_> {
     fn on(&mut self, event: &Event) -> Response<State> {
-        self.led.set_low().unwrap();
+        // Here we are transitioning to the off state
+        // Setting the pin high turns the LED off on my dev board
+        self.led.set_high().unwrap();
         Transition(State::Off)
     }
 
     fn off(&mut self, event: &Event) -> Response<State> {
-        self.led.set_high().unwrap();
+        // Here we are transitioning to the on state
+        // Setting the pin low turns the LED on for my dev board
+        self.led.set_low().unwrap();
         Transition(State::On)
-    }
-
-    fn on_transition(&mut self, source: &State, target: &State) {
-        println!("transitioned from `{:?}` to `{:?}`", source, target);
     }
 }

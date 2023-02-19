@@ -35,9 +35,9 @@ fn main() {
 // blinky the LED on/off
 fn blinky_fsm_thread(mut fsm: InitializedStatemachine<led_fsm::Blinky>) {
     loop {
-        thread::sleep(Duration::from_millis(500));
+        thread::sleep(Duration::from_millis(2000));
         fsm.handle(&led_fsm::Event::TimerElapsed);
-        thread::sleep(Duration::from_millis(500));
+        thread::sleep(Duration::from_millis(2000));
         fsm.handle(&led_fsm::Event::TimerElapsed);
     }
 }
