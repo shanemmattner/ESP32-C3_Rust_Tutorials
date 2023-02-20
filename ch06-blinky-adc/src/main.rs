@@ -23,10 +23,6 @@ use std::{
     time::Duration,
 };
 
-static BLINKY_STACK_SIZE: usize = 2000;
-static BUTTON_STACK_SIZE: usize = 2000;
-static ADC_STACK_SIZE: usize = 5000;
-
 mod led_fsm;
 mod tasks;
 
@@ -47,7 +43,7 @@ fn main() {
     let channel0 = LedcDriver::new(
         peripherals.ledc.channel0,
         timer.clone(),
-        peripherals.pins.gpio9,
+        peripherals.pins.gpio7,
     )
     .unwrap();
 
@@ -55,7 +51,8 @@ fn main() {
 
     let led_fsm = led_fsm::Blinky { led }.state_machine().init();
 
-    let (tx, rx) = bounded(1);
+    let (tx1, rx1) = bounded(1);
+    let (tx2, rx2) = (tx1.clone(), rx1.clone());
 
     // print_type_of(&tx);
 
@@ -69,17 +66,17 @@ fn main() {
     .unwrap();
 
     let _blinky_thread = std::thread::Builder::new()
-        .stack_size(BLINKY_STACK_SIZE)
-        .spawn(move || tasks::blinky_fsm_thread(led_fsm, rx))
+        .stack_size(tasks::BLINKY_STACK_SIZE)
+        .spawn(move || tasks::blinky_fsm_thread(led_fsm, rx1))
         .unwrap();
 
     let _button_thread = std::thread::Builder::new()
-        .stack_size(BUTTON_STACK_SIZE)
-        .spawn(move || tasks::button_thread(btn, tx))
+        .stack_size(tasks::BUTTON_STACK_SIZE)
+        .spawn(move || tasks::button_thread(btn, tx1))
         .unwrap();
 
     let _adc_thread = std::thread::Builder::new()
-        .stack_size(ADC_STACK_SIZE)
-        .spawn(move || tasks::adc_thread(adc1, a1_ch4, max_duty, channel0))
+        .stack_size(tasks::ADC_STACK_SIZE)
+        .spawn(move || tasks::adc_thread(adc1, a1_ch4, max_duty, channel0, tx2))
         .unwrap();
 }

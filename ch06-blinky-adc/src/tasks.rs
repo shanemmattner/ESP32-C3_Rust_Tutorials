@@ -23,17 +23,27 @@ use std::{
     time::Duration,
 };
 
+pub enum IPC {
+    Btn(bool),
+    Adc(u16),
+}
+
 use crate::led_fsm;
 
-static ADC_MAX_COUNTS: u32 = 2850;
+pub static ADC_MAX_COUNTS: u32 = 2850;
+pub static BLINKY_STACK_SIZE: usize = 2000;
+pub static BUTTON_STACK_SIZE: usize = 2000;
+pub static ADC_STACK_SIZE: usize = 5000;
 
-pub fn button_thread(btn: PinDriver<'_, AnyInputPin, Input>, tx: crossbeam_channel::Sender<bool>) {
+pub fn button_thread(btn: PinDriver<'_, AnyInputPin, Input>, tx: crossbeam_channel::Sender<IPC>) {
     let mut btn_state = true;
     loop {
         if btn.is_high() {
             if !btn_state {
                 btn_state = true;
-                tx.send(btn_state).unwrap();
+
+                let msg = IPC::Btn(true);
+                tx.send(msg).unwrap();
             }
         } else {
             btn_state = false;
@@ -45,7 +55,7 @@ pub fn button_thread(btn: PinDriver<'_, AnyInputPin, Input>, tx: crossbeam_chann
 
 pub fn blinky_fsm_thread(
     mut fsm: InitializedStatemachine<led_fsm::Blinky>,
-    rx: crossbeam_channel::Receiver<bool>,
+    rx: crossbeam_channel::Receiver<IPC>,
 ) {
     loop {
         fsm.handle(&led_fsm::Event::TimerElapsed);
@@ -63,6 +73,7 @@ pub fn adc_thread<T: esp_idf_hal::gpio::ADCPin>(
     mut pin: adc::AdcChannelDriver<T, adc::Atten11dB<adc::ADC1>>,
     max_duty: u32,
     mut channel: LedcDriver<'_>,
+    tx: crossbeam_channel::Sender<IPC>,
 ) where
     Atten11dB<ADC1>: Attenuation<<T as ADCPin>::Adc>,
 {
