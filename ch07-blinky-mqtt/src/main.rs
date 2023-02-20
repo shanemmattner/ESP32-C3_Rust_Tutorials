@@ -19,11 +19,13 @@ use esp_idf_hal::{
         *,
     },
     ledc::*,
+    peripheral,
     prelude::*,
 };
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
 use statig::{prelude::*, InitializedStatemachine};
 use std::{
+    env,
     sync::{mpsc::*, Arc},
     thread,
     time::Duration,
@@ -33,6 +35,10 @@ use esp_idf_svc::{eventloop::*, mqtt::client, netif::*, wifi::*};
 
 mod led_fsm;
 mod tasks;
+
+const SSID: &str = env!("WIFI_SSID");
+const PASS: &str = env!("WIFI_PASS");
+const MQTT_URL: &str = env!("MQTT_URL");
 
 fn main() {
     // It is necessary to call this function once. Otherwise some patches to the runtime
@@ -62,8 +68,6 @@ fn main() {
     let (tx1, rx1) = bounded(1);
     let (tx2, rx2) = (tx1.clone(), rx1.clone());
 
-    // print_type_of(&tx);
-
     let a1_ch4 =
         adc::AdcChannelDriver::<_, adc::Atten11dB<adc::ADC1>>::new(peripherals.pins.gpio4).unwrap();
 
@@ -73,6 +77,12 @@ fn main() {
     )
     .unwrap();
 
+    // start wifi
+    let sysloop = EspSystemEventLoop::take().unwrap();
+    let _wifi = wifi(peripherals.modem, sysloop).unwrap();
+    //let mut client = get_client(MQTT_URL).unwrap();
+
+    // initialize the tasks
     let _blinky_thread = std::thread::Builder::new()
         .stack_size(tasks::BLINKY_STACK_SIZE)
         .spawn(move || tasks::blinky_fsm_thread(led_fsm, rx1))
@@ -87,4 +97,71 @@ fn main() {
         .stack_size(tasks::ADC_STACK_SIZE)
         .spawn(move || tasks::adc_thread(adc1, a1_ch4, max_duty, channel0, tx2))
         .unwrap();
+}
+
+#[cfg(not(feature = "qemu"))]
+fn wifi(
+    modem: impl peripheral::Peripheral<P = esp_idf_hal::modem::Modem> + 'static,
+    sysloop: EspSystemEventLoop,
+) -> Result<Box<EspWifi<'static>>> {
+    use std::net::Ipv4Addr;
+
+    let mut wifi = Box::new(EspWifi::new(modem, sysloop.clone(), None)?);
+
+    println!("Wifi created, about to scan");
+
+    let ap_infos = wifi.scan()?;
+
+    let ours = ap_infos.into_iter().find(|a| a.ssid == SSID);
+
+    let channel = if let Some(ours) = ours {
+        println!(
+            "Found configured access point {} on channel {}",
+            SSID, ours.channel
+        );
+        Some(ours.channel)
+    } else {
+        println!(
+            "Configured access point {} not found during scanning, will go with unknown channel",
+            SSID
+        );
+        None
+    };
+
+    wifi.set_configuration(&Configuration::Client(ClientConfiguration {
+        ssid: SSID.into(),
+        password: PASS.into(),
+        channel,
+        ..Default::default()
+    }))?;
+
+    wifi.start()?;
+
+    println!("Starting wifi...");
+
+    if !WifiWait::new(&sysloop)?
+        .wait_with_timeout(Duration::from_secs(20), || wifi.is_started().unwrap())
+    {
+        bail!("Wifi did not start");
+    }
+
+    println!("Connecting wifi...");
+
+    wifi.connect()?;
+
+    if !EspNetifWait::new::<EspNetif>(wifi.sta_netif(), &sysloop)?.wait_with_timeout(
+        Duration::from_secs(20),
+        || {
+            wifi.is_connected().unwrap()
+                && wifi.sta_netif().get_ip_info().unwrap().ip != Ipv4Addr::new(0, 0, 0, 0)
+        },
+    ) {
+        bail!("Wifi did not connect or did not receive a DHCP lease");
+    }
+
+    let ip_info = wifi.sta_netif().get_ip_info()?;
+
+    println!("Wifi DHCP info: {:?}", ip_info);
+
+    Ok(wifi)
 }
