@@ -3,25 +3,19 @@
 extern crate crossbeam;
 extern crate crossbeam_channel;
 
-use anyhow::{bail, Result};
 use crossbeam_channel::bounded;
 use embedded_hal_0_2::PwmPin;
-use embedded_svc::{
-    mqtt::client::{Connection, Event, MessageImpl, QoS},
-    utils::mqtt::client::ConnState,
-    wifi::*,
-};
-use esp_idf_hal::ledc::config::TimerConfig;
 use esp_idf_hal::{
     adc::{self, config::Config, AdcDriver, Atten11dB, *},
     gpio::{
         self, AnyInputPin, AnyOutputPin, Input, InputMode, InputPin, Output, OutputPin, PinDriver,
         *,
     },
-    ledc::*,
+    ledc::{config::TimerConfig, *},
     peripheral,
     prelude::*,
 };
+use esp_idf_svc::eventloop::*;
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
 use serde::Serialize;
 use statig::{prelude::*, InitializedStatemachine};
@@ -32,14 +26,9 @@ use std::{
     time::Duration,
 };
 
-use esp_idf_svc::{eventloop::*, mqtt::client, netif::*, wifi::*};
-
+mod cloud;
 mod led_fsm;
 mod tasks;
-
-const SSID: &str = env!("WIFI_SSID");
-const PASS: &str = env!("WIFI_PASS");
-const MQTT_URL: &str = env!("MQTT_URL");
 
 #[derive(Serialize, Debug)]
 struct MqttData {
@@ -47,6 +36,8 @@ struct MqttData {
     temperature: f32,
     tds: f32,
 }
+
+const MQTT_URL: &str = env!("MQTT_URL");
 
 fn main() {
     // It is necessary to call this function once. Otherwise some patches to the runtime
@@ -87,8 +78,8 @@ fn main() {
 
     // start wifi
     let sysloop = EspSystemEventLoop::take().unwrap();
-    let _wifi = wifi(peripherals.modem, sysloop).unwrap();
-    //let mut client = get_client(MQTT_URL).unwrap();
+    let _wifi = cloud::wifi(peripherals.modem, sysloop).unwrap();
+    let mut client = cloud::get_client(MQTT_URL).unwrap();
 
     // initialize the tasks
     let _blinky_thread = std::thread::Builder::new()
@@ -105,71 +96,4 @@ fn main() {
         .stack_size(tasks::ADC_STACK_SIZE)
         .spawn(move || tasks::adc_thread(adc1, a1_ch4, max_duty, channel0, tx2))
         .unwrap();
-}
-
-#[cfg(not(feature = "qemu"))]
-fn wifi(
-    modem: impl peripheral::Peripheral<P = esp_idf_hal::modem::Modem> + 'static,
-    sysloop: EspSystemEventLoop,
-) -> Result<Box<EspWifi<'static>>> {
-    use std::net::Ipv4Addr;
-
-    let mut wifi = Box::new(EspWifi::new(modem, sysloop.clone(), None)?);
-
-    println!("Wifi created, about to scan");
-
-    let ap_infos = wifi.scan()?;
-
-    let ours = ap_infos.into_iter().find(|a| a.ssid == SSID);
-
-    let channel = if let Some(ours) = ours {
-        println!(
-            "Found configured access point {} on channel {}",
-            SSID, ours.channel
-        );
-        Some(ours.channel)
-    } else {
-        println!(
-            "Configured access point {} not found during scanning, will go with unknown channel",
-            SSID
-        );
-        None
-    };
-
-    wifi.set_configuration(&Configuration::Client(ClientConfiguration {
-        ssid: SSID.into(),
-        password: PASS.into(),
-        channel,
-        ..Default::default()
-    }))?;
-
-    wifi.start()?;
-
-    println!("Starting wifi...");
-
-    if !WifiWait::new(&sysloop)?
-        .wait_with_timeout(Duration::from_secs(20), || wifi.is_started().unwrap())
-    {
-        bail!("Wifi did not start");
-    }
-
-    println!("Connecting wifi...");
-
-    wifi.connect()?;
-
-    if !EspNetifWait::new::<EspNetif>(wifi.sta_netif(), &sysloop)?.wait_with_timeout(
-        Duration::from_secs(20),
-        || {
-            wifi.is_connected().unwrap()
-                && wifi.sta_netif().get_ip_info().unwrap().ip != Ipv4Addr::new(0, 0, 0, 0)
-        },
-    ) {
-        bail!("Wifi did not connect or did not receive a DHCP lease");
-    }
-
-    let ip_info = wifi.sta_netif().get_ip_info()?;
-
-    println!("Wifi DHCP info: {:?}", ip_info);
-
-    Ok(wifi)
 }
