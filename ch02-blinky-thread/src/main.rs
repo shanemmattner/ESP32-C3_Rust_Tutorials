@@ -10,7 +10,7 @@ static BLINKY_STACK_SIZE: usize = 2000;
 fn main() {
     // It is necessary to call this function once. Otherwise some patches to the runtime
     // implemented by esp-idf-sys might not link properly. See https://github.com/esp-rs/esp-idf-template/issues/71
-    esp_idf_syslink_patches();
+    esp_idf_sys::link_patches();
 
     // Get all the peripherals
     let peripherals = Peripherals::take().unwrap();
