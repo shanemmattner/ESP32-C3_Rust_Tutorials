@@ -14,11 +14,13 @@ fn main() {
 
     // Loop forever blinking the LED on/off every 500ms
     loop {
-        thread::sleep(Duration::from_millis(500));
-        println!("LED ON");
-        led.set_high().unwrap();
-        thread::sleep(Duration::from_millis(500));
-        println!("LED OFF");
+        // Inverse logic to turn LED on
         led.set_low().unwrap();
+        thread::sleep(Duration::from_millis(1000));
+        println!("LED ON");
+
+        led.set_high().unwrap();
+        println!("LED OFF");
+        thread::sleep(Duration::from_millis(1000));
     }
 }
