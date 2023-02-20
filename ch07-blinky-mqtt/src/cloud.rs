@@ -3,20 +3,14 @@ use embedded_svc::mqtt::client::{Connection, Event, MessageImpl, QoS};
 use embedded_svc::{utils::mqtt::client::ConnState, wifi::*};
 use esp_idf_hal::peripheral;
 use esp_idf_svc::mqtt::client::{EspMqttClient, LwtConfiguration, MqttClientConfiguration};
-use esp_idf_svc::{eventloop::*, mqtt::client, netif::*, wifi::*};
+use esp_idf_svc::{eventloop::*, netif::*, wifi::*};
 use esp_idf_sys::esp_efuse_mac_get_default;
 use esp_idf_sys::EspError;
-use serde::Serialize;
-use std::{
-    env,
-    sync::{mpsc::*, Arc},
-    thread,
-    time::Duration,
-};
+use std::{env, thread, time::Duration};
 
 const SSID: &str = env!("WIFI_SSID");
 const PASS: &str = env!("WIFI_PASS");
-const MQTT_URL: &str = env!("MQTT_URL");
+const _MQTT_URL: &str = env!("MQTT_URL");
 
 #[cfg(not(feature = "qemu"))]
 pub fn wifi(
