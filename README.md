@@ -13,7 +13,7 @@ The tutorials are meant to be followed in order.  Each chapter consists of a sho
 - `Chapter 2: Blinky Thread` - Take the blinky code from the previous chapter and make it run in it's own thread
 - `Chapter 3: Blinky FSM` - Move the blinky logic into a [finite state machine](https://brilliant.org/wiki/finite-state-machines)
 - `Chapter 4: Blinky + Button HSM` - Add a button to the previous example which will start and stop the `blinky state machine` in a [hierarchical state machine](https://www.eventhelix.com/design-patterns/hierarchical-state-machine)
-- `Chapter 5: Blinky HSM + MPMC` - Use a [crossbeams channel](https://docs.rs/crossbeam/latest/crossbeam/channel/index.html) to pass data from the button thread to the `blinky fsm` thread
+- `Chapter 5: Blinky HSM + MPMC` - Create seperate threads for monitoring the button and sending events to the LED FSM. Use a [crossbeams channel](https://docs.rs/crossbeam/latest/crossbeam/channel/index.html) to pass data from the button thread to the `blinky fsm` thread
 - `Chapter 6: Blinky HSM + ADC LED PWM` - Take ADC readings and adjust the PWM of the LED we are blinking on/off in previous examples
 
 
@@ -44,7 +44,13 @@ espflash /dev/ttyACM0 target/riscv32imc-esp-espidf/debug/project
 ```
 espmonitor /dev/ttyACM0
 ```
-  
+ </details>
+
+<details>
+  <summary>TODO</summary>
+- Initialize pins with pull-up or pull down 
+  - Issue occurs when using '.downgrade_input()'
+
 </details>
 
 <details>
