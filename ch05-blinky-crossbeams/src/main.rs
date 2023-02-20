@@ -1,16 +1,14 @@
-#![allow(dead_code)]
-#![allow(unused_variables, unused_imports)]
 extern crate crossbeam;
 extern crate crossbeam_channel;
 
 use crossbeam_channel::bounded;
 use esp_idf_hal::{
-    gpio::{AnyInputPin, AnyOutputPin, Input, InputMode, InputPin, Output, OutputPin, PinDriver},
+    gpio::{AnyInputPin, Input, InputPin, OutputPin, PinDriver},
     prelude::*,
 };
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
 use statig::{prelude::*, InitializedStatemachine};
-use std::{sync::mpsc::*, thread, time::Duration};
+use std::{thread, time::Duration};
 
 static BLINKY_STACK_SIZE: usize = 2000;
 static BUTTON_STACK_SIZE: usize = 2000;

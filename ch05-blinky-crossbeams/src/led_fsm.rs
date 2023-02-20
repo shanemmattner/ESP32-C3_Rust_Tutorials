@@ -1,10 +1,4 @@
-#![allow(dead_code)]
-#![allow(unused_variables, unused_imports)]
-
-use esp_idf_hal::{
-    gpio::{AnyOutputPin, Output, OutputPin, PinDriver},
-    prelude::*,
-};
+use esp_idf_hal::gpio::{AnyOutputPin, Output, PinDriver};
 use statig::prelude::*;
 
 // #[derive(Debug, Default)]
@@ -39,7 +33,7 @@ impl StateMachine for Blinky<'_> {
 }
 
 impl statig::State<Blinky<'_>> for State {
-    fn call_handler(&mut self, blinky: &mut Blinky, event: &Event) -> Response<Self> {
+    fn call_handler(&mut self, _blinky: &mut Blinky, event: &Event) -> Response<Self> {
         match self {
             State::LedOn => Blinky::led_on(event),
             State::LedOff => Blinky::led_off(event),
@@ -65,7 +59,7 @@ impl statig::State<Blinky<'_>> for State {
 }
 
 impl statig::Superstate<Blinky<'_>> for Superstate {
-    fn call_handler(&mut self, blinky: &mut Blinky, event: &Event) -> Response<State> {
+    fn call_handler(&mut self, _blinky: &mut Blinky, event: &Event) -> Response<State> {
         match self {
             Superstate::Blinking => Blinky::blinking(event),
         }
