@@ -27,9 +27,8 @@ static BLINKY_STACK_SIZE: usize = 2000;
 static BUTTON_STACK_SIZE: usize = 2000;
 static ADC_STACK_SIZE: usize = 5000;
 
-static ADC_MAX_COUNTS: u32 = 2850;
-
 mod led_fsm;
+mod tasks;
 
 fn main() {
     // It is necessary to call this function once. Otherwise some patches to the runtime
@@ -41,7 +40,7 @@ fn main() {
     // Config GPIO for input and output
     let led = PinDriver::output(peripherals.pins.gpio8.downgrade_output()).unwrap();
     let btn = PinDriver::input(peripherals.pins.gpio6.downgrade_input()).unwrap();
-
+    // TODO: how to make the `btn` pin pull-up or pull-down.
     // LED controller config
     let config = TimerConfig::new().frequency(25.kHz().into());
     let timer = Arc::new(LedcTimerDriver::new(peripherals.ledc.timer0, &config).unwrap());
@@ -71,75 +70,16 @@ fn main() {
 
     let _blinky_thread = std::thread::Builder::new()
         .stack_size(BLINKY_STACK_SIZE)
-        .spawn(move || blinky_fsm_thread(led_fsm, rx))
+        .spawn(move || tasks::blinky_fsm_thread(led_fsm, rx))
         .unwrap();
 
     let _button_thread = std::thread::Builder::new()
         .stack_size(BUTTON_STACK_SIZE)
-        .spawn(move || button_thread(btn, tx))
+        .spawn(move || tasks::button_thread(btn, tx))
         .unwrap();
 
     let _adc_thread = std::thread::Builder::new()
         .stack_size(ADC_STACK_SIZE)
-        .spawn(move || adc_thread(adc1, a1_ch4, max_duty, channel0))
+        .spawn(move || tasks::adc_thread(adc1, a1_ch4, max_duty, channel0))
         .unwrap();
-}
-
-fn adc_thread<T: esp_idf_hal::gpio::ADCPin>(
-    mut adc: AdcDriver<adc::ADC1>,
-    mut pin: adc::AdcChannelDriver<T, adc::Atten11dB<adc::ADC1>>,
-    max_duty: u32,
-    mut channel: LedcDriver<'_>,
-) where
-    Atten11dB<ADC1>: Attenuation<<T as ADCPin>::Adc>,
-{
-    loop {
-        // Read ADC and and set the LED PWM to the percentage of full scale
-        match adc.read(&mut pin) {
-            Ok(x) => {
-                let pwm = (x as u32 * max_duty) / ADC_MAX_COUNTS;
-                match channel.set_duty(pwm) {
-                    Ok(x) => (),
-                    Err(e) => println!("err setting duty of led: {e}\n"),
-                }
-            }
-            Err(e) => println!("err reading ADC: {e}\n"),
-        }
-
-        thread::sleep(Duration::from_millis(100));
-    }
-}
-fn blinky_fsm_thread(
-    mut fsm: InitializedStatemachine<led_fsm::Blinky>,
-    rx: crossbeam_channel::Receiver<bool>,
-) {
-    loop {
-        fsm.handle(&led_fsm::Event::TimerElapsed);
-        match rx.try_recv() {
-            Ok(_) => fsm.handle(&led_fsm::Event::ButtonPressed),
-            Err(_) => {}
-        }
-
-        thread::sleep(Duration::from_millis(1000));
-    }
-}
-
-fn button_thread(btn: PinDriver<'_, AnyInputPin, Input>, tx: crossbeam_channel::Sender<bool>) {
-    let mut btn_state = true;
-    loop {
-        if btn.is_high() {
-            if !btn_state {
-                btn_state = true;
-                tx.send(btn_state).unwrap();
-            }
-        } else {
-            btn_state = false;
-        }
-
-        thread::sleep(Duration::from_millis(100));
-    }
-}
-
-fn print_type_of<T>(_: &T) {
-    println!("{}", std::any::type_name::<T>())
 }
