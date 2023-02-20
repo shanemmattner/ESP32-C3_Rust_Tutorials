@@ -1,8 +1,4 @@
-use esp_idf_hal::gpio;
-use esp_idf_hal::{
-    gpio::{Output, PinDriver},
-    prelude::*,
-};
+use esp_idf_hal::{gpio::PinDriver, prelude::*};
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
 use std::{thread, time::Duration};
 
