@@ -1,11 +1,4 @@
-#![allow(unused_imports)]
-#![allow(dead_code)]
-use esp_idf_hal::gpio;
-#[allow(unused)]
-use esp_idf_hal::{
-    gpio::{AnyOutputPin, Output, OutputPin, PinDriver},
-    prelude::*,
-};
+use esp_idf_hal::gpio::{AnyOutputPin, Output, PinDriver};
 use statig::prelude::*;
 
 // #[derive(Debug, Default)]
