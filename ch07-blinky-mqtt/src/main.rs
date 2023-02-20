@@ -23,6 +23,7 @@ use esp_idf_hal::{
     prelude::*,
 };
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
+use serde::Serialize;
 use statig::{prelude::*, InitializedStatemachine};
 use std::{
     env,
@@ -39,6 +40,13 @@ mod tasks;
 const SSID: &str = env!("WIFI_SSID");
 const PASS: &str = env!("WIFI_PASS");
 const MQTT_URL: &str = env!("MQTT_URL");
+
+#[derive(Serialize, Debug)]
+struct MqttData {
+    distance: u16,
+    temperature: f32,
+    tds: f32,
+}
 
 fn main() {
     // It is necessary to call this function once. Otherwise some patches to the runtime

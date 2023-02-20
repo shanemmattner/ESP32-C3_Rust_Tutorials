@@ -24,6 +24,7 @@ embedded-hal-0-2 = { package = "embedded-hal", version = "0.2.7", features = ["u
 embedded-svc = "0.24"
 statig = "0.2.0"
 crossbeam = "0.8"
+serde = { version = "1", features = ["derive"] }
 crossbeam-channel = "0.5"
 anyhow = { version = "1", features = ["backtrace"] }
 
