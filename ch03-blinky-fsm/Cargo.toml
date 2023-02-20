@@ -18,7 +18,7 @@ pio = ["esp-idf-sys/pio"]
 [dependencies]
 esp-idf-sys = { version = "0.32", features = ["binstart"] }
 esp-idf-hal = "0.40"
-esp-println = { version = "0.3.1", features = ["esp32"] }
+esp-println = { version = "0.3.1", features = ["esp32c3"] }
 statig = "0.2.0"
 
 [build-dependencies]

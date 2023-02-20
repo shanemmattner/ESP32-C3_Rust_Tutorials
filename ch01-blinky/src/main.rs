@@ -17,8 +17,8 @@ fn main() {
     loop {
         // Inverse logic to turn LED on
         led.set_low().unwrap();
-        thread::sleep(Duration::from_millis(1000));
         println!("LED ON");
+        thread::sleep(Duration::from_millis(1000));
 
         led.set_high().unwrap();
         println!("LED OFF");
