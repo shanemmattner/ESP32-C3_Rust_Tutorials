@@ -1,7 +1,5 @@
-#![allow(dead_code)]
-#![allow(unused_variables, unused_imports)]
 use esp_idf_hal::{
-    gpio::{AnyInputPin, AnyOutputPin, Input, InputMode, InputPin, Output, OutputPin, PinDriver},
+    gpio::{AnyInputPin, Input, InputPin, OutputPin, PinDriver},
     prelude::*,
 };
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
