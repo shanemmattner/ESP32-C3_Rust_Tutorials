@@ -7,6 +7,7 @@ use esp_idf_hal::{
     prelude::*,
 };
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
+use esp_println::println;
 use statig::{prelude::*, InitializedStatemachine};
 use std::{thread, time::Duration};
 

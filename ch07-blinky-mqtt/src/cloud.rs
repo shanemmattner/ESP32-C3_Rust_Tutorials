@@ -6,6 +6,7 @@ use esp_idf_svc::mqtt::client::{EspMqttClient, LwtConfiguration, MqttClientConfi
 use esp_idf_svc::{eventloop::*, netif::*, wifi::*};
 use esp_idf_sys::esp_efuse_mac_get_default;
 use esp_idf_sys::EspError;
+use esp_println::println;
 use std::{env, thread, time::Duration};
 
 const SSID: &str = env!("WIFI_SSID");

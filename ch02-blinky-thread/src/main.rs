@@ -3,6 +3,7 @@ use esp_idf_hal::{
     prelude::*,
 };
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
+use esp_println::println;
 use std::{thread, time::Duration};
 
 static BLINKY_STACK_SIZE: usize = 2000;
@@ -27,10 +28,10 @@ fn main() {
 // Thread function that will blink the LED on/off every 500ms
 fn blinky_thread(mut led: PinDriver<AnyOutputPin, Output>) {
     loop {
-        thread::sleep(Duration::from_millis(500));
+        thread::sleep(Duration::from_millis(1000));
         println!("LED ON");
         led.set_high().unwrap();
-        thread::sleep(Duration::from_millis(500));
+        thread::sleep(Duration::from_millis(1000));
         println!("LED OFF");
         led.set_low().unwrap();
     }
