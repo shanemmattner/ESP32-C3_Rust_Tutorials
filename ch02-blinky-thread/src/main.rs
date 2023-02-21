@@ -28,11 +28,11 @@ fn main() {
 // Thread function that will blink the LED on/off every 500ms
 fn blinky_thread(mut led_pin: PinDriver<AnyOutputPin, Output>) {
     loop {
-        led_pin.set_high().unwrap();
+        led_pin.set_low().unwrap();
         println!("LED ON");
         thread::sleep(Duration::from_millis(1000));
 
-        led_pin.set_low().unwrap();
+        led_pin.set_high().unwrap();
         println!("LED OFF");
         thread::sleep(Duration::from_millis(1000));
     }

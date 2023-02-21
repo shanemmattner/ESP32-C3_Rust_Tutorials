@@ -1,0 +1,25 @@
+[package]
+name = "blinky-button"
+version = "0.1.0"
+authors = ["Shane Mattner <shanemmattner@gmail.com.com>"]
+edition = "2021"
+resolver = "2"
+
+[profile.release]
+opt-level = "s"
+
+[profile.dev]
+debug = true # Symbols are nice and they don't increase the size on Flash
+opt-level = "z"
+
+[features]
+pio = ["esp-idf-sys/pio"]
+
+[dependencies]
+esp-idf-sys = { version = "0.32", features = ["binstart"] }
+esp-idf-hal = "0.40"
+esp-println = { version = "0.3.1", features = ["esp32c3"] }
+
+
+[build-dependencies]
+embuild = "0.30.4"

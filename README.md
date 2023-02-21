@@ -13,6 +13,11 @@ The tutorials are meant to be followed in order.  Each chapter consists of a sho
 <img src="./pics/blinky.gif" width="250" height="250"/>
 
 - `Chapter 2: Blinky Thread` - Take the blinky code from the previous chapter and make it run in it's own thread
+- `Chapter 3: Blinky Button` - Add a button to turn the blinking logic on and off
+<img src="./pics/blinky-btn.gif" width="250" height="250"/>
+
+
+<b>WIP</b>
 - `Chapter 3: Blinky FSM` - Move the blinky logic into a [finite state machine](https://brilliant.org/wiki/finite-state-machines)
 - `Chapter 4: Blinky + Button HSM` - Add a button to the previous example which will start and stop the `blinky state machine` in a [hierarchical state machine](https://www.eventhelix.com/design-patterns/hierarchical-state-machine)
 - `Chapter 5: Blinky HSM + MPMC` - Create seperate threads for monitoring the button and sending events to the LED FSM. Use a [crossbeams channel](https://docs.rs/crossbeam/latest/crossbeam/channel/index.html) to pass data from the button thread to the `blinky fsm` thread
