@@ -9,33 +9,33 @@ use std::{thread, time::Duration};
 
 static BLINKY_STACK_SIZE: usize = 2000;
 static BUTTON_STACK_SIZE: usize = 2000;
+static ADC_STACK_SIZE: usize = 2000;
 
 fn main() {
     // It is necessary to call this function once. Otherwise some patches to the runtime
     // implemented by esp-idf-sys might not link properly. See https://github.com/esp-rs/esp-idf-template/issues/71
     esp_idf_sys::link_patches();
 
-    // Get all the peripherals
     let peripherals = Peripherals::take().unwrap();
-    // Initialize Pin 8 as an output to drive the LED
     let led_pin = PinDriver::output(peripherals.pins.gpio8.downgrade_output()).unwrap();
-    // Initialize Pin 6 as an input to read the button status
     let mut btn_pin = PinDriver::input(peripherals.pins.gpio6.downgrade()).unwrap();
     btn_pin.set_pull(Pull::Down).unwrap();
 
     let (tx, rx) = bounded(1);
 
-    // Create thread to blink the LED and pass it the initialized GPIO
     let _blinky_thread = std::thread::Builder::new()
         .stack_size(BLINKY_STACK_SIZE)
         .spawn(move || blinky_thread(led_pin, rx))
         .unwrap();
 
-    // Create thread to blink the LED and pass it the initialized GPIO
     let _button_thread = std::thread::Builder::new()
         .stack_size(BUTTON_STACK_SIZE)
         .spawn(move || button_thread(btn_pin, tx))
         .unwrap();
+
+    let _adc_thread = std::thread::Builder::new()
+        .stack_size(ADC_STACK_SIZE.spawn(move || button_thread(btn_pin, tx))
+        .spawn(move || adc_thread(btn_pin, tx))
 }
 
 // Thread function that will blink the LED on/off every 500ms

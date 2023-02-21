@@ -73,3 +73,6 @@
 [submodule "submodules/reference_projects/rust-esp32-std-demo"]
 	path = submodules/reference_projects/rust-esp32-std-demo
 	url = git@github.com:ivmarkov/rust-esp32-std-demo.git
+[submodule "submodules/ESP32-USB-Dongle"]
+	path = submodules/ESP32-USB-Dongle
+	url = git@github.com:pms67/ESP32-USB-Dongle.git
