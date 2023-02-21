@@ -15,6 +15,7 @@ The tutorials are meant to be followed in order.  Each chapter consists of a sho
 - `Chapter 2: Blinky Thread` - Take the blinky code from the previous chapter and make it run in it's own thread
 - `Chapter 3: Blinky Button` - Add a button to turn the blinking logic on and off
 <img src="./pics/blinky-btn.gif" width="250" height="250"/>
+- `Chapter 4: Blinky Button Multi-Threaded` - Move the button logic to it's own thread and pass messages between threads with [crossbeams channel](https://docs.rs/crossbeam/latest/crossbeam/channel/index.html)
 
 
 <b>WIP</b>
