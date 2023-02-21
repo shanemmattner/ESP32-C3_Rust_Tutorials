@@ -16,23 +16,24 @@ fn main() {
     // Get all the peripherals
     let peripherals = Peripherals::take().unwrap();
     // Initialize Pin 8 as an output to drive the LED
-    let led = PinDriver::output(peripherals.pins.gpio8.downgrade_output()).unwrap();
+    let led_pin = PinDriver::output(peripherals.pins.gpio8.downgrade_output()).unwrap();
 
     // Create thread to blink the LED and pass it the initialized GPIO
     let _blinky_thread = std::thread::Builder::new()
         .stack_size(BLINKY_STACK_SIZE)
-        .spawn(move || blinky_thread(led))
+        .spawn(move || blinky_thread(led_pin))
         .unwrap();
 }
 
 // Thread function that will blink the LED on/off every 500ms
-fn blinky_thread(mut led: PinDriver<AnyOutputPin, Output>) {
+fn blinky_thread(mut led_pin: PinDriver<AnyOutputPin, Output>) {
     loop {
-        thread::sleep(Duration::from_millis(1000));
+        led_pin.set_high().unwrap();
         println!("LED ON");
-        led.set_high().unwrap();
         thread::sleep(Duration::from_millis(1000));
+
+        led_pin.set_low().unwrap();
         println!("LED OFF");
-        led.set_low().unwrap();
+        thread::sleep(Duration::from_millis(1000));
     }
 }

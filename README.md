@@ -10,6 +10,8 @@ This will be a series of embedded Rust tutorials using the [Olimex ESP32-C3 Dev 
 The tutorials are meant to be followed in order.  Each chapter consists of a short example that builds off the previous chapter.
 
 - `Chapter 1: Blinky` - The "Hellow World" of embedded.  We'll blink an LED on and off
+![blinky](./pics/blinky.gif)
+
 - `Chapter 2: Blinky Thread` - Take the blinky code from the previous chapter and make it run in it's own thread
 - `Chapter 3: Blinky FSM` - Move the blinky logic into a [finite state machine](https://brilliant.org/wiki/finite-state-machines)
 - `Chapter 4: Blinky + Button HSM` - Add a button to the previous example which will start and stop the `blinky state machine` in a [hierarchical state machine](https://www.eventhelix.com/design-patterns/hierarchical-state-machine)
@@ -77,6 +79,8 @@ Other interesting crates/ideas:
 <details>
   <summary>Misc</summary>
   
+[Singletons in Embedded Rust](https://docs.rust-embedded.org/book/peripherals/singletons.html)
+
 Pull in code for submodules with:
 ```
 git submodule update --init --recursive
