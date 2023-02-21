@@ -10,7 +10,7 @@ This will be a series of embedded Rust tutorials using the [Olimex ESP32-C3 Dev 
 The tutorials are meant to be followed in order.  Each chapter consists of a short example that builds off the previous chapter.
 
 - `Chapter 1: Blinky` - The "Hellow World" of embedded.  We'll blink an LED on and off
-![blinky](./pics/blinky.gif)
+<img src="./pics/blinky.gif" width="250" height="250"/>
 
 - `Chapter 2: Blinky Thread` - Take the blinky code from the previous chapter and make it run in it's own thread
 - `Chapter 3: Blinky FSM` - Move the blinky logic into a [finite state machine](https://brilliant.org/wiki/finite-state-machines)
