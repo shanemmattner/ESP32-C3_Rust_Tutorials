@@ -37,10 +37,10 @@ fn main() {
     let (tx1, rx1) = bounded(1); // make channel to pass data
 
     // Config GPIO for input and output that will be passed to FSM
-    let led = PinDriver::output(peripherals.pins.gpio8.downgrade_output()).unwrap();
-    let btn = PinDriver::input(peripherals.pins.gpio6.downgrade_input()).unwrap();
+    let led_pin = PinDriver::output(peripherals.pins.gpio8.downgrade_output()).unwrap();
+    let btn_pin = PinDriver::input(peripherals.pins.gpio6.downgrade_input()).unwrap();
     // TODO: how to make the `btn` pin pull-up or pull-down.
-    let led_fsm = led_fsm::Blinky { led }.state_machine().init();
+    let led_fsm = led_fsm::Blinky { led_pin }.state_machine().init();
 
     // LED controller config
     let config = TimerConfig::new().frequency(25.kHz().into());
@@ -74,7 +74,7 @@ fn main() {
 
     let _button_thread = std::thread::Builder::new()
         .stack_size(tasks::BUTTON_STACK_SIZE)
-        .spawn(move || tasks::button_thread(btn, tx1))
+        .spawn(move || tasks::button_thread(btn_pin, tx1))
         .unwrap();
 
     let _adc_thread = std::thread::Builder::new()

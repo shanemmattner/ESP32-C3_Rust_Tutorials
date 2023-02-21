@@ -31,10 +31,13 @@ pub static BLINKY_STACK_SIZE: usize = 2000;
 pub static BUTTON_STACK_SIZE: usize = 2000;
 pub static ADC_STACK_SIZE: usize = 5000;
 
-pub fn button_thread(btn: PinDriver<'_, AnyInputPin, Input>, tx: crossbeam_channel::Sender<bool>) {
+pub fn button_thread(
+    btn_pin: PinDriver<'_, AnyInputPin, Input>,
+    tx: crossbeam_channel::Sender<bool>,
+) {
     let mut btn_state = true;
     loop {
-        if btn.is_high() {
+        if btn_pin.is_high() {
             if !btn_state {
                 btn_state = true;
                 tx.send(btn_state).unwrap();

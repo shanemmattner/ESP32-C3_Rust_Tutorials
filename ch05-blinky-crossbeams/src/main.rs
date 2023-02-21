@@ -22,10 +22,10 @@ fn main() {
     esp_idf_sys::link_patches();
 
     let peripherals = Peripherals::take().unwrap();
-    let led = PinDriver::output(peripherals.pins.gpio8.downgrade_output()).unwrap();
-    let btn = PinDriver::input(peripherals.pins.gpio6.downgrade_input()).unwrap();
+    let led_pin = PinDriver::output(peripherals.pins.gpio8.downgrade_output()).unwrap();
+    let btn_pin = PinDriver::input(peripherals.pins.gpio6.downgrade_input()).unwrap();
 
-    let led_fsm = led_fsm::Blinky { led }.state_machine().init();
+    let led_fsm = led_fsm::Blinky { led_pin }.state_machine().init();
 
     let (tx, rx) = bounded(1);
     print_type_of(&tx);
@@ -37,7 +37,7 @@ fn main() {
 
     let _button_thread = std::thread::Builder::new()
         .stack_size(BUTTON_STACK_SIZE)
-        .spawn(move || button_thread(btn, tx))
+        .spawn(move || button_thread(btn_pin, tx))
         .unwrap();
 }
 
@@ -56,10 +56,10 @@ fn blinky_fsm_thread(
     }
 }
 
-fn button_thread(btn: PinDriver<'_, AnyInputPin, Input>, tx: crossbeam_channel::Sender<bool>) {
+fn button_thread(btn_pin: PinDriver<'_, AnyInputPin, Input>, tx: crossbeam_channel::Sender<bool>) {
     let mut btn_state = true;
     loop {
-        if btn.is_high() {
+        if btn_pin.is_high() {
             if !btn_state {
                 btn_state = true;
                 tx.send(btn_state).unwrap();

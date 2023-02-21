@@ -3,7 +3,7 @@ use esp_println::println;
 use statig::prelude::*;
 
 pub struct Blinky<'a> {
-    pub led: PinDriver<'a, AnyOutputPin, Output>,
+    pub led_pin: PinDriver<'a, AnyOutputPin, Output>,
 }
 
 // The event that will be handled by the state machine.
@@ -68,11 +68,11 @@ impl statig::Superstate<Blinky<'_>> for Superstate {
 
 impl Blinky<'_> {
     fn enter_led_on(&mut self) {
-        self.led.set_high().unwrap();
+        self.led_pin.set_high().unwrap();
     }
 
     fn enter_led_off(&mut self) {
-        self.led.set_low().unwrap();
+        self.led_pin.set_low().unwrap();
     }
 
     fn led_on(event: &Event) -> Response<State> {

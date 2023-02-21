@@ -18,9 +18,9 @@ fn main() {
     // Get all the peripherals
     let peripherals = Peripherals::take().unwrap();
     // Initialize an output pin to drive the LED
-    let led = PinDriver::output(peripherals.pins.gpio8.downgrade_output()).unwrap();
+    let led_pin = PinDriver::output(peripherals.pins.gpio8.downgrade_output()).unwrap();
     // Create and initialize the finitie state machine. Pass in the LED gpio pin
-    let blinky_fsm = led_fsm::Blinky { led }.state_machine().init();
+    let blinky_fsm = led_fsm::Blinky { led_pin }.state_machine().init();
     // Create thread in which the fsm will run
     let _blinky_thread = std::thread::Builder::new()
         .stack_size(BLINKY_STACK_SIZE)

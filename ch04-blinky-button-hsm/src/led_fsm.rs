@@ -4,7 +4,7 @@ use statig::prelude::*;
 
 // #[derive(Debug, Default)]
 pub struct Blinky<'a> {
-    pub led: PinDriver<'a, AnyOutputPin, Output>,
+    pub led_pin: PinDriver<'a, AnyOutputPin, Output>,
 }
 
 // The event that will be handled by the state machine.
@@ -70,12 +70,12 @@ impl statig::Superstate<Blinky<'_>> for Superstate {
 impl Blinky<'_> {
     fn enter_led_on(&mut self) {
         // Setting the pin high turns the LED off on my dev board
-        self.led.set_low().unwrap();
+        self.led_pin.set_low().unwrap();
     }
 
     fn enter_led_off(&mut self) {
         // Setting the pin low turns the LED on for my dev board
-        self.led.set_high().unwrap();
+        self.led_pin.set_high().unwrap();
     }
 
     fn led_on(event: &Event) -> Response<State> {
