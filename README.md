@@ -69,6 +69,7 @@ espmonitor /dev/ttyACM0
 - I2C
 - CLI
 - UART
+- Crash dumps and diagnostics
 
 Other interesting crates/ideas:
 - [static assertions](https://github.com/nvzqz/static-assertions-rs)
