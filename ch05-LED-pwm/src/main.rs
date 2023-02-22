@@ -2,7 +2,7 @@ use crossbeam_channel::bounded;
 use crossbeam_utils::atomic::AtomicCell;
 use esp_idf_hal::{
     adc::{self, *},
-    gpio::{ADCPin, AnyIOPin, AnyOutputPin, IOPin, Input, Output, OutputPin, PinDriver, Pull},
+    gpio::{ADCPin, AnyIOPin, IOPin, Input, PinDriver, Pull},
     ledc::{config::TimerConfig, *},
     peripherals::Peripherals,
     prelude::*,
@@ -97,40 +97,37 @@ fn blinky_thread(
 ) {
     let mut blinky_status = false;
     let max_duty = channel.get_max_duty();
-    let mut duty = max_duty;
     loop {
         // Watch for button press messages
         match rx.try_recv() {
             Ok(x) => {
                 blinky_status = x;
-                duty = adc_mutex.load() as u32;
-                // When we receive a button press then change the PWM of the pin
-                if !blinky_status {
-                    match channel.set_duty(max_duty) {
-                        Ok(_x) => (),
-                        Err(e) => println!("err setting duty of led: {e}\n"),
-                    }
-                }
             }
             Err(_) => {}
         }
 
         // blinky if the button was pressed
         if blinky_status {
-            let pwm = (duty as u32 * max_duty) / ADC_MAX_COUNTS;
-            match channel.set_duty(pwm) {
+            match channel.set_duty(0) {
                 Ok(_x) => (),
                 Err(e) => println!("err setting duty of led: {e}\n"),
             }
-            //println!("LED ON");
+            println!("LED ON");
             thread::sleep(Duration::from_millis(1000));
 
             match channel.set_duty(max_duty) {
                 Ok(_x) => (),
                 Err(e) => println!("err setting duty of led: {e}\n"),
             }
-            //println!("LED OFF");
+            println!("LED OFF");
             thread::sleep(Duration::from_millis(1000));
+        } else {
+            let duty = adc_mutex.load() as u32;
+            let pwm = (duty as u32 * max_duty) / ADC_MAX_COUNTS;
+            match channel.set_duty(pwm) {
+                Ok(_x) => (),
+                Err(e) => println!("err setting duty of led: {e}\n"),
+            }
         }
 
         thread::sleep(Duration::from_millis(100));
