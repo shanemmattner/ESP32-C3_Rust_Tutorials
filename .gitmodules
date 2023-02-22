@@ -79,3 +79,6 @@
 [submodule "submodules/openocd-esp32"]
 	path = submodules/openocd-esp32
 	url = git@github.com:espressif/openocd-esp32.git
+[submodule "submodules/menu"]
+	path = submodules/menu
+	url = git@github.com:rust-embedded-community/menu.git

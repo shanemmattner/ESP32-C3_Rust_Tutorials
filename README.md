@@ -93,3 +93,13 @@ Pull in code for submodules with:
 git submodule update --init --recursive
 ```
 </details>
+
+
+<details>
+  <summary>Links</summary>
+
+- [150+ ESP32 project](https://microcontrollerslab.com/esp32-tutorials-projects/)
+- [Wokwi ESP32 Rust](https://wokwi.com/rust)
+- [ESP32 Tutorials](https://embeddedexplorer.com/esp32/)
+- [160+ ESP32 Projects, Tutorials, and Guides](https://randomnerdtutorials.com/projects-esp32/)
+
