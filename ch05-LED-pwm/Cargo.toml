@@ -19,8 +19,10 @@ pio = ["esp-idf-sys/pio"]
 esp-idf-sys = { version = "0.32", features = ["binstart"] }
 esp-idf-hal = "0.40"
 esp-println = { version = "0.3.1", features = ["esp32c3"] }
+embedded-hal-0-2 = { package = "embedded-hal", version = "0.2.7", features = ["unproven"] }
 crossbeam = "0.8"
 crossbeam-channel = "0.5"
+crossbeam-utils = "0.8"
 
 [build-dependencies]
 embuild = "0.31"
