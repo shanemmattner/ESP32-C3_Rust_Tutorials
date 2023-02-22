@@ -76,3 +76,6 @@
 [submodule "submodules/ESP32-USB-Dongle"]
 	path = submodules/ESP32-USB-Dongle
 	url = git@github.com:pms67/ESP32-USB-Dongle.git
+[submodule "submodules/openocd-esp32"]
+	path = submodules/openocd-esp32
+	url = git@github.com:espressif/openocd-esp32.git
