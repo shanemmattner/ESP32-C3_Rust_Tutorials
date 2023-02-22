@@ -23,9 +23,8 @@ fn main() {
     esp_idf_sys::link_patches();
 
     let peripherals = Peripherals::take().unwrap();
-    let led_pin = PinDriver::output(peripherals.pins.gpio4.downgrade_output()).unwrap();
     let mut btn_pin = PinDriver::input(peripherals.pins.gpio6.downgrade()).unwrap();
-    btn_pin.set_pull(Pull::Up).unwrap();
+    btn_pin.set_pull(Pull::Down).unwrap();
 
     // Crossbeam channel
     let (tx, rx) = bounded(1);
@@ -54,7 +53,7 @@ fn main() {
     let a1 = arc_data.clone();
     let _blinky_thread = std::thread::Builder::new()
         .stack_size(BLINKY_STACK_SIZE)
-        .spawn(move || blinky_thread(led_pin, rx, a1, channel_0))
+        .spawn(move || blinky_thread(rx, a1, channel_0))
         .unwrap();
 
     let _button_thread = std::thread::Builder::new()
@@ -92,23 +91,22 @@ fn adc_thread<T: ADCPin>(
 
 // Thread function that will blink the LED on/off every 500ms
 fn blinky_thread(
-    mut led_pin: PinDriver<AnyOutputPin, Output>,
     rx: crossbeam_channel::Receiver<bool>,
     adc_mutex: Arc<AtomicCell<u16>>,
     mut channel: LedcDriver<'_>,
 ) {
     let mut blinky_status = false;
+    let max_duty = channel.get_max_duty();
+    let mut duty = max_duty;
     loop {
         // Watch for button press messages
         match rx.try_recv() {
             Ok(x) => {
                 blinky_status = x;
+                duty = adc_mutex.load() as u32;
                 // When we receive a button press then change the PWM of the pin
-                if blinky_status {
-                    let val = adc_mutex.load();
-                    let max_duty = channel.get_max_duty();
-                    let pwm = (val as u32 * max_duty) / ADC_MAX_COUNTS;
-                    match channel.set_duty(pwm) {
+                if !blinky_status {
+                    match channel.set_duty(max_duty) {
                         Ok(_x) => (),
                         Err(e) => println!("err setting duty of led: {e}\n"),
                     }
@@ -119,12 +117,19 @@ fn blinky_thread(
 
         // blinky if the button was pressed
         if blinky_status {
-            led_pin.set_low().unwrap();
-            println!("LED ON");
+            let pwm = (duty as u32 * max_duty) / ADC_MAX_COUNTS;
+            match channel.set_duty(pwm) {
+                Ok(_x) => (),
+                Err(e) => println!("err setting duty of led: {e}\n"),
+            }
+            //println!("LED ON");
             thread::sleep(Duration::from_millis(1000));
 
-            led_pin.set_high().unwrap();
-            println!("LED OFF");
+            match channel.set_duty(max_duty) {
+                Ok(_x) => (),
+                Err(e) => println!("err setting duty of led: {e}\n"),
+            }
+            //println!("LED OFF");
             thread::sleep(Duration::from_millis(1000));
         }
 

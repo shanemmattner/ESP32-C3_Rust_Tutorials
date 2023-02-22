@@ -16,7 +16,7 @@ The tutorials are meant to be followed in order.  Each chapter consists of a sho
 - `Chapter 3: Blinky Button` - Add a button to turn the blinking logic on and off
 <img src="./pics/blinky-btn.gif" width="250" height="250"/>
 - `Chapter 4: Blinky Button Multi-Threaded` - Move the button logic to it's own thread and pass messages between threads with [crossbeams channel](https://docs.rs/crossbeam/latest/crossbeam/channel/index.html)
-
+- `Chapter 5: LED PWM` - Read an ADC pin and change the PWM of our blinky LED. Requires using a [crossbeam Atomic](https://docs.rs/crossbeam/latest/crossbeam/atomic/struct.AtomicCell.html) and the ESP32-C3 LED controller
 
 <b>WIP</b>
 - `Chapter 3: Blinky FSM` - Move the blinky logic into a [finite state machine](https://brilliant.org/wiki/finite-state-machines)
