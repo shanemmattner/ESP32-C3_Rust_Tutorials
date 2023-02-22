@@ -96,7 +96,7 @@ fn main() {
             i = 0;
         }
         i += 1;
-        FreeRtos::delay_ms(10);
+        FreeRtos::delay_ms(1000);
     }
 }
 
