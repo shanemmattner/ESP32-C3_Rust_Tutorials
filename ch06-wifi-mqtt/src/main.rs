@@ -15,6 +15,7 @@ use esp_idf_hal::{
 };
 use esp_idf_svc::{
     eventloop::{EspEventLoop, EspSystemEventLoop, System},
+    netif::{EspNetif, EspNetifWait},
     nvs::{EspDefaultNvsPartition, EspNvsPartition, NvsDefault},
     timer::EspTaskTimerService,
     wifi::{EspWifi, WifiWait},
@@ -22,7 +23,7 @@ use esp_idf_svc::{
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
 use esp_println::println;
 use serde::Serialize;
-use std::{env, sync::atomic::*, sync::Arc, thread, time::Duration};
+use std::{env, net::Ipv4Addr, sync::atomic::*, sync::Arc, thread, time::Duration};
 
 static BLINKY_STACK_SIZE: usize = 2000;
 static BUTTON_STACK_SIZE: usize = 2000;
@@ -183,6 +184,11 @@ fn button_thread(btn_pin: PinDriver<AnyIOPin, Input>, tx: crossbeam_channel::Sen
     }
 }
 
+#[allow(unused)]
+pub struct Wifi<'a> {
+    esp_wifi: EspWifi<'a>,
+}
+
 pub fn connect(wifi_ssid: &str, wifi_pass: &str) -> anyhow::Result<EspWifi<'static>> {
     let sys_loop = EspEventLoop::take().unwrap();
     let modem = unsafe { WifiModem::new() };
@@ -215,7 +221,21 @@ pub fn connect(wifi_ssid: &str, wifi_pass: &str) -> anyhow::Result<EspWifi<'stat
     }
 
     wifi.connect()?;
-    println!("WIFI connected successfully");
 
+    if !EspNetifWait::new::<EspNetif>(wifi.sta_netif(), &sys_loop)?.wait_with_timeout(
+        Duration::from_secs(20),
+        || {
+            wifi.driver().is_connected().unwrap()
+                && wifi.sta_netif().get_ip_info().unwrap().ip != Ipv4Addr::new(0, 0, 0, 0)
+        },
+    ) {
+        bail!("Wifi did not connect or did not receive a DHCP lease");
+    }
+
+    let ip_info = wifi.sta_netif().get_ip_info()?;
+
+    println!("Wifi DHCP info: {:?}", ip_info);
+
+    //let wifi = Wifi { esp_wifi: wifi };
     Ok(wifi)
 }
