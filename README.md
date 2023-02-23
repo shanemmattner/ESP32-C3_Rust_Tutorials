@@ -72,10 +72,12 @@ espmonitor /dev/ttyACM0
 - Timer to generate blinky
 - DMA
 - SPI
+- OTA
 - I2C
 - CLI
 - UART
 - Crash dumps and diagnostics
+
 
 Other interesting crates/ideas:
 - [static assertions](https://github.com/nvzqz/static-assertions-rs)

@@ -4,7 +4,6 @@ extern crate crossbeam;
 extern crate crossbeam_channel;
 
 use crossbeam_channel::bounded;
-use embedded_hal_0_2::PwmPin;
 use esp_idf_hal::ledc::config::TimerConfig;
 use esp_idf_hal::{
     adc::{self, config::Config, AdcDriver, Atten11dB, *},

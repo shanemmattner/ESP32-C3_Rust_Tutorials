@@ -124,3 +124,10 @@ pub fn get_unique_id() -> String {
     }
     hex::encode(mac)
 }
+
+fn publish_data(data: MqttData, client: &mut EspMqttClient<ConnState<MessageImpl, EspError>>) {
+    let data = serde_json::to_string(&data).unwrap();
+    client
+        .publish("fishtank/sensors", QoS::AtLeastOnce, false, data.as_bytes())
+        .unwrap();
+}

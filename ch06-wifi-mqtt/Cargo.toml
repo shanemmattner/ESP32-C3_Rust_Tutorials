@@ -1,7 +1,7 @@
 [package]
-name = "wifi-mqtt"
+name = "wifi_mqtt"
 version = "0.1.0"
-authors = ["Shane"]
+authors = ["Shane Mattner <shanemmattner@gmail.com.com>"]
 edition = "2021"
 resolver = "2"
 
@@ -21,13 +21,13 @@ esp-idf-hal = "0.40"
 esp-println = { version = "0.3.1", features = ["esp32c3"] }
 esp-idf-svc = "0.45"
 embedded-svc = "0.24"
-statig = "0.2.0"
-crossbeam = "0.8"
-serde = { version = "1", features = ["derive"] }
 hex = "0.4.3"
+serde = {version = "1.0.152", features = ["derive"]}
+embedded-hal-0-2 = { package = "embedded-hal", version = "0.2.7", features = ["unproven"] }
+crossbeam = "0.8"
 crossbeam-channel = "0.5"
-anyhow = { version = "1", features = ["backtrace"] }
-
+crossbeam-utils = "0.8"
 
 [build-dependencies]
 embuild = "0.31"
+anyhow = "1"
