@@ -85,3 +85,12 @@
 [submodule "submodules/reference_projects/OFMon"]
 	path = submodules/reference_projects/OFMon
 	url = git@github.com:arashsm79/OFMon.git
+[submodule "submodules/reference_projects/rust-esp-websocket"]
+	path = submodules/reference_projects/rust-esp-websocket
+	url = git@github.com:kauly/rust-esp-websocket.git
+[submodule "submodules/reference_projects/esp32c3-hello"]
+	path = submodules/reference_projects/esp32c3-hello
+	url = git@github.com:imxood/esp32c3-hello.git
+[submodule "submodules/espressif-trainings"]
+	path = submodules/espressif-trainings
+	url = git@github.com:esp-rs/espressif-trainings.git

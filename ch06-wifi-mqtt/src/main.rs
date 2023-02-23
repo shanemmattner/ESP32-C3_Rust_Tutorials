@@ -1,22 +1,25 @@
+use anyhow::Context;
 use crossbeam_channel::bounded;
 use crossbeam_utils::atomic::AtomicCell;
-use embedded_svc::mqtt::client::{Connection, Event, MessageImpl, QoS};
-use embedded_svc::utils::mqtt::client::ConnState;
-use embedded_svc::wifi::*;
+use embedded_svc::wifi::{
+    AccessPointConfiguration, AuthMethod, ClientConfiguration, Configuration,
+};
 use esp_idf_hal::{
     adc::{self, *},
+    delay::FreeRtos,
     gpio::{ADCPin, AnyIOPin, IOPin, Input, PinDriver, Pull},
     ledc::{config::TimerConfig, *},
+    modem::{Modem, WifiModem},
     peripherals::Peripherals,
     prelude::*,
 };
-use esp_idf_svc::eventloop::*;
-use esp_idf_svc::mqtt::client::*;
-use esp_idf_svc::netif::*;
-use esp_idf_svc::wifi::*;
+use esp_idf_svc::{
+    eventloop::{EspEventLoop, EspSystemEventLoop, System},
+    nvs::{EspDefaultNvsPartition, EspNvsPartition, NvsDefault},
+    timer::EspTaskTimerService,
+    wifi::EspWifi,
+};
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
-use esp_idf_sys::esp_efuse_mac_get_default;
-use esp_idf_sys::EspError;
 use esp_println::println;
 use serde::Serialize;
 use std::{env, sync::atomic::*, sync::Arc, thread, time::Duration};
@@ -43,11 +46,10 @@ fn main() {
     // implemented by esp-idf-sys might not link properly. See https://github.com/esp-rs/esp-idf-template/issues/71
     esp_idf_sys::link_patches();
 
-    let sysloop = EspSystemEventLoop::take().unwrap();
-    //    let _wifi = wifi(peripherals.modem, sysloop).unwrap();
-    //  let mut client = get_client(mqtt_url).unwrap();
-
     let peripherals = Peripherals::take().unwrap();
+
+    let wifi = connect(SSID, PASS).unwrap();
+
     let mut btn_pin = PinDriver::input(peripherals.pins.gpio6.downgrade()).unwrap();
     btn_pin.set_pull(Pull::Down).unwrap();
 
@@ -178,4 +180,34 @@ fn button_thread(btn_pin: PinDriver<AnyIOPin, Input>, tx: crossbeam_channel::Sen
         }
         thread::sleep(Duration::from_millis(100));
     }
+}
+
+pub fn connect(wifi_ssid: &str, wifi_pass: &str) -> anyhow::Result<EspWifi<'static>> {
+    let sysloop = EspEventLoop::take()?;
+    let modem = unsafe { WifiModem::new() };
+    let mut wifi = EspWifi::new(modem, sysloop, None)?;
+
+    println!("Wifi created, scanning available networks...");
+
+    let available_networks = wifi.scan()?;
+    let target_network = available_networks
+        .iter()
+        .find(|network| network.ssid == wifi_ssid)
+        .with_context(|| format!("Failed to detect the target network ({wifi_ssid})"))?;
+
+    println!("Scan successfull, found '{wifi_ssid}', with config: {target_network:#?}");
+
+    wifi.set_configuration(&Configuration::Client(ClientConfiguration {
+        ssid: wifi_ssid.into(),
+        password: wifi_pass.into(),
+        auth_method: target_network.auth_method,
+        bssid: Some(target_network.bssid),
+        channel: Some(target_network.channel),
+    }))?;
+
+    wifi.start()?;
+    wifi.connect()?;
+    println!("WIFI connected successfully");
+
+    Ok(wifi)
 }
