@@ -1,5 +1,5 @@
 [package]
-name = "led_pwm"
+name = "adc_to_ledc"
 version = "0.1.0"
 authors = ["Shane Mattner <shanemmattner@gmail.com.com>"]
 edition = "2021"
