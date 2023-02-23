@@ -4,27 +4,16 @@ use crossbeam_utils::atomic::AtomicCell;
 use embedded_svc::wifi::{
     AccessPointConfiguration, AuthMethod, ClientConfiguration, Configuration,
 };
-use esp_idf_hal::{
-    adc::{self, *},
-    delay::FreeRtos,
-    gpio::{ADCPin, AnyIOPin, IOPin, Input, PinDriver, Pull},
-    ledc::{config::TimerConfig, *},
-    modem::{Modem, WifiModem},
-    peripherals::Peripherals,
-    prelude::*,
-};
+use esp_idf_hal::modem::WifiModem;
 use esp_idf_svc::{
-    eventloop::{EspEventLoop, EspSystemEventLoop, System},
+    eventloop::EspEventLoop,
     mqtt::client::{EspMqttClient, EspMqttMessage, MqttClientConfiguration},
     netif::{EspNetif, EspNetifWait},
-    nvs::{EspDefaultNvsPartition, EspNvsPartition, NvsDefault},
-    timer::EspTaskTimerService,
+    nvs::EspDefaultNvsPartition,
     wifi::{EspWifi, WifiWait},
 };
-use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
 use esp_println::println;
-use serde::Serialize;
-use std::{env, net::Ipv4Addr, sync::atomic::*, sync::Arc, thread, time::Duration};
+use std::{net::Ipv4Addr, sync::Arc, time::Duration};
 
 pub fn connect(wifi_ssid: &str, wifi_pass: &str) -> anyhow::Result<EspWifi<'static>> {
     let sys_loop = EspEventLoop::take().unwrap();

@@ -5,34 +5,27 @@ use anyhow::{bail, Context, Result};
 use crossbeam_channel::bounded;
 use crossbeam_utils::atomic::AtomicCell;
 use embedded_svc::mqtt::client::{Connection, Event, MessageImpl, QoS};
+use embedded_svc::utils::mqtt::client::ConnState;
 use embedded_svc::wifi::{
     AccessPointConfiguration, AuthMethod, ClientConfiguration, Configuration,
 };
-use embedded_svc::{utils::mqtt::client::ConnState, wifi::*};
-use esp_idf_hal::peripheral;
 use esp_idf_hal::{
     adc::{self, *},
-    delay::FreeRtos,
-    gpio::{ADCPin, AnyIOPin, IOPin, Input, PinDriver, Pull},
+    gpio::{IOPin, PinDriver, Pull},
     ledc::{config::TimerConfig, *},
-    modem::{Modem, WifiModem},
     peripherals::Peripherals,
     prelude::*,
 };
 use esp_idf_svc::{
-    eventloop::{EspEventLoop, EspSystemEventLoop, System},
-    mqtt::client::{EspMqttClient, EspMqttMessage, LwtConfiguration, MqttClientConfiguration},
-    netif::{EspNetif, EspNetifWait},
-    nvs::{EspDefaultNvsPartition, EspNvsPartition, NvsDefault},
-    timer::EspTaskTimerService,
-    wifi::{EspWifi, WifiWait},
+    mqtt::client::{EspMqttClient, LwtConfiguration, MqttClientConfiguration},
+    wifi::EspWifi,
 };
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
 use esp_idf_sys::esp_efuse_mac_get_default;
 use esp_idf_sys::EspError;
 use esp_println::println;
 use serde::Serialize;
-use std::{env, net::Ipv4Addr, sync::atomic::*, sync::Arc, thread, time::Duration};
+use std::{env, sync::Arc, thread};
 
 static BLINKY_STACK_SIZE: usize = 2000;
 static BUTTON_STACK_SIZE: usize = 2000;
@@ -89,13 +82,15 @@ fn main() {
         format!("mqtt://{}", app_config.mqtt_host)
     };
 
+    let client = get_client(&broker_url);
+
     //    let mqtt_config = MqttClientConfiguration::default();
     //    // 1. Create a client with default configuration and empty handler
-    //    let mut client = EspMqttClient::new(broker_url, &mqtt_config, move |message_event| {
-    //        // ... your handler code here - leave this empty for now
-    //        // we'll add functionality later in this chapter
-    //    })
-    //    .unwrap();
+    //let mut client = EspMqttClient::new(broker_url, &mqtt_config, move |message_event| {
+    //    // ... your handler code here - leave this empty for now
+    //    // we'll add functionality later in this chapter
+    //})
+    //.unwrap();
     //
     //    // 2. publish an empty hello message
     //    let payload: &[u8] = &[];

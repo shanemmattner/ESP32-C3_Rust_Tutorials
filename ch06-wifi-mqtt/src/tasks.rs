@@ -1,17 +1,9 @@
-use anyhow::{bail, Context};
-use crossbeam_channel::bounded;
 use crossbeam_utils::atomic::AtomicCell;
-use embedded_svc::wifi::{
-    AccessPointConfiguration, AuthMethod, ClientConfiguration, Configuration,
-};
 use esp_idf_hal::{
     adc::{self, *},
-    delay::FreeRtos,
-    gpio::{ADCPin, AnyIOPin, IOPin, Input, PinDriver, Pull},
-    ledc::{config::TimerConfig, *},
+    gpio::{ADCPin, AnyIOPin, Input, PinDriver, Pull},
+    ledc::LedcDriver,
     modem::{Modem, WifiModem},
-    peripherals::Peripherals,
-    prelude::*,
 };
 use esp_idf_svc::{
     eventloop::{EspEventLoop, EspSystemEventLoop, System},
@@ -21,10 +13,8 @@ use esp_idf_svc::{
     timer::EspTaskTimerService,
     wifi::{EspWifi, WifiWait},
 };
-use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
 use esp_println::println;
-use serde::Serialize;
-use std::{env, net::Ipv4Addr, sync::atomic::*, sync::Arc, thread, time::Duration};
+use std::{sync::Arc, thread, time::Duration};
 
 static ADC_MAX_COUNTS: u32 = 2850;
 
