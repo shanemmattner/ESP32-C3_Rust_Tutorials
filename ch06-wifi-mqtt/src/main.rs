@@ -1,4 +1,4 @@
-use anyhow::Context;
+use anyhow::{bail, Context};
 use crossbeam_channel::bounded;
 use crossbeam_utils::atomic::AtomicCell;
 use embedded_svc::wifi::{
@@ -17,7 +17,7 @@ use esp_idf_svc::{
     eventloop::{EspEventLoop, EspSystemEventLoop, System},
     nvs::{EspDefaultNvsPartition, EspNvsPartition, NvsDefault},
     timer::EspTaskTimerService,
-    wifi::EspWifi,
+    wifi::{EspWifi, WifiWait},
 };
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
 use esp_println::println;
@@ -50,6 +50,7 @@ fn main() {
 
     let wifi = connect(SSID, PASS).unwrap();
 
+    // Initialize the button pin
     let mut btn_pin = PinDriver::input(peripherals.pins.gpio6.downgrade()).unwrap();
     btn_pin.set_pull(Pull::Down).unwrap();
 
@@ -183,9 +184,10 @@ fn button_thread(btn_pin: PinDriver<AnyIOPin, Input>, tx: crossbeam_channel::Sen
 }
 
 pub fn connect(wifi_ssid: &str, wifi_pass: &str) -> anyhow::Result<EspWifi<'static>> {
-    let sysloop = EspEventLoop::take()?;
+    let sys_loop = EspEventLoop::take().unwrap();
     let modem = unsafe { WifiModem::new() };
-    let mut wifi = EspWifi::new(modem, sysloop, None)?;
+    let nvs = EspDefaultNvsPartition::take().unwrap();
+    let mut wifi = EspWifi::new(modem, sys_loop.clone(), Some(nvs))?;
 
     println!("Wifi created, scanning available networks...");
 
@@ -206,6 +208,12 @@ pub fn connect(wifi_ssid: &str, wifi_pass: &str) -> anyhow::Result<EspWifi<'stat
     }))?;
 
     wifi.start()?;
+    if !WifiWait::new(&sys_loop)?
+        .wait_with_timeout(Duration::from_secs(20), || wifi.is_started().unwrap())
+    {
+        bail!("Wifi did not start");
+    }
+
     wifi.connect()?;
     println!("WIFI connected successfully");
 
