@@ -82,3 +82,6 @@
 [submodule "submodules/menu"]
 	path = submodules/menu
 	url = git@github.com:rust-embedded-community/menu.git
+[submodule "submodules/reference_projects/OFMon"]
+	path = submodules/reference_projects/OFMon
+	url = git@github.com:arashsm79/OFMon.git
