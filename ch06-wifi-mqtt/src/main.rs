@@ -15,6 +15,7 @@ use esp_idf_hal::{
 };
 use esp_idf_svc::{
     eventloop::{EspEventLoop, EspSystemEventLoop, System},
+    mqtt::client::{EspMqttClient, EspMqttMessage, MqttClientConfiguration},
     netif::{EspNetif, EspNetifWait},
     nvs::{EspDefaultNvsPartition, EspNvsPartition, NvsDefault},
     timer::EspTaskTimerService,
@@ -42,6 +43,14 @@ struct MqttData {
     tds: f32,
 }
 
+pub struct Config {
+    mqtt_host: &'static str,
+    mqtt_user: &'static str,
+    mqtt_pass: &'static str,
+    wifi_ssid: &'static str,
+    wifi_psk: &'static str,
+}
+
 fn main() {
     // It is necessary to call this function once. Otherwise some patches to the runtime
     // implemented by esp-idf-sys might not link properly. See https://github.com/esp-rs/esp-idf-template/issues/71
@@ -49,7 +58,33 @@ fn main() {
 
     let peripherals = Peripherals::take().unwrap();
 
-    let wifi = connect(SSID, PASS).unwrap();
+    match connect(SSID, PASS) {
+        Ok(_) => {
+            println!("Connected to WiFi succesfully")
+        }
+        Err(e) => println!("Error connecting to wifi: {e}"),
+    };
+
+    // MQTT Client configuration:
+    let app_config = Config {
+        mqtt_host: "test",
+        mqtt_user: "test",
+        mqtt_pass: "test",
+        wifi_ssid: SSID,
+        wifi_psk: PASS,
+    };
+
+    let broker_url = if app_config.mqtt_user != "" {
+        format!(
+            "mqtt://{}:{}@{}",
+            app_config.mqtt_user, app_config.mqtt_pass, app_config.mqtt_host
+        )
+    } else {
+        format!("mqtt://{}", app_config.mqtt_host)
+    };
+
+    let mqtt_config = MqttClientConfiguration::default();
+    // 1. Create a client with default configuration and empty handler
 
     // Initialize the button pin
     let mut btn_pin = PinDriver::input(peripherals.pins.gpio6.downgrade()).unwrap();
