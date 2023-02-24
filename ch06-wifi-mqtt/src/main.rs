@@ -35,9 +35,9 @@ const SSID: &str = env!("WIFI_SSID");
 const PASS: &str = env!("WIFI_PASS");
 //const _MQTT_URL: &str = env!("MQTT_URL");
 
-const MQTT_ADDR: &str = "broker.mqttdashboard.com:8000"; // host:port
+const MQTT_ADDR: &str = "mqtt://192.168.68.115:1883"; // host:port
 const MQTT_CLIENT_ID: &str = "clientId-SvLEFMBFY3";
-const MQTT_TOPIC_NAME: &str = "test_publish/shane";
+const MQTT_TOPIC_NAME: &str = "test_topic";
 
 #[derive(Serialize, Debug)]
 struct MqttData {
@@ -77,17 +77,25 @@ fn main() {
         Err(e) => println!("Error connecting to wifi: {e}"),
     };
 
-    let broker_url = if app_config.mqtt_user != "" {
-        format!(
-            "mqtt://{}:{}@{}",
-            app_config.mqtt_user, app_config.mqtt_pass, app_config.mqtt_host
-        )
-    } else {
-        format!("mqtt://{}", app_config.mqtt_host)
-    };
+    //let broker_url = if app_config.mqtt_user != "" {
+    //    format!(
+    //        "mqtt://{}:{}@{}",
+    //        app_config.mqtt_user, app_config.mqtt_pass, app_config.mqtt_host
+    //    )
+    //} else {
+    //    format!("mqtt://{}", app_config.mqtt_host)
+    //};
 
     //let _client = get_client(&MQTT_URL);
-    let mut mqtt_stream = mqtt_connect(MQTT_ADDR, MQTT_CLIENT_ID).unwrap();
+    //match mqtt_connect(MQTT_ADDR, MQTT_CLIENT_ID) {
+    //    Ok(_) => println!("MQTT connect"),
+    //    Err(_) => println!("MQTT ERROR"),
+    //}
+
+    match test_mqtt_client() {
+        Ok(_) => println!("MQTT connect"),
+        Err(_) => println!("MQTT ERROR"),
+    }
 
     //    let mqtt_config = MqttClientConfiguration::default();
     //    // 1. Create a client with default configuration and empty handler
@@ -149,51 +157,6 @@ fn main() {
         .unwrap();
 }
 
-#[allow(unused)]
-pub struct Wifi<'a> {
-    esp_wifi: EspWifi<'a>,
-}
-
-pub fn get_client(url: &str) -> Result<EspMqttClient<ConnState<MessageImpl, EspError>>, EspError> {
-    let client_id = format!("fishtank-rust_{}", get_unique_id());
-    let conf = MqttClientConfiguration {
-        client_id: Some(&client_id),
-        keep_alive_interval: Some(std::time::Duration::new(60, 0)),
-        lwt: Some(LwtConfiguration {
-            topic: "shane_topic/topic1",
-            payload: b"offline",
-            qos: QoS::AtLeastOnce,
-            retain: true,
-        }),
-        ..Default::default()
-    };
-
-    let (mut client, mut connection) = EspMqttClient::new_with_conn(url, &conf).unwrap();
-
-    thread::spawn(move || {
-        while let Some(msg) = connection.next() {
-            match msg.as_ref() {
-                Ok(event) => {
-                    match event {
-                        Event::Received(_msg) => {}
-                        Event::Connected(_) => {}
-                        Event::Disconnected => {}
-                        Event::Subscribed(_x) => {
-                            // Do nothing
-                        }
-                        _event => println!("Got unknown MQTT event"),
-                    }
-                }
-                Err(_) => println!("Error receiving msg"),
-            }
-        }
-    });
-    client
-        .publish("fishtank/status", QoS::AtLeastOnce, true, b"online")
-        .unwrap();
-    Ok(client)
-}
-
 pub fn get_unique_id() -> String {
     let mut mac: [u8; 6] = [0; 6];
     unsafe {
@@ -203,43 +166,53 @@ pub fn get_unique_id() -> String {
     hex::encode(mac)
 }
 
-fn mqtt_connect(mqtt_addr: &str, client_id: &str) -> anyhow::Result<TcpStream> {
-    let mut stream = TcpStream::connect(mqtt_addr)?;
+fn test_mqtt_client() -> Result<EspMqttClient<ConnState<MessageImpl, EspError>>> {
+    println!("About to start MQTT client");
 
-    let mut conn = ConnectPacket::new(client_id);
-    conn.set_clean_session(true);
-    let mut buf = Vec::new();
-    conn.encode(&mut buf)?;
-    stream.write_all(&buf[..])?;
+    let conf = MqttClientConfiguration {
+        client_id: Some("rust-esp32-std-demo"),
+        crt_bundle_attach: Some(esp_idf_sys::esp_crt_bundle_attach),
 
-    let conn_ack = ConnackPacket::decode(&mut stream)?;
+        ..Default::default()
+    };
 
-    if conn_ack.connect_return_code() != ConnectReturnCode::ConnectionAccepted {
-        bail!("MQTT failed to receive the connection accepted ack");
-    }
+    let (mut client, mut connection) =
+        EspMqttClient::new_with_conn("mqtts://broker.emqx.io:8083", &conf)?;
 
-    println!("MQTT connected");
+    println!("MQTT client started");
 
-    Ok(stream)
-}
+    // Need to immediately start pumping the connection for messages, or else subscribe() and publish() below will not work
+    // Note that when using the alternative constructor - `EspMqttClient::new` - you don't need to
+    // spawn a new thread, as the messages will be pumped with a backpressure into the callback you provide.
+    // Yet, you still need to efficiently process each message in the callback without blocking for too long.
+    //
+    // Note also that if you go to http://tools.emqx.io/ and then connect and send a message to topic
+    // "rust-esp32-std-demo", the client configured here should receive it.
+    thread::spawn(move || {
+        println!("MQTT Listening for messages");
 
-fn mqtt_publish(
-    _: &EspWifi,
-    stream: &mut TcpStream,
-    topic_name: &str,
-    message: &str,
-    qos: QoSWithPacketIdentifier,
-) -> anyhow::Result<()> {
-    let topic = unsafe { TopicName::new_unchecked(topic_name.to_string()) };
-    let bytes = message.as_bytes();
+        while let Some(msg) = connection.next() {
+            match msg {
+                Err(e) => println!("MQTT Message ERROR: {}", e),
+                Ok(msg) => println!("MQTT Message: {:?}", msg),
+            }
+        }
 
-    let publish_packet = PublishPacketRef::new(&topic, qos, bytes);
+        println!("MQTT connection loop exit");
+    });
 
-    let mut buf = Vec::new();
-    publish_packet.encode(&mut buf)?;
-    stream.write_all(&buf[..])?;
+    client.subscribe("rust-esp32-std-demo", QoS::AtMostOnce)?;
 
-    println!("MQTT published message {} to topic {}", message, topic_name);
+    println!("Subscribed to all topics (rust-esp32-std-demo)");
 
-    Ok(())
+    client.publish(
+        "rust-esp32-std-demo",
+        QoS::AtMostOnce,
+        false,
+        "Hello from Shane's rust-esp32-std-demo! #1".as_bytes(),
+    )?;
+
+    println!("Published a hello message to topic \"rust-esp32-std-demo\"");
+
+    Ok(client)
 }
