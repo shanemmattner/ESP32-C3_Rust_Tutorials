@@ -56,9 +56,9 @@ fn main() {
 
     // MQTT Client configuration:
     let app_config = Config {
-        mqtt_host: "test",
-        mqtt_user: "test",
-        mqtt_pass: "test",
+        mqtt_host: "clientId-sycsXsDMCw",
+        mqtt_user: "shane123",
+        mqtt_pass: "pass",
         wifi_ssid: SSID,
         wifi_psk: PASS,
     };
@@ -152,7 +152,7 @@ pub fn get_client(url: &str) -> Result<EspMqttClient<ConnState<MessageImpl, EspE
         client_id: Some(&client_id),
         keep_alive_interval: Some(std::time::Duration::new(60, 0)),
         lwt: Some(LwtConfiguration {
-            topic: "fishtank/status",
+            topic: "shane_topic/topic1",
             payload: b"offline",
             qos: QoS::AtLeastOnce,
             retain: true,
@@ -164,17 +164,6 @@ pub fn get_client(url: &str) -> Result<EspMqttClient<ConnState<MessageImpl, EspE
 
     thread::spawn(move || {
         while let Some(msg) = connection.next() {
-            let event = msg.as_ref().unwrap();
-            match event {
-                Event::Received(_msg) => {}
-                Event::Connected(_) => {}
-                Event::Disconnected => {}
-                Event::Subscribed(_x) => {
-                    // Do nothing
-                }
-                _event => println!("Got unknown MQTT event"),
-            }
-
             match msg.as_ref() {
                 Ok(event) => {
                     match event {
