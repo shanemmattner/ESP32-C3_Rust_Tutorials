@@ -55,13 +55,6 @@ espmonitor /dev/ttyACM0
  </details>
 
 <details>
-  <summary>TODO</summary>
-- Initialize pins with pull-up or pull down 
-  - Issue occurs when using '.downgrade_input()'
-
-</details>
-
-<details>
   <summary>Roadmap</summary>
   
 - Logging (https://github.com/knurling-rs/defmt)
