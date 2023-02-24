@@ -1,19 +1,14 @@
 use anyhow::{bail, Context};
-use crossbeam_channel::bounded;
-use crossbeam_utils::atomic::AtomicCell;
-use embedded_svc::wifi::{
-    AccessPointConfiguration, AuthMethod, ClientConfiguration, Configuration,
-};
+use embedded_svc::wifi::{ClientConfiguration, Configuration};
 use esp_idf_hal::modem::WifiModem;
 use esp_idf_svc::{
     eventloop::EspEventLoop,
-    mqtt::client::{EspMqttClient, EspMqttMessage, MqttClientConfiguration},
     netif::{EspNetif, EspNetifWait},
     nvs::EspDefaultNvsPartition,
     wifi::{EspWifi, WifiWait},
 };
 use esp_println::println;
-use std::{net::Ipv4Addr, sync::Arc, time::Duration};
+use std::{net::Ipv4Addr, time::Duration};
 
 pub fn connect(wifi_ssid: &str, wifi_pass: &str) -> anyhow::Result<EspWifi<'static>> {
     let sys_loop = EspEventLoop::take().unwrap();

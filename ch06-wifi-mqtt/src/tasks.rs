@@ -1,17 +1,8 @@
 use crossbeam_utils::atomic::AtomicCell;
 use esp_idf_hal::{
     adc::{self, *},
-    gpio::{ADCPin, AnyIOPin, Input, PinDriver, Pull},
+    gpio::{ADCPin, AnyIOPin, Input, PinDriver},
     ledc::LedcDriver,
-    modem::{Modem, WifiModem},
-};
-use esp_idf_svc::{
-    eventloop::{EspEventLoop, EspSystemEventLoop, System},
-    mqtt::client::{EspMqttClient, EspMqttMessage, MqttClientConfiguration},
-    netif::{EspNetif, EspNetifWait},
-    nvs::{EspDefaultNvsPartition, EspNvsPartition, NvsDefault},
-    timer::EspTaskTimerService,
-    wifi::{EspWifi, WifiWait},
 };
 use esp_println::println;
 use std::{sync::Arc, thread, time::Duration};

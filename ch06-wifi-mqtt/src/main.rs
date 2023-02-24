@@ -1,14 +1,11 @@
 mod tasks;
 mod wifi;
 
-use anyhow::{bail, Context, Result};
+use anyhow::Result;
 use crossbeam_channel::bounded;
 use crossbeam_utils::atomic::AtomicCell;
 use embedded_svc::mqtt::client::{Connection, Event, MessageImpl, QoS};
 use embedded_svc::utils::mqtt::client::ConnState;
-use embedded_svc::wifi::{
-    AccessPointConfiguration, AuthMethod, ClientConfiguration, Configuration,
-};
 use esp_idf_hal::{
     adc::{self, *},
     gpio::{IOPin, PinDriver, Pull},
@@ -33,7 +30,7 @@ static ADC_STACK_SIZE: usize = 2000;
 
 const SSID: &str = env!("WIFI_SSID");
 const PASS: &str = env!("WIFI_PASS");
-const MQTT_URL: &str = env!("MQTT_URL");
+const _MQTT_URL: &str = env!("MQTT_URL");
 
 #[derive(Serialize, Debug)]
 struct MqttData {
@@ -57,13 +54,6 @@ fn main() {
 
     let peripherals = Peripherals::take().unwrap();
 
-    match wifi::connect(SSID, PASS) {
-        Ok(_) => {
-            println!("Connected to WiFi succesfully")
-        }
-        Err(e) => println!("Error connecting to wifi: {e}"),
-    };
-
     // MQTT Client configuration:
     let app_config = Config {
         mqtt_host: "test",
@@ -71,6 +61,13 @@ fn main() {
         mqtt_pass: "test",
         wifi_ssid: SSID,
         wifi_psk: PASS,
+    };
+
+    match wifi::connect(app_config.wifi_ssid, app_config.wifi_psk) {
+        Ok(_) => {
+            println!("Connected to WiFi succesfully")
+        }
+        Err(e) => println!("Error connecting to wifi: {e}"),
     };
 
     let broker_url = if app_config.mqtt_user != "" {
@@ -82,7 +79,7 @@ fn main() {
         format!("mqtt://{}", app_config.mqtt_host)
     };
 
-    let client = get_client(&broker_url);
+    let _client = get_client(&broker_url);
 
     //    let mqtt_config = MqttClientConfiguration::default();
     //    // 1. Create a client with default configuration and empty handler
