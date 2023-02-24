@@ -174,6 +174,21 @@ pub fn get_client(url: &str) -> Result<EspMqttClient<ConnState<MessageImpl, EspE
                 }
                 _event => println!("Got unknown MQTT event"),
             }
+
+            match msg.as_ref() {
+                Ok(event) => {
+                    match event {
+                        Event::Received(_msg) => {}
+                        Event::Connected(_) => {}
+                        Event::Disconnected => {}
+                        Event::Subscribed(_x) => {
+                            // Do nothing
+                        }
+                        _event => println!("Got unknown MQTT event"),
+                    }
+                }
+                Err(_) => println!("Error receiving msg"),
+            }
         }
     });
     client
