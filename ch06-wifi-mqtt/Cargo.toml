@@ -28,6 +28,7 @@ crossbeam = "0.8"
 crossbeam-channel = "0.5"
 crossbeam-utils = "0.8"
 anyhow = "1"
+mqtt-protocol = "0.11"
 
 [build-dependencies]
 embuild = "0.31"

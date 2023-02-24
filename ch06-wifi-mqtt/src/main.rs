@@ -1,7 +1,7 @@
 mod tasks;
 mod wifi;
 
-use anyhow::Result;
+use anyhow::{bail, Result};
 use crossbeam_channel::bounded;
 use crossbeam_utils::atomic::AtomicCell;
 use embedded_svc::mqtt::client::{Connection, Event, MessageImpl, QoS};
@@ -21,8 +21,11 @@ use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, alway
 use esp_idf_sys::esp_efuse_mac_get_default;
 use esp_idf_sys::EspError;
 use esp_println::println;
+use mqtt::control::ConnectReturnCode;
+use mqtt::packet::{ConnackPacket, ConnectPacket, PublishPacketRef, QoSWithPacketIdentifier};
+use mqtt::{Decodable, Encodable, TopicName};
 use serde::Serialize;
-use std::{env, sync::Arc, thread};
+use std::{env, io::Write, net::TcpStream, sync::Arc, thread};
 
 static BLINKY_STACK_SIZE: usize = 2000;
 static BUTTON_STACK_SIZE: usize = 2000;
@@ -30,7 +33,11 @@ static ADC_STACK_SIZE: usize = 2000;
 
 const SSID: &str = env!("WIFI_SSID");
 const PASS: &str = env!("WIFI_PASS");
-const _MQTT_URL: &str = env!("MQTT_URL");
+//const _MQTT_URL: &str = env!("MQTT_URL");
+
+const MQTT_ADDR: &str = "broker.mqttdashboard.com:8000"; // host:port
+const MQTT_CLIENT_ID: &str = "clientId-SvLEFMBFY3";
+const MQTT_TOPIC_NAME: &str = "test_publish/shane";
 
 #[derive(Serialize, Debug)]
 struct MqttData {
@@ -79,7 +86,8 @@ fn main() {
         format!("mqtt://{}", app_config.mqtt_host)
     };
 
-    let _client = get_client(&broker_url);
+    //let _client = get_client(&MQTT_URL);
+    let mut mqtt_stream = mqtt_connect(MQTT_ADDR, MQTT_CLIENT_ID).unwrap();
 
     //    let mqtt_config = MqttClientConfiguration::default();
     //    // 1. Create a client with default configuration and empty handler
@@ -193,4 +201,45 @@ pub fn get_unique_id() -> String {
         esp_efuse_mac_get_default(ptr);
     }
     hex::encode(mac)
+}
+
+fn mqtt_connect(mqtt_addr: &str, client_id: &str) -> anyhow::Result<TcpStream> {
+    let mut stream = TcpStream::connect(mqtt_addr)?;
+
+    let mut conn = ConnectPacket::new(client_id);
+    conn.set_clean_session(true);
+    let mut buf = Vec::new();
+    conn.encode(&mut buf)?;
+    stream.write_all(&buf[..])?;
+
+    let conn_ack = ConnackPacket::decode(&mut stream)?;
+
+    if conn_ack.connect_return_code() != ConnectReturnCode::ConnectionAccepted {
+        bail!("MQTT failed to receive the connection accepted ack");
+    }
+
+    println!("MQTT connected");
+
+    Ok(stream)
+}
+
+fn mqtt_publish(
+    _: &EspWifi,
+    stream: &mut TcpStream,
+    topic_name: &str,
+    message: &str,
+    qos: QoSWithPacketIdentifier,
+) -> anyhow::Result<()> {
+    let topic = unsafe { TopicName::new_unchecked(topic_name.to_string()) };
+    let bytes = message.as_bytes();
+
+    let publish_packet = PublishPacketRef::new(&topic, qos, bytes);
+
+    let mut buf = Vec::new();
+    publish_packet.encode(&mut buf)?;
+    stream.write_all(&buf[..])?;
+
+    println!("MQTT published message {} to topic {}", message, topic_name);
+
+    Ok(())
 }
