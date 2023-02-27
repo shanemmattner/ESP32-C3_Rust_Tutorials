@@ -97,3 +97,6 @@
 [submodule "submodules/reference_projects/esp-sdmmc-experiment"]
 	path = submodules/reference_projects/esp-sdmmc-experiment
 	url = git@github.com:taunusflieger/esp-sdmmc-experiment.git
+[submodule "submodules/reference_projects/sd-card"]
+	path = submodules/reference_projects/sd-card
+	url = git@github.com:lonesometraveler/sd-card.git
