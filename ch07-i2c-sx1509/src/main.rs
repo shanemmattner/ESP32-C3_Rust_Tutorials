@@ -6,6 +6,8 @@ use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, alway
 use esp_println::println;
 use sx1509;
 
+const SSD1306_ADDRESS: u8 = 0x3e;
+
 fn main() {
     // It is necessary to call this function once. Otherwise some patches to the runtime
     // implemented by esp-idf-sys might not link properly. See https://github.com/esp-rs/esp-idf-template/issues/71
@@ -25,12 +27,24 @@ fn main() {
     expander.borrow(&mut i2c).software_reset().unwrap();
     expander.borrow(&mut i2c).set_bank_a_direction(0).unwrap();
     expander.borrow(&mut i2c).set_bank_a_pullup(0xFF).unwrap();
-    // read the pins from bank a
+
+    expander
+        .borrow(&mut i2c)
+        .set_bank_b_direction(0xFF)
+        .unwrap();
+    i2c.write(
+        SSD1306_ADDRESS,
+        &[sx1509::Register::RegPullDownB as u8],
+        0xFF,
+    )
+    .unwrap();
 
     loop {
         let pins = expander.borrow(&mut i2c).get_bank_a_data().unwrap();
         println!("bank a: {pins}");
 
-        FreeRtos::delay_ms(500);
+        expander.borrow(&mut i2c).set_bank_b_data(pins).unwrap();
+
+        FreeRtos::delay_ms(100);
     }
 }
