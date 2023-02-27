@@ -15,8 +15,10 @@ The structure of these tutorials is part classic tutorials and part project base
 Each part is self contained
 - `0 - Output`: We'll make the "Hellow World" of embedded: a Blinky application to turn an LED on and off periodically
 <img src="./pics/blinky.gif" width="250" height="250"/>
+
 - `1 - Input`: Add a button to turn the blinking logic on and off
 <img src="./pics/blinky-btn.gif" width="250" height="250"/>
+
 - `2 - Threads`: Move the button logic and LED logic to their own thread and pass messages between threads with [crossbeams channel](https://docs.rs/crossbeam/latest/crossbeam/channel/index.html)
 - `3 - ADC`: Read 4 different ADC's and print out their values
 - `4 - neopixel`: Use an ADC reading to change the color of a [neopixel](https://www.adafruit.com/category/168) 
