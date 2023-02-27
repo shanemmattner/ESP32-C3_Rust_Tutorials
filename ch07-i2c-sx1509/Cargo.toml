@@ -1,0 +1,27 @@
+[package]
+name = "ch07-i2c-sx1509"
+version = "0.1.0"
+authors = ["Shane <shanemmattner@gmail.com>"]
+edition = "2021"
+resolver = "2"
+
+[profile.release]
+opt-level = "s"
+
+[profile.dev]
+debug = true # Symbols are nice and they don't increase the size on Flash
+opt-level = "z"
+
+[features]
+pio = ["esp-idf-sys/pio"]
+
+[dependencies]
+esp-idf-sys = { version = "0.32", features = ["binstart"] }
+esp-idf-hal = "0.40"
+esp-println = { version = "0.3.1", features = ["esp32c3"] }
+embedded-hal-0-2 = { package = "embedded-hal", version = "0.2.7", features = ["unproven"] }
+sx1509 = "0.2.0"
+
+
+[build-dependencies]
+embuild = "0.30.4"
