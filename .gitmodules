@@ -94,3 +94,6 @@
 [submodule "submodules/espressif-trainings"]
 	path = submodules/espressif-trainings
 	url = git@github.com:esp-rs/espressif-trainings.git
+[submodule "submodules/reference_projects/esp-sdmmc-experiment"]
+	path = submodules/reference_projects/esp-sdmmc-experiment
+	url = git@github.com:taunusflieger/esp-sdmmc-experiment.git
