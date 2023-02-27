@@ -1,10 +1,10 @@
 use esp_idf_hal::{
+    delay::FreeRtos,
     gpio::{IOPin, PinDriver, Pull},
-    prelude::*,
+    peripherals::Peripherals,
 };
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
 use esp_println::println;
-use std::{thread, time::Duration};
 
 fn main() {
     // It is necessary to call this function once. Otherwise some patches to the runtime
@@ -23,13 +23,13 @@ fn main() {
         if btn_pin.is_high() {
             led_pin.set_low().unwrap();
             println!("LED ON");
-            thread::sleep(Duration::from_millis(1000));
+            FreeRtos::delay_ms(1000);
 
             led_pin.set_high().unwrap();
             println!("LED OFF");
         } else {
             led_pin.set_high().unwrap();
         }
-        thread::sleep(Duration::from_millis(1000));
+        FreeRtos::delay_ms(1000);
     }
 }

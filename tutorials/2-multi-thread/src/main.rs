@@ -1,11 +1,11 @@
 use crossbeam_channel::bounded;
 use esp_idf_hal::{
+    delay::FreeRtos,
     gpio::{AnyIOPin, AnyOutputPin, IOPin, Input, Output, OutputPin, PinDriver, Pull},
-    prelude::*,
+    peripherals::Peripherals,
 };
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
 use esp_println::println;
-use std::{thread, time::Duration};
 
 static BLINKY_STACK_SIZE: usize = 2000;
 static BUTTON_STACK_SIZE: usize = 2000;
@@ -47,13 +47,12 @@ fn blinky_thread(
         if blinky_status {
             led_pin.set_low().unwrap();
             println!("LED ON");
-            thread::sleep(Duration::from_millis(1000));
+            FreeRtos::delay_ms(1000);
 
             led_pin.set_high().unwrap();
             println!("LED OFF");
-            thread::sleep(Duration::from_millis(1000));
         }
-        thread::sleep(Duration::from_millis(100));
+        FreeRtos::delay_ms(1000);
     }
 }
 
@@ -74,6 +73,6 @@ fn button_thread(btn_pin: PinDriver<AnyIOPin, Input>, tx: crossbeam_channel::Sen
                 tx.send(btn_status).unwrap();
             }
         }
-        thread::sleep(Duration::from_millis(100));
+        FreeRtos::delay_ms(100);
     }
 }
