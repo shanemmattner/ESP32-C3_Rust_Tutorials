@@ -1,29 +1,27 @@
 # ESP32-C3 Rust Tutorials
 
-This will be a series of embedded Rust tutorials using the [Olimex ESP32-C3 Dev kit](https://www.olimex.com/Products/IoT/ESP32-C3/ESP32-C3-DevKit-Lipo/open-source-hardware). I'm making this repo as a way to record everything I learn so I don't forget it and hopefully others will find it beneficial, too.
+This will be a series of embedded Rust tutorials using the [Olimex ESP32-C3 Dev kit](https://www.olimex.com/Products/IoT/ESP32-C3/ESP32-C3-DevKit-Lipo/open-source-hardware). 
+
+The structure of these tutorials is part classic tutorials and part project based. The project is an `ESP32-C3 Remote Data Logger` for which we will need several different peripherals.  I'll go through short tutorials from scratch on implementing the peripherals.  Then in a later chapter we'll combine all the peripherals into a cohesive project.
+
+
+
 
 ## Notes:
 - `submodules/reference_projects` contains a bunch of promising ESP32 Rust projects.  Since there's a lack of tutorials out on the web today I scoured Github for any project using `esp-idf-hal`.
 - These tutorials are all using `std`.  Eventually I'll probably make some `no-std` examples but I'm still learning Rust so `std` is easier
 
 ## Tutorials
-The tutorials are meant to be followed in order.  Each chapter consists of a short example that builds off the previous chapter.
-
-- `Chapter 1: Blinky` - The "Hellow World" of embedded.  We'll blink an LED on and off
+Each part is self contained
+- `0 - Output`: We'll make the "Hellow World" of embedded: a Blinky application to turn an LED on and off periodically
 <img src="./pics/blinky.gif" width="250" height="250"/>
-
-- `Chapter 2: Blinky Thread` - Take the blinky code from the previous chapter and make it run in it's own thread
-- `Chapter 3: Blinky Button` - Add a button to turn the blinking logic on and off
+- `1 - Input`: Add a button to turn the blinking logic on and off
 <img src="./pics/blinky-btn.gif" width="250" height="250"/>
-- `Chapter 4: Blinky Button Multi-Threaded` - Move the button logic to it's own thread and pass messages between threads with [crossbeams channel](https://docs.rs/crossbeam/latest/crossbeam/channel/index.html)
-- `Chapter 5: LED PWM` - Read an ADC pin and change the PWM of our blinky LED. Requires using a [crossbeam Atomic](https://docs.rs/crossbeam/latest/crossbeam/atomic/struct.AtomicCell.html) and the ESP32-C3 LED controller
-
-<b>WIP</b>
-- `Chapter 3: Blinky FSM` - Move the blinky logic into a [finite state machine](https://brilliant.org/wiki/finite-state-machines)
-- `Chapter 4: Blinky + Button HSM` - Add a button to the previous example which will start and stop the `blinky state machine` in a [hierarchical state machine](https://www.eventhelix.com/design-patterns/hierarchical-state-machine)
-- `Chapter 5: Blinky HSM + MPMC` - Create seperate threads for monitoring the button and sending events to the LED FSM. Use a [crossbeams channel](https://docs.rs/crossbeam/latest/crossbeam/channel/index.html) to pass data from the button thread to the `blinky fsm` thread
-- `Chapter 6: Blinky HSM + ADC LED PWM` - Take ADC readings and adjust the PWM of the LED we are blinking on/off in previous examples
-
+- `2 - Threads`: Move the button logic and LED logic to their own thread and pass messages between threads with [crossbeams channel](https://docs.rs/crossbeam/latest/crossbeam/channel/index.html)
+- `3 - ADC`: Read 4 different ADC's and print out their values
+- `4 - neopixel`: Use an ADC reading to change the color of a [neopixel](https://www.adafruit.com/category/168) 
+- `5 - I2C`: Use I2C to talk to a SX1509 GPIO Expander. Configure some pins as inputs and others as outputs.
+- `6 - SPI`: Read ADC values and store them on a micro-SD card
 
 <details>
   <summary>Development environment setup</summary>
