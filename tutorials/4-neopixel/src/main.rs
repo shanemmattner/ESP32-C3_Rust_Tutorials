@@ -29,6 +29,7 @@ fn main() {
     let mut a1_ch0 =
         adc::AdcChannelDriver::<_, adc::Atten11dB<adc::ADC1>>::new(peripherals.pins.gpio0).unwrap();
 
+    // Neopixel init
     let led = peripherals.pins.gpio5;
     let channel = peripherals.rmt.channel0;
     let config = TransmitConfig::new().clock_divider(1);
