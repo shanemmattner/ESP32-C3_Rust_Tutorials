@@ -1,4 +1,4 @@
-use anyhow::{bail, Result};
+use anyhow::Result;
 use esp_idf_hal::rmt::*;
 use std::time::Duration;
 
@@ -39,9 +39,11 @@ pub fn neopixel(rgb: RGB, tx: &mut TxRmtDriver) -> Result<()> {
 
 /// Converts hue, saturation, value to RGB
 pub fn hsv2rgb(h: u32, s: u32, v: u32) -> Result<RGB> {
-    if h > 360 || s > 100 || v > 100 {
-        bail!("The given HSV values are not in valid range");
-    }
+    // limit max values passed in
+    let h = if h > 360 { 360 } else { h };
+    let s = if s > 100 { 100 } else { s };
+    let v = if v > 100 { 100 } else { v };
+
     let s = s as f64 / 100.0;
     let v = v as f64 / 100.0;
     let c = s * v;

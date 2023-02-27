@@ -47,7 +47,9 @@ fn main() {
         match adc1.read(&mut a1_ch0) {
             Ok(x) => {
                 println!("A1_CH0: {x}\n");
-                let prcnt: f32 = x as f32 / ADC_MAX as f32;
+                let mut prcnt: f32 = x as f32 / ADC_MAX as f32;
+                // make sure we don't go over 100%
+                prcnt = if prcnt > 1.0 { 1.0 } else { prcnt };
                 let rgb = neopixel::hsv2rgb((360.0 as f32 * prcnt) as u32, 100, 20).unwrap();
 
                 neopixel::neopixel(rgb, &mut tx).unwrap();
