@@ -43,16 +43,7 @@ fn main() {
     )
     .unwrap();
 
-    // rainbow loop at 20% brightness
-    let mut i: u32 = 0;
     loop {
-        let rgb = neopixel::hsv2rgb(i, 100, 20).unwrap();
-        neopixel::neopixel(rgb, &mut tx).unwrap();
-        if i == 360 {
-            i = 0;
-        }
-        i += 1;
-
         match adc1.read(&mut a1_ch0) {
             Ok(x) => {
                 println!("A1_CH0: {x}\n");
