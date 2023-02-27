@@ -1,4 +1,4 @@
-use esp_idf_hal::delay::{FreeRtos, BLOCK};
+use esp_idf_hal::delay::FreeRtos;
 use esp_idf_hal::i2c::*;
 use esp_idf_hal::peripherals::Peripherals;
 use esp_idf_hal::prelude::*;
@@ -24,6 +24,7 @@ fn main() {
     let mut expander = sx1509::Sx1509::new(&mut i2c, sx1509::DEFAULT_ADDRESS);
     expander.borrow(&mut i2c).software_reset().unwrap();
     expander.borrow(&mut i2c).set_bank_a_direction(0).unwrap();
+    expander.borrow(&mut i2c).set_bank_a_pullup(0xFF).unwrap();
     // read the pins from bank a
 
     loop {

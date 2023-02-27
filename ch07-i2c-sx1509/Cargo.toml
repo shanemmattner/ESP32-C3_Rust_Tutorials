@@ -1,5 +1,5 @@
 [package]
-name = "ch07-i2c-sx1509"
+name = "i2c-sx1509"
 version = "0.1.0"
 authors = ["Shane <shanemmattner@gmail.com>"]
 edition = "2021"
