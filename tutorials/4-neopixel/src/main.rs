@@ -16,7 +16,7 @@ fn main() {
     // implemented by esp-idf-sys might not link properly. See https://github.com/esp-rs/esp-idf-template/issues/71
     esp_idf_sys::link_patches();
 
-    println!("Starting 4-neopixel\n");
+    println!("Starting 4-neopixel\nThis application reads an ADC pin and changes the color of a neopixel.\n");
 
     let peripherals = Peripherals::take().unwrap();
 

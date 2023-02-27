@@ -13,7 +13,7 @@ fn main() {
     // implemented by esp-idf-sys might not link properly. See https://github.com/esp-rs/esp-idf-template/issues/71
     esp_idf_sys::link_patches();
 
-    println!("Starting 5-i2c\n");
+    println!("Starting 5-i2c. This application talks to a SX1509 GPIO expander taking in 8 inputes and setting 8 outputs.\n");
 
     let peripherals = Peripherals::take().unwrap();
     let i2c = peripherals.i2c0;

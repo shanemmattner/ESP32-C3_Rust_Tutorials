@@ -15,7 +15,7 @@ fn main() {
     // implemented by esp-idf-sys might not link properly. See https://github.com/esp-rs/esp-idf-template/issues/71
     esp_idf_sys::link_patches();
 
-    println!("Starting 2-multi-thread\n");
+    println!("Starting 2-threads\nThis application separates the input button logic and blinky logic into their own threaads.");
 
     let peripherals = Peripherals::take().unwrap();
     let led_pin = PinDriver::output(peripherals.pins.gpio8.downgrade_output()).unwrap();

@@ -11,7 +11,7 @@ fn main() {
     // implemented by esp-idf-sys might not link properly. See https://github.com/esp-rs/esp-idf-template/issues/71
     esp_idf_sys::link_patches();
 
-    println!("Starting 1-blinky-button\n");
+    println!("Starting 1-output\nThis application adds a button to control an LED blinking on and off every 1 second.\n");
 
     // Get all the peripherals
     let peripherals = Peripherals::take().unwrap();
