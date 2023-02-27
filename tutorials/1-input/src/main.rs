@@ -18,10 +18,12 @@ fn main() {
     // Initialize Pin 8 as an output to drive the LED
     let mut led_pin = PinDriver::output(peripherals.pins.gpio8).unwrap();
     // Initialize Pin 6 as an input to read the button status
+    // Downgrading the pin allows us to set the pull-down resistor
     let mut btn_pin = PinDriver::input(peripherals.pins.gpio6.downgrade()).unwrap();
     btn_pin.set_pull(Pull::Down).unwrap();
 
     loop {
+        // If button is pressed then do then blink on and off ever 1 sec
         if btn_pin.is_high() {
             led_pin.set_low().unwrap();
             println!("LED ON");
