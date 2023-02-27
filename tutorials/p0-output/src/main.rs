@@ -1,4 +1,4 @@
-use esp_idf_hal::{delay::FreeRtos, gpio::PinDriver, prelude::*};
+use esp_idf_hal::{delay::FreeRtos, gpio::PinDriver, peripherals::Peripherals};
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
 use esp_println::println;
 
