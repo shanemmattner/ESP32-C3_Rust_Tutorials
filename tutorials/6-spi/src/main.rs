@@ -48,10 +48,6 @@ fn main() {
     match sdmmc_spi.acquire() {
         Ok(block) => {
             let mut controller = embedded_sdmmc::Controller::new(block, SdMmcClock);
-            match controller.device().card_size_bytes() {
-                Ok(size) => println!("Card size: {}", size),
-                Err(e) => println!("Err: {:?}", e),
-            }
 
             let mut volume = match controller.get_volume(embedded_sdmmc::VolumeIdx(0)) {
                 Ok(v) => v,
