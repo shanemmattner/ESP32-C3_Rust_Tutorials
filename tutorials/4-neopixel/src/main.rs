@@ -16,6 +16,8 @@ fn main() {
     // implemented by esp-idf-sys might not link properly. See https://github.com/esp-rs/esp-idf-template/issues/71
     esp_idf_sys::link_patches();
 
+    println!("Starting 4-neopixel\n");
+
     let peripherals = Peripherals::take().unwrap();
 
     // ADC init
@@ -32,7 +34,6 @@ fn main() {
     let config = TransmitConfig::new().clock_divider(1);
     let mut tx = TxRmtDriver::new(channel, led, &config).unwrap();
 
-    // 3 seconds white at 10% brightness
     neopixel::neopixel(
         neopixel::RGB {
             r: 25,

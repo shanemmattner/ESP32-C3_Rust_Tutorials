@@ -11,6 +11,8 @@ fn main() {
     // implemented by esp-idf-sys might not link properly. See https://github.com/esp-rs/esp-idf-template/issues/71
     esp_idf_sys::link_patches();
 
+    println!("Starting 3-adc\n");
+
     let peripherals = Peripherals::take().unwrap();
 
     // ADC init
