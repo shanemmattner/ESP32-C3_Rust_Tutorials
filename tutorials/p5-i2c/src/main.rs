@@ -1,7 +1,4 @@
-use esp_idf_hal::delay::FreeRtos;
-use esp_idf_hal::i2c::*;
-use esp_idf_hal::peripherals::Peripherals;
-use esp_idf_hal::prelude::*;
+use esp_idf_hal::{delay::FreeRtos, i2c::*, peripherals::Peripherals};
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
 use esp_println::println;
 use sx1509;

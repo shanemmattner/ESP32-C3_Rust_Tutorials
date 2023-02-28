@@ -22,6 +22,8 @@ Each part is self contained
 - `p2-threads`: Move the button logic and LED logic to their own thread and pass messages between threads with [crossbeams channel](https://docs.rs/crossbeam/latest/crossbeam/channel/index.html)
 - `p3-adc`: Read 4 different ADC's and print out their values
 - `p4-neopixel`: Use an ADC reading to change the color of a [neopixel](https://www.adafruit.com/category/168) 
+<img src="./pics/neopixel.gif" width="250" height="250"/>
+
 - `p5-i2c`: Use I2C to talk to a SX1509 GPIO Expander. Configure some pins as inputs and others as outputs.
 - `p6-spi`: Read ADC values and store them on a micro-SD card
 
