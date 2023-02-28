@@ -26,17 +26,17 @@ fn main() {
 
     let _blinky_thread = std::thread::Builder::new()
         .stack_size(BLINKY_STACK_SIZE)
-        .spawn(move || blinky_thread(led_pin, rx))
+        .spawn(move || blinky_thread_function(led_pin, rx))
         .unwrap();
 
     let _button_thread = std::thread::Builder::new()
         .stack_size(BUTTON_STACK_SIZE)
-        .spawn(move || button_thread(btn_pin, tx))
+        .spawn(move || button_thread_function(btn_pin, tx))
         .unwrap();
 }
 
 // Thread function that will blink the LED on/off every 500ms
-fn blinky_thread(
+fn blinky_thread_function(
     mut led_pin: PinDriver<AnyOutputPin, Output>,
     rx: crossbeam_channel::Receiver<bool>,
 ) {
@@ -58,7 +58,10 @@ fn blinky_thread(
     }
 }
 
-fn button_thread(btn_pin: PinDriver<AnyIOPin, Input>, tx: crossbeam_channel::Sender<bool>) {
+fn button_thread_function(
+    btn_pin: PinDriver<AnyIOPin, Input>,
+    tx: crossbeam_channel::Sender<bool>,
+) {
     let mut btn_status = false;
 
     loop {
