@@ -1,9 +1,7 @@
-use esp_idf_hal::{delay::FreeRtos, i2c::*, peripherals::Peripherals};
+use esp_idf_hal::{delay::FreeRtos, i2c::*, peripherals::Peripherals, prelude::*};
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
 use esp_println::println;
 use sx1509;
-
-const SSD1306_ADDRESS: u8 = 0x3e;
 
 fn main() {
     // It is necessary to call this function once. Otherwise some patches to the runtime
@@ -32,7 +30,7 @@ fn main() {
 
     // The sx1509 driver currently doesn't have pull-down implemented so directly write with I2C
     i2c.write(
-        SSD1306_ADDRESS,
+        sx1509::DEFAULT_ADDRESS,
         &[sx1509::Register::RegPullDownB as u8],
         0xFF,
     )
