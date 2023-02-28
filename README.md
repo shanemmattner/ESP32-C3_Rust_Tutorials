@@ -13,6 +13,13 @@ We tutorial below has a `YouTube video` link where I will start with a blank pro
 - [p5-i2c](https://youtu.be/NvEnHJPpavo): Configure and use a [SX1509 GPIO Expander](https://www.sparkfun.com/products/13601) through [I2C](https://learn.sparkfun.com/tutorials/i2c)
 - `p6-spi`: Read ADC values and store them on a micro-SD card
 
+## Project 0: Data Logger Application
+This project will use the ESP32-C3 to gather analog and digital data.
+
+- 4 ADC's
+- 16 Digital IO
+- SD card logging
+
 <details>
   <summary>Development environment setup</summary>
   
