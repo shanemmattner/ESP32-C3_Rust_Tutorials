@@ -2,16 +2,16 @@
 
 This will be a series of `embedded Rust tutorials` using the [Olimex ESP32-C3 Dev kit](https://www.olimex.com/Products/IoT/ESP32-C3/ESP32-C3-DevKit-Lipo/open-source-hardware). 
 
-We will start with a blanky project for each tutorial and implement a peripherals using the latest [esp-idf-hal](https://github.com/esp-rs/esp-idf-hal) version. After implementing various peripherals we will build a larger project: `ESP32-C3 Remote Data Logger`.  
+We will start with a blanky project for each tutorial and implement a peripherals using the latest [esp-idf-hal](https://github.com/esp-rs/esp-idf-hal) version. After implementing various peripherals we will build a larger project: `ESP32-C3 Remote Data Logger`.
 
 ## Tutorials
-Each part is self contained
-- `p0-output`: Make the "Hellow World" of embedded systems: a `Blinky application` to periodically turn an LED on and off
-- `p1-input`: Add a button to turn the blinking logic on and off
-- `p2-threads`: Move the button logic and LED logic to their own thread and pass messages between threads with [crossbeams channel](https://docs.rs/crossbeam/latest/crossbeam/channel/index.html)
-- `p3-adc`: Read an [analog-to-digital converter channel](https://en.wikipedia.org/wiki/Analog-to-digital_converter) and print out the value
-- `p4-neopixel`: Use the ADC reading to change the color of a [neopixel](https://www.adafruit.com/category/168) 
-- `p5-i2c`: Configure and use a [SX1509 GPIO Expander](https://www.sparkfun.com/products/13601) through [I2C](https://learn.sparkfun.com/tutorials/i2c)
+Check out the `YouTue video` link for a guide on building each example
+- [p0-output](https://youtu.be/vUSHaogHs1s): Make the "Hellow World" of embedded systems: a `Blinky application` to periodically turn an LED on and off
+- [p1-input](https://youtu.be/2IY27b9TT2k): Add a button to turn the blinking logic on and off
+- [p2-threads](https://youtu.be/ht5t39dEa4E): Move the button logic and LED logic to their own thread and pass messages between threads with [crossbeams channel](https://docs.rs/crossbeam/latest/crossbeam/channel/index.html)
+- [p3-adc](https://youtu.be/07SVj6R_AhA): Read an [analog-to-digital converter channel](https://en.wikipedia.org/wiki/Analog-to-digital_converter) and print out the value
+- [p4-neopixel](https://youtu.be/VIVML4cioIo): Use the ADC reading to change the color of a [neopixel](https://www.adafruit.com/category/168) 
+- [p5-i2c](https://youtu.be/NvEnHJPpavo): Configure and use a [SX1509 GPIO Expander](https://www.sparkfun.com/products/13601) through [I2C](https://learn.sparkfun.com/tutorials/i2c)
 - `p6-spi`: Read ADC values and store them on a micro-SD card
 
 <details>
