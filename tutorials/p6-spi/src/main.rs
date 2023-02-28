@@ -73,36 +73,27 @@ fn main() {
                     Ok(block) => {
                         let mut controller = embedded_sdmmc::Controller::new(block, SdMmcClock);
 
-                        let mut volume = match controller.get_volume(embedded_sdmmc::VolumeIdx(0)) {
-                            Ok(v) => v,
-                            Err(e) => panic!("Err: {:?}", e),
-                        };
+                        let mut volume =
+                            controller.get_volume(embedded_sdmmc::VolumeIdx(0)).unwrap();
 
-                        let root_dir = match controller.open_root_dir(&volume) {
-                            Ok(d) => d,
-                            Err(e) => panic!("Err: {:?}", e),
-                        };
+                        let root_dir = controller.open_root_dir(&volume).unwrap();
 
-                        let mut f = match controller.open_file_in_dir(
-                            &mut volume,
-                            &root_dir,
-                            FILE_TO_CREATE,
-                            Mode::ReadWriteCreateOrAppend,
-                        ) {
-                            Ok(f) => f,
-                            Err(e) => panic!("Err: {:?}", e),
-                        };
+                        let mut f = controller
+                            .open_file_in_dir(
+                                &mut volume,
+                                &root_dir,
+                                FILE_TO_CREATE,
+                                Mode::ReadWriteCreateOrAppend,
+                            )
+                            .unwrap();
 
                         f.seek_from_end(0).unwrap();
-                        match controller.write(&mut volume, &mut f, &adc_string.as_bytes()[..]) {
-                            Ok(num) => println!("bytes written: {num}"),
-                            Err(e) => panic!("Err: {:?}", e),
-                        };
+                        let bytes_written = controller
+                            .write(&mut volume, &mut f, &adc_string.as_bytes()[..])
+                            .unwrap();
+                        println!("bytes written: {bytes_written}");
 
-                        match controller.close_file(&volume, f) {
-                            Ok(_) => println!("file closed"),
-                            Err(e) => panic!("Err: {:?}", e),
-                        };
+                        controller.close_file(&volume, f).unwrap();
                     }
                     Err(e) => println!("Error acquire SPI bus {:?}", e),
                 };
