@@ -1,30 +1,17 @@
 # ESP32-C3 Rust Tutorials
 
-This will be a series of embedded Rust tutorials using the [Olimex ESP32-C3 Dev kit](https://www.olimex.com/Products/IoT/ESP32-C3/ESP32-C3-DevKit-Lipo/open-source-hardware). 
+This will be a series of `embedded Rust tutorials` using the [Olimex ESP32-C3 Dev kit](https://www.olimex.com/Products/IoT/ESP32-C3/ESP32-C3-DevKit-Lipo/open-source-hardware). 
 
-The structure of these tutorials is part classic tutorials and part project based. The project is an `ESP32-C3 Remote Data Logger` for which we will need several different peripherals.  I'll go through short tutorials from scratch on implementing the peripherals.  Then in a later chapter we'll combine all the peripherals into a cohesive project.
-
-
-
-
-## Notes:
-- `submodules/reference_projects` contains a bunch of promising ESP32 Rust projects.  Since there's a lack of tutorials out on the web today I scoured Github for any project using `esp-idf-hal`.
-- These tutorials are all using `std`.  Eventually I'll probably make some `no-std` examples but I'm still learning Rust so `std` is easier
+We will start with a blanky project for each tutorial and implement a peripherals using the latest [esp-idf-hal](https://github.com/esp-rs/esp-idf-hal) version. After implementing various peripherals we will build a larger project: `ESP32-C3 Remote Data Logger`.  
 
 ## Tutorials
 Each part is self contained
-- `p0-output`: We'll make the "Hellow World" of embedded: a Blinky application to turn an LED on and off periodically
-<img src="./pics/blinky.gif" width="250" height="250"/>
-
+- `p0-output`: Make the "Hellow World" of embedded systems: a `Blinky application` to periodically turn an LED on and off
 - `p1-input`: Add a button to turn the blinking logic on and off
-<img src="./pics/blinky-btn.gif" width="250" height="250"/>
-
 - `p2-threads`: Move the button logic and LED logic to their own thread and pass messages between threads with [crossbeams channel](https://docs.rs/crossbeam/latest/crossbeam/channel/index.html)
-- `p3-adc`: Read 4 different ADC's and print out their values
-- `p4-neopixel`: Use an ADC reading to change the color of a [neopixel](https://www.adafruit.com/category/168) 
-<img src="./pics/neopixel.gif" width="250" height="250"/>
-
-- `p5-i2c`: Use I2C to talk to a SX1509 GPIO Expander. Configure some pins as inputs and others as outputs.
+- `p3-adc`: Read an [analog-to-digital converter channel](https://en.wikipedia.org/wiki/Analog-to-digital_converter) and print out the value
+- `p4-neopixel`: Use the ADC reading to change the color of a [neopixel](https://www.adafruit.com/category/168) 
+- `p5-i2c`: Configure and use a [SX1509 GPIO Expander](https://www.sparkfun.com/products/13601) through [I2C](https://learn.sparkfun.com/tutorials/i2c)
 - `p6-spi`: Read ADC values and store them on a micro-SD card
 
 <details>
@@ -60,23 +47,16 @@ espmonitor /dev/ttyACM0
   <summary>Roadmap</summary>
   
 - Logging (https://github.com/knurling-rs/defmt)
-- uSD card
 - Debug project (https://github.com/knurling-rs/probe-run)
 - MQTT transfer
 - Pub/sub (https://github.com/jakmeier/nuts)
 - Timer to generate blinky
 - DMA
-- SPI
 - OTA
-- I2C
 - CLI
 - UART
 - Crash dumps and diagnostics
 
-
-Other interesting crates/ideas:
-- [static assertions](https://github.com/nvzqz/static-assertions-rs)
-- [lazy static](https://github.com/rust-lang-nursery/lazy-static.rs)
 </details>
 
 
