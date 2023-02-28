@@ -1,11 +1,10 @@
 # ESP32-C3 Rust Tutorials
 
-This will be a series of `embedded Rust tutorials` using the [Olimex ESP32-C3 Dev kit](https://www.olimex.com/Products/IoT/ESP32-C3/ESP32-C3-DevKit-Lipo/open-source-hardware). 
+This will be a series of `embedded Rust tutorials` using the [Olimex ESP32-C3 Dev kit](https://www.olimex.com/Products/IoT/ESP32-C3/ESP32-C3-DevKit-Lipo/open-source-hardware). After implementing various peripherals we will build a larger project: `ESP32-C3 Data Logger Application`.
 
-We will start with a blanky project for each tutorial and implement a peripherals using the latest [esp-idf-hal](https://github.com/esp-rs/esp-idf-hal) version. After implementing various peripherals we will build a larger project: `ESP32-C3 Remote Data Logger`.
+We tutorial below has a `YouTube video` link where I will start with a blank project and implement a peripherals using the latest [esp-idf-hal](https://github.com/esp-rs/esp-idf-hal) version. 
 
 ## Tutorials
-Check out the `YouTue video` link for a guide on building each example
 - [p0-output](https://youtu.be/vUSHaogHs1s): Make the "Hellow World" of embedded systems: a `Blinky application` to periodically turn an LED on and off
 - [p1-input](https://youtu.be/2IY27b9TT2k): Add a button to turn the blinking logic on and off
 - [p2-threads](https://youtu.be/ht5t39dEa4E): Move the button logic and LED logic to their own thread and pass messages between threads with [crossbeams channel](https://docs.rs/crossbeam/latest/crossbeam/channel/index.html)
