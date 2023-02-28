@@ -10,8 +10,9 @@ use esp_idf_hal::{
 };
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
 use esp_println::println;
+use std::time::*;
 
-const FILE_TO_CREATE: &'static str = "test.csv";
+const FILE_TO_CREATE: &'static str = "logs.txt";
 
 pub struct SdMmcClock;
 
@@ -63,12 +64,12 @@ fn main() {
     let sdmmc_cs = PinDriver::output(peripherals.pins.gpio6).unwrap();
     let mut sdmmc_spi = embedded_sdmmc::SdMmcSpi::new(spi, sdmmc_cs);
 
+    // keep track of the time for logging
+    let start_time = Instant::now();
+
     loop {
         match adc1.read(&mut a1_ch0) {
-            Ok(x) => {
-                let x: u32 = x as u32;
-                let mut adc_string: String = x.to_string();
-                adc_string.push(',');
+            Ok(adc_reading) => {
                 match sdmmc_spi.acquire() {
                     Ok(block) => {
                         let mut controller = embedded_sdmmc::Controller::new(block, SdMmcClock);
@@ -88,10 +89,16 @@ fn main() {
                             .unwrap();
 
                         f.seek_from_end(0).unwrap();
-                        let bytes_written = controller
-                            .write(&mut volume, &mut f, &adc_string.as_bytes()[..])
+                        // Create log string
+                        let mut log_string: String = start_time.elapsed().as_millis().to_string();
+                        log_string.push_str(&",A1_CH0,".to_string());
+                        log_string.push_str(&(adc_reading as u32).to_string());
+                        log_string.push('\n');
+                        // Write the string to the SD card
+                        let _bytes_written = controller
+                            .write(&mut volume, &mut f, &log_string.as_bytes()[..])
                             .unwrap();
-                        println!("bytes written: {bytes_written}");
+                        println!("String written: {log_string}");
 
                         controller.close_file(&volume, f).unwrap();
                     }
@@ -101,7 +108,6 @@ fn main() {
             Err(e) => println!("err reading A1_CH0: {e}\n"),
         }
 
-        println!("\n");
-        FreeRtos::delay_ms(1000);
+        FreeRtos::delay_ms(500);
     }
 }
