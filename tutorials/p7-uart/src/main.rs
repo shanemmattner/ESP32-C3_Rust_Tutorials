@@ -1,7 +1,6 @@
-use esp_idf_hal::{
-    delay::FreeRtos, delay::NON_BLOCK, gpio, peripherals::Peripherals, prelude::*, uart::*,
-};
+use esp_idf_hal::{delay::FreeRtos, gpio, peripherals::Peripherals, prelude::*, uart::*};
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
+use std::fmt::Write;
 
 fn main() -> anyhow::Result<()> {
     esp_idf_sys::link_patches();
@@ -12,7 +11,7 @@ fn main() -> anyhow::Result<()> {
 
     println!("Starting UART loopback test");
     let config = config::Config::new().baudrate(Hertz(115_200));
-    let uart = UartDriver::new(
+    let mut uart = UartDriver::new(
         peripherals.uart1,
         tx,
         rx,
@@ -23,12 +22,17 @@ fn main() -> anyhow::Result<()> {
     .unwrap();
 
     loop {
-        let mut buf: [u8; 4] = [0; 4];
-        let mut x = uart.read(&mut buf, 1000).unwrap();
-        while x > 0 {
-            uart.write(&[buf[x - 1]]).unwrap();
-            x -= 1;
+        for i in 0..10 {
+            write!(uart, "{i}").unwrap();
         }
-        FreeRtos::delay_ms(100);
+        write!(uart, "\n").unwrap();
+
+        // let mut buf: [u8; 4] = [0; 4];
+        // let mut x = uart.read(&mut buf, 1000).unwrap();
+        // while x > 0 {
+        //     uart.write(&[buf[x - 1]]).unwrap();
+        //     x -= 1;
+        // }
+        FreeRtos::delay_ms(1000);
     }
 }
