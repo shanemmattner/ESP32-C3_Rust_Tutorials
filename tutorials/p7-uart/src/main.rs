@@ -1,6 +1,13 @@
-use esp_idf_hal::{delay::FreeRtos, gpio, peripherals::Peripherals, prelude::*, uart::*};
+use arrayvec::ArrayVec;
+use esp_idf_hal::{
+    delay::{FreeRtos, NON_BLOCK},
+    gpio,
+    peripherals::Peripherals,
+    prelude::*,
+    uart::*,
+};
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
-use std::fmt::Write;
+use std::time::Instant;
 
 fn main() -> anyhow::Result<()> {
     esp_idf_sys::link_patches();
@@ -11,7 +18,7 @@ fn main() -> anyhow::Result<()> {
 
     println!("Starting UART loopback test");
     let config = config::Config::new().baudrate(Hertz(115_200));
-    let mut uart = UartDriver::new(
+    let uart = UartDriver::new(
         peripherals.uart1,
         tx,
         rx,
@@ -21,18 +28,45 @@ fn main() -> anyhow::Result<()> {
     )
     .unwrap();
 
-    loop {
-        for i in 0..10 {
-            write!(uart, "{i}").unwrap();
-        }
-        write!(uart, "\n").unwrap();
+    let mut uart_buf: Vec<u8> = Vec::new();
 
-        // let mut buf: [u8; 4] = [0; 4];
-        // let mut x = uart.read(&mut buf, 1000).unwrap();
-        // while x > 0 {
-        //     uart.write(&[buf[x - 1]]).unwrap();
-        //     x -= 1;
-        // }
-        FreeRtos::delay_ms(1000);
+    loop {
+        let start = Instant::now();
+
+        let mut buf: [u8; 100] = [0; 100];
+        match uart.read(&mut buf, NON_BLOCK) {
+            Ok(x) => {
+                if x > 0 {
+                    println!("{:?}", buf);
+
+                    uart_buf.extend_from_slice(&buf[0..x - 1]);
+                }
+            }
+            Err(_) => {}
+        }
+
+        let duration = start.elapsed();
+        println!("--------------\nUART read time:  {:?}", duration);
+
+        if uart_buf.len() > 0 {
+            if uart_buf[uart_buf.len() - 1] == 13 {
+                let start = Instant::now();
+
+                let send_buf = uart_buf.to_owned();
+                let array: ArrayVec<_, 100> = send_buf.into_iter().collect();
+                let array: [u8; 100] = array.into_inner().unwrap();
+                uart.write(&array).unwrap();
+
+                let duration = start.elapsed();
+
+                println!("UART write time:  {:?}\n---------------", duration);
+            }
+        }
+        // append bytes read to uart_buf
+
+        // look for '\n' character, if found print out the string so far, if not append current
+        // byte to buffer
+
+        FreeRtos::delay_ms(10);
     }
 }
