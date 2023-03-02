@@ -43,17 +43,12 @@ fn main() -> anyhow::Result<()> {
         if uart_buf.len() > 0 {
             if uart_buf[uart_buf.len() - 1] == 13 {
                 println!("{:?}", uart_buf);
-                uart_buf.clear();
-                // let send_buf = uart_buf.to_owned();
-                // let array: ArrayVec<_, 100> = send_buf.into_iter().collect();
-                // let array: [u8; 100] = array.into_inner().unwrap();
-                // uart.write(&array).unwrap();
+                match uart.write(&uart_buf) {
+                    Ok(_) => uart_buf.clear(),
+                    Err(_) => {}
+                }
             }
         }
-        // append bytes read to uart_buf
-
-        // look for '\n' character, if found print out the string so far, if not append current
-        // byte to buffer
 
         FreeRtos::delay_ms(10);
     }
