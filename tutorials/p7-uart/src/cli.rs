@@ -35,17 +35,11 @@ static ASCII_DEL_CODE: u8 = 8;
 static ASCII_CR_CODE: u8 = 13;
 static MAX_UART_BUFFER: usize = 100;
 
-pub fn cli_hello(subcommand: &str) -> CliError {
-    let err = CliError::Fail;
-
-    let msg = "Hello World";
-    println!("{msg}");
-
-    //    match uart.write(&msg) {
-    //        Ok(_) => println!("msg sent successful"),
-    //        Err(_) => {}
-    //    }
-    err
+fn uart_write(uart: &uart::UartDriver, msg: &Vec<u8>) -> CliError {
+    match uart.write(&msg) {
+        Ok(_) => CliError::Success,
+        Err(_) => CliError::Fail,
+    }
 }
 
 pub fn uart_thread(uart: uart::UartDriver) {
@@ -75,18 +69,32 @@ pub fn uart_thread(uart: uart::UartDriver) {
         }
 
         if uart_buf.len() > 0 {
-            // If the last character was a carriage return then process
+            // If the last character was a carriage return then process command
             if uart_buf[uart_buf.len() - 1] == ASCII_CR_CODE {
-                match str::from_utf8(&uart_buf) {
-                    Ok(s) => {
-                        let cmd_splt = split(s);
-                        println!("{:?}", cmd_splt);
-                        match uart_write(&uart, &uart_buf) {
-                            CliError::Success => uart_buf.clear(),
-                            CliError::Fail => {}
+                // remove the carriage return character from the end of the line
+                uart_buf.pop();
+                // Make sure there wasn't just a carriage return
+                if uart_buf.len() > 0 {
+                    // convert vec<u8> to utf-8 &str
+                    match str::from_utf8(&uart_buf) {
+                        Ok(s) => {
+                            // split str slice to get command and arguments
+                            let buf_split = split(s).unwrap();
+                            let cmd: &str = &buf_split[0][..];
+                            // find the appropriate command
+                            match HASHES.get(cmd) {
+                                Some(x) => println!("key found"),
+                                None => println!("key not found"),
+                            }
+
+                            println!("{:?}", buf_split);
+                            match uart_write(&uart, &uart_buf) {
+                                CliError::Success => uart_buf.clear(), // clear buffer on write success
+                                CliError::Fail => {}
+                            }
                         }
+                        Err(_) => uart_buf.clear(),
                     }
-                    Err(_) => uart_buf.clear(),
                 }
             }
         }
@@ -95,9 +103,15 @@ pub fn uart_thread(uart: uart::UartDriver) {
     }
 }
 
-fn uart_write(uart: &uart::UartDriver, msg: &Vec<u8>) -> CliError {
-    match uart.write(&msg) {
-        Ok(_) => CliError::Success,
-        Err(_) => CliError::Fail,
-    }
+pub fn cli_hello(subcommand: &str) -> CliError {
+    let err = CliError::Fail;
+
+    let msg = "Hello World";
+    println!("{msg}");
+
+    //    match uart.write(&msg) {
+    //        Ok(_) => println!("msg sent successful"),
+    //        Err(_) => {}
+    //    }
+    err
 }
