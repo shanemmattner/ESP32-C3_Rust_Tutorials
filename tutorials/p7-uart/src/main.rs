@@ -7,7 +7,7 @@ use esp_idf_hal::{
 };
 use esp_idf_sys as _;
 
-fn main() -> anyhow::Result<()> {
+fn main() {
     esp_idf_sys::link_patches();
 
     let peripherals = Peripherals::take().unwrap();
