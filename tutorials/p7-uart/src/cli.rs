@@ -3,7 +3,8 @@ use esp_idf_hal::{
     uart,
 };
 use lazy_static::lazy_static; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
-use std::collections::HashMap;
+use shell_words::*;
+use std::{collections::HashMap, str};
 
 pub enum CliError {
     Success,
@@ -63,6 +64,10 @@ pub fn uart_thread(uart: uart::UartDriver) {
                         }
                     } else {
                         uart_buf.push(buf[0]);
+                        // Prevent buffer from growing too large, no command should be more than 100 characters
+                        if uart_buf.len() > MAX_UART_BUFFER {
+                            uart_buf.clear();
+                        }
                     }
                 }
             }
@@ -70,17 +75,20 @@ pub fn uart_thread(uart: uart::UartDriver) {
         }
 
         if uart_buf.len() > 0 {
+            // If the last character was a carriage return then process
             if uart_buf[uart_buf.len() - 1] == ASCII_CR_CODE {
-                println!("{:?}", uart_buf);
-                match uart_write(&uart, &uart_buf) {
-                    CliError::Success => uart_buf.clear(),
-                    CliError::Fail => {}
+                match str::from_utf8(&uart_buf) {
+                    Ok(s) => {
+                        let cmd_splt = split(s);
+                        println!("{:?}", cmd_splt);
+                        match uart_write(&uart, &uart_buf) {
+                            CliError::Success => uart_buf.clear(),
+                            CliError::Fail => {}
+                        }
+                    }
+                    Err(_) => uart_buf.clear(),
                 }
             }
-        }
-
-        if uart_buf.len() > MAX_UART_BUFFER {
-            uart_buf.clear();
         }
 
         FreeRtos::delay_ms(50);
