@@ -32,12 +32,14 @@ lazy_static! {
 
 static ASCII_DEL_CODE: u8 = 8;
 static ASCII_CR_CODE: u8 = 13;
+static MAX_UART_BUFFER: usize = 100;
 
 pub fn cli_hello(subcommand: &str) -> CliError {
     let err = CliError::Fail;
 
     let msg = "Hello World";
     println!("{msg}");
+
     //    match uart.write(&msg) {
     //        Ok(_) => println!("msg sent successful"),
     //        Err(_) => {}
@@ -70,17 +72,24 @@ pub fn uart_thread(uart: uart::UartDriver) {
         if uart_buf.len() > 0 {
             if uart_buf[uart_buf.len() - 1] == ASCII_CR_CODE {
                 println!("{:?}", uart_buf);
-                match uart.write(&uart_buf) {
-                    Ok(_) => uart_buf.clear(),
-                    Err(_) => {}
+                match uart_write(&uart, &uart_buf) {
+                    CliError::Success => uart_buf.clear(),
+                    CliError::Fail => {}
                 }
             }
         }
 
-        if uart_buf.len() > 100 {
+        if uart_buf.len() > MAX_UART_BUFFER {
             uart_buf.clear();
         }
 
         FreeRtos::delay_ms(50);
+    }
+}
+
+fn uart_write(uart: &uart::UartDriver, msg: &Vec<u8>) -> CliError {
+    match uart.write(&msg) {
+        Ok(_) => CliError::Success,
+        Err(_) => CliError::Fail,
     }
 }
