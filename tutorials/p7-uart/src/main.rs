@@ -7,7 +7,6 @@ use esp_idf_hal::{
     uart::*,
 };
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
-use std::time::Instant;
 
 fn main() -> anyhow::Result<()> {
     esp_idf_sys::link_patches();
@@ -31,35 +30,24 @@ fn main() -> anyhow::Result<()> {
     let mut uart_buf: Vec<u8> = Vec::new();
 
     loop {
-        let start = Instant::now();
-
         let mut buf: [u8; 100] = [0; 100];
         match uart.read(&mut buf, NON_BLOCK) {
             Ok(x) => {
                 if x > 0 {
-                    println!("{:?}", buf);
-
-                    uart_buf.extend_from_slice(&buf[0..x - 1]);
+                    uart_buf.push(buf[0]);
                 }
             }
             Err(_) => {}
         }
 
-        let duration = start.elapsed();
-        println!("--------------\nUART read time:  {:?}", duration);
-
         if uart_buf.len() > 0 {
             if uart_buf[uart_buf.len() - 1] == 13 {
-                let start = Instant::now();
-
-                let send_buf = uart_buf.to_owned();
-                let array: ArrayVec<_, 100> = send_buf.into_iter().collect();
-                let array: [u8; 100] = array.into_inner().unwrap();
-                uart.write(&array).unwrap();
-
-                let duration = start.elapsed();
-
-                println!("UART write time:  {:?}\n---------------", duration);
+                println!("{:?}", uart_buf);
+                uart_buf.clear();
+                // let send_buf = uart_buf.to_owned();
+                // let array: ArrayVec<_, 100> = send_buf.into_iter().collect();
+                // let array: [u8; 100] = array.into_inner().unwrap();
+                // uart.write(&array).unwrap();
             }
         }
         // append bytes read to uart_buf
