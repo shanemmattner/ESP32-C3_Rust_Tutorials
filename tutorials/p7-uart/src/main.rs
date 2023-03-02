@@ -9,6 +9,8 @@ use esp_idf_hal::{
 };
 use esp_idf_sys as _;
 
+static CLI_STACK_SIZE: usize = 5000;
+
 fn main() -> anyhow::Result<()> {
     esp_idf_sys::link_patches();
 
@@ -30,29 +32,37 @@ fn main() -> anyhow::Result<()> {
 
     let mut uart_buf: Vec<u8> = Vec::new();
 
+    let _cli_thread = std::thread::Builder::new()
+        .stack_size(CLI_STACK_SIZE)
+        .spawn(move || cli::uart_thread(uart))
+        .unwrap();
+
     loop {
-        let mut buf: [u8; 100] = [0; 100];
-        match uart.read(&mut buf, NON_BLOCK) {
-            Ok(x) => {
-                if x > 0 {
-                    uart_buf.push(buf[0]);
-                }
-            }
-            Err(_) => {}
-        }
-
-        if uart_buf.len() > 0 {
-            if uart_buf[uart_buf.len() - 1] == 13 {
-                println!("{:?}", uart_buf);
-                match uart.write(&uart_buf) {
-                    Ok(_) => uart_buf.clear(),
-                    Err(_) => {}
-                }
-
-                cli::cli_hello("world");
-            }
-        }
-
-        FreeRtos::delay_ms(10);
+        FreeRtos::delay_ms(100);
     }
+    //loop {
+    //    let mut buf: [u8; 100] = [0; 100];
+    //    match uart.read(&mut buf, NON_BLOCK) {
+    //        Ok(x) => {
+    //            if x > 0 {
+    //                uart_buf.push(buf[0]);
+    //            }
+    //        }
+    //        Err(_) => {}
+    //    }
+
+    //    if uart_buf.len() > 0 {
+    //        if uart_buf[uart_buf.len() - 1] == 13 {
+    //            println!("{:?}", uart_buf);
+    //            match uart.write(&uart_buf) {
+    //                Ok(_) => uart_buf.clear(),
+    //                Err(_) => {}
+    //            }
+
+    //            cli::cli_hello("world");
+    //        }
+    //    }
+
+    //    FreeRtos::delay_ms(10);
+    //}
 }
