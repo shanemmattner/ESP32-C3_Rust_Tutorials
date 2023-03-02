@@ -1,9 +1,6 @@
 use esp_idf_hal::{
     delay::{FreeRtos, NON_BLOCK},
-    gpio,
-    peripherals::Peripherals,
-    prelude::*,
-    uart::{self, *},
+    uart,
 };
 use lazy_static::lazy_static; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
 use std::collections::HashMap;
@@ -33,6 +30,9 @@ lazy_static! {
     };
 }
 
+static ASCII_DEL_CODE: u8 = 8;
+static ASCII_CR_CODE: u8 = 13;
+
 pub fn cli_hello(subcommand: &str) -> CliError {
     let err = CliError::Fail;
 
@@ -45,8 +45,7 @@ pub fn cli_hello(subcommand: &str) -> CliError {
     err
 }
 
-pub fn uart_thread(uart: uart::UartDriver) -> CliError {
-    let err = CliError::Fail;
+pub fn uart_thread(uart: uart::UartDriver) {
     let mut uart_buf: Vec<u8> = Vec::new();
 
     loop {
@@ -54,14 +53,22 @@ pub fn uart_thread(uart: uart::UartDriver) -> CliError {
         match uart.read(&mut buf, NON_BLOCK) {
             Ok(x) => {
                 if x > 0 {
-                    uart_buf.push(buf[0]);
+                    // Logic for deleting a character in the uart buffer vector
+                    if buf[0] == ASCII_DEL_CODE {
+                        match uart_buf.pop() {
+                            Some(_) => {}
+                            None => println!("Error: No characters to pop"),
+                        }
+                    } else {
+                        uart_buf.push(buf[0]);
+                    }
                 }
             }
             Err(_) => {}
         }
 
         if uart_buf.len() > 0 {
-            if uart_buf[uart_buf.len() - 1] == 13 {
+            if uart_buf[uart_buf.len() - 1] == ASCII_CR_CODE {
                 println!("{:?}", uart_buf);
                 match uart.write(&uart_buf) {
                     Ok(_) => uart_buf.clear(),
@@ -69,7 +76,11 @@ pub fn uart_thread(uart: uart::UartDriver) -> CliError {
                 }
             }
         }
+
+        if uart_buf.len() > 100 {
+            uart_buf.clear();
+        }
+
         FreeRtos::delay_ms(100);
     }
-    err
 }

@@ -1,12 +1,6 @@
 mod cli;
 
-use esp_idf_hal::{
-    delay::{FreeRtos, NON_BLOCK},
-    gpio,
-    peripherals::Peripherals,
-    prelude::*,
-    uart::*,
-};
+use esp_idf_hal::{delay::FreeRtos, gpio, peripherals::Peripherals, prelude::*, uart::*};
 use esp_idf_sys as _;
 
 static CLI_STACK_SIZE: usize = 5000;
@@ -18,7 +12,6 @@ fn main() -> anyhow::Result<()> {
     let tx = peripherals.pins.gpio21;
     let rx = peripherals.pins.gpio20;
 
-    println!("Starting UART loopback test");
     let config = config::Config::new().baudrate(Hertz(115_200));
     let uart = UartDriver::new(
         peripherals.uart1,
@@ -30,8 +23,6 @@ fn main() -> anyhow::Result<()> {
     )
     .unwrap();
 
-    let mut uart_buf: Vec<u8> = Vec::new();
-
     let _cli_thread = std::thread::Builder::new()
         .stack_size(CLI_STACK_SIZE)
         .spawn(move || cli::uart_thread(uart))
@@ -40,29 +31,4 @@ fn main() -> anyhow::Result<()> {
     loop {
         FreeRtos::delay_ms(100);
     }
-    //loop {
-    //    let mut buf: [u8; 100] = [0; 100];
-    //    match uart.read(&mut buf, NON_BLOCK) {
-    //        Ok(x) => {
-    //            if x > 0 {
-    //                uart_buf.push(buf[0]);
-    //            }
-    //        }
-    //        Err(_) => {}
-    //    }
-
-    //    if uart_buf.len() > 0 {
-    //        if uart_buf[uart_buf.len() - 1] == 13 {
-    //            println!("{:?}", uart_buf);
-    //            match uart.write(&uart_buf) {
-    //                Ok(_) => uart_buf.clear(),
-    //                Err(_) => {}
-    //            }
-
-    //            cli::cli_hello("world");
-    //        }
-    //    }
-
-    //    FreeRtos::delay_ms(10);
-    //}
 }
