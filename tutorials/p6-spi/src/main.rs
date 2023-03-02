@@ -1,18 +1,14 @@
 use embedded_sdmmc::*;
 use esp_idf_hal::{
-    adc::{self, *},
-    delay::FreeRtos,
     gpio::*,
     peripherals::Peripherals,
     prelude::*,
-    spi::config::Duplex,
-    spi::*,
+    spi::{config::Duplex, *},
 };
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
 use esp_println::println;
-use std::time::*;
 
-const FILE_TO_CREATE: &'static str = "logs.txt";
+const FILE_NAME: &'static str = "logs.txt";
 
 pub struct SdMmcClock;
 
@@ -34,25 +30,16 @@ fn main() {
     // implemented by esp-idf-sys might not link properly. See https://github.com/esp-rs/esp-idf-template/issues/71
     esp_idf_sys::link_patches();
 
-    println!("Starting 6-spi\nThis application writes ADC readings to a micro-SD card\n");
+    println!("Starting 6-spi\nThis application writes to a micro-SD card\n");
 
     let peripherals = Peripherals::take().unwrap();
-
-    // ADC init
-    let mut adc1 = AdcDriver::new(
-        peripherals.adc1,
-        &adc::config::Config::new().calibration(true),
-    )
-    .unwrap();
-    let mut a1_ch0 =
-        adc::AdcChannelDriver::<_, adc::Atten11dB<adc::ADC1>>::new(peripherals.pins.gpio0).unwrap();
 
     // SPI sd card init
     let driver = SpiDriver::new(
         peripherals.spi2,
         peripherals.pins.gpio8,       // SCK
-        peripherals.pins.gpio7,       // MOSI
-        Some(peripherals.pins.gpio9), // MISO
+        peripherals.pins.gpio7,       // PICO
+        Some(peripherals.pins.gpio9), // POCI
         Dma::Disabled,
     )
     .unwrap();
@@ -64,50 +51,32 @@ fn main() {
     let sdmmc_cs = PinDriver::output(peripherals.pins.gpio6).unwrap();
     let mut sdmmc_spi = embedded_sdmmc::SdMmcSpi::new(spi, sdmmc_cs);
 
-    // keep track of the time for logging
-    let start_time = Instant::now();
+    match sdmmc_spi.acquire() {
+        Ok(block) => {
+            let mut controller = embedded_sdmmc::Controller::new(block, SdMmcClock);
 
-    loop {
-        match adc1.read(&mut a1_ch0) {
-            Ok(adc_reading) => {
-                match sdmmc_spi.acquire() {
-                    Ok(block) => {
-                        let mut controller = embedded_sdmmc::Controller::new(block, SdMmcClock);
+            let mut volume = controller.get_volume(embedded_sdmmc::VolumeIdx(0)).unwrap();
 
-                        let mut volume =
-                            controller.get_volume(embedded_sdmmc::VolumeIdx(0)).unwrap();
+            let root_dir = controller.open_root_dir(&volume).unwrap();
 
-                        let root_dir = controller.open_root_dir(&volume).unwrap();
+            let mut f = controller
+                .open_file_in_dir(
+                    &mut volume,
+                    &root_dir,
+                    FILE_NAME,
+                    Mode::ReadWriteCreateOrAppend,
+                )
+                .unwrap();
 
-                        let mut f = controller
-                            .open_file_in_dir(
-                                &mut volume,
-                                &root_dir,
-                                FILE_TO_CREATE,
-                                Mode::ReadWriteCreateOrAppend,
-                            )
-                            .unwrap();
+            f.seek_from_end(0).unwrap();
+            let log_string: String = "Hello SD card!\n".to_string();
+            let _bytes_written = controller
+                .write(&mut volume, &mut f, &log_string.as_bytes()[..])
+                .unwrap();
+            println!("String written: {log_string}");
 
-                        f.seek_from_end(0).unwrap();
-                        // Create log string
-                        let mut log_string: String = start_time.elapsed().as_millis().to_string();
-                        log_string.push_str(&",A1_CH0,".to_string());
-                        log_string.push_str(&(adc_reading as u32).to_string());
-                        log_string.push('\n');
-                        // Write the string to the SD card
-                        let _bytes_written = controller
-                            .write(&mut volume, &mut f, &log_string.as_bytes()[..])
-                            .unwrap();
-                        println!("String written: {log_string}");
-
-                        controller.close_file(&volume, f).unwrap();
-                    }
-                    Err(e) => println!("Error acquire SPI bus {:?}", e),
-                };
-            }
-            Err(e) => println!("err reading A1_CH0: {e}\n"),
+            controller.close_file(&volume, f).unwrap();
         }
-
-        FreeRtos::delay_ms(500);
-    }
+        Err(e) => println!("Error acquire SPI bus {:?}", e),
+    };
 }
