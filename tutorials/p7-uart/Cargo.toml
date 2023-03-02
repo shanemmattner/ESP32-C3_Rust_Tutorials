@@ -1,5 +1,5 @@
 [package]
-name = "p7-uart"
+name = "uart"
 version = "0.1.0"
 authors = ["Shane <shanemmattner@gmail.com>"]
 edition = "2021"

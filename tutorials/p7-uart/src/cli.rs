@@ -81,6 +81,6 @@ pub fn uart_thread(uart: uart::UartDriver) {
             uart_buf.clear();
         }
 
-        FreeRtos::delay_ms(100);
+        FreeRtos::delay_ms(50);
     }
 }
