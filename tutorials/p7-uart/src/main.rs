@@ -1,9 +1,11 @@
-mod cli;
-
-use esp_idf_hal::{delay::FreeRtos, gpio, peripherals::Peripherals, prelude::*, uart::*};
+use esp_idf_hal::{
+    delay::{FreeRtos, NON_BLOCK},
+    gpio,
+    peripherals::Peripherals,
+    prelude::*,
+    uart::*,
+};
 use esp_idf_sys as _;
-
-static CLI_STACK_SIZE: usize = 5000;
 
 fn main() -> anyhow::Result<()> {
     esp_idf_sys::link_patches();
@@ -23,12 +25,25 @@ fn main() -> anyhow::Result<()> {
     )
     .unwrap();
 
-    let _cli_thread = std::thread::Builder::new()
-        .stack_size(CLI_STACK_SIZE)
-        .spawn(move || cli::uart_thread(uart))
-        .unwrap();
+    let mut uart_buf: Vec<u8> = Vec::new();
 
     loop {
+        let mut buf: [u8; 10] = [0; 10];
+        match uart.read(&mut buf, NON_BLOCK) {
+            Ok(x) => {
+                if x > 0 {
+                    uart_buf.push(buf[0]);
+                    if uart_buf[uart_buf.len() - 1] == 13 {
+                        match uart.write(&uart_buf) {
+                            Ok(_) => println!("{:?} written", buf),
+                            Err(_) => {}
+                        }
+                        uart_buf.clear();
+                    }
+                }
+            }
+            Err(_) => {}
+        }
         FreeRtos::delay_ms(100);
     }
 }
