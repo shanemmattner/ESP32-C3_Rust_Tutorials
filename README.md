@@ -4,7 +4,17 @@ This will be a series of `embedded Rust tutorials` using the [Olimex ESP32-C3 De
 
 We tutorial below has a `YouTube video` link where I will start with a blank project and implement a peripherals using the latest [esp-idf-hal](https://github.com/esp-rs/esp-idf-hal) version. 
 
-## Tutorials
+## Project 0: Data Logger
+This inroductory project will cover basic peripheral usage for the ESP32-C3 to implement the following features:
+
+- 4 ADC's
+- 16 Digital IO
+- SD card logging
+- UART CLI Shell
+- Neopixel status indicator
+- Unit tests
+
+### Peripheral Tutorials
 - [p0-output](https://youtu.be/vUSHaogHs1s): Make the "Hellow World" of embedded systems: a `Blinky application` to periodically turn an LED on and off
 - [p1-input](https://youtu.be/2IY27b9TT2k): Add a button to turn the blinking logic on and off
 - [p2-threads](https://youtu.be/ht5t39dEa4E): Move the button logic and LED logic to their own thread and pass messages between threads with [crossbeams channel](https://docs.rs/crossbeam/latest/crossbeam/channel/index.html)
@@ -13,17 +23,6 @@ We tutorial below has a `YouTube video` link where I will start with a blank pro
 - [p5-i2c](https://youtu.be/NvEnHJPpavo): Configure and use a [SX1509 GPIO Expander](https://www.sparkfun.com/products/13601) through [I2C](https://learn.sparkfun.com/tutorials/i2c)
 - [p6-spi](https://youtu.be/PUL8ehH6eUg): Write a string to a uSD card over SPI using [embedded-sdmmc](https://github.com/rust-embedded-community/embedded-sdmmc-rs) crate
 - [p7-uart](tbd): Receiver characters from the UART and send them back when we detect a [carriage return](https://developer.mozilla.org/en-US/docs/Glossary/CRLF)
-
-
-## Project 0: Data Logger Application
-This project will use the ESP32-C3 to gather analog and digital data.
-
-- 4 ADC's
-- 16 Digital IO
-- SD card logging
-- UART CLI Shell
-- Neopixel status indicator
-
 
 <details>
   <summary>Development environment setup</summary>
@@ -56,18 +55,21 @@ espmonitor /dev/ttyACM0
 
 <details>
   <summary>Roadmap</summary>
-  
-- Logging (https://github.com/knurling-rs/defmt)
-- Debug project (https://github.com/knurling-rs/probe-run)
-- MQTT transfer
-- Pub/sub (https://github.com/jakmeier/nuts)
-- Timer to generate blinky
-- DMA
-- OTA
-- CLI
-- UART
-- Crash dumps and diagnostics
 
+For the second project I'm thinking to add in more advanced features and ideas listed below.  Any input is welcome.
+- Debugging
+- Logging
+- FSM/HSM
+- Wifi
+- MQTT
+- OTA
+- Pub/sub
+- Crash dumps & diagnostics
+
+Other features I'd like to add but don't have a clear example for yet:
+- DMA
+- Timer usage
+  
 </details>
 
 
