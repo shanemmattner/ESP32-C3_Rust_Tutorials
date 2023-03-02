@@ -7,6 +7,8 @@ use esp_idf_hal::{
 };
 use esp_idf_sys as _;
 
+const CR: u8 = 13;
+
 fn main() {
     esp_idf_sys::link_patches();
 
@@ -25,20 +27,21 @@ fn main() {
     )
     .unwrap();
 
-    let mut uart_buf: Vec<u8> = Vec::new();
+    let mut cli_buf: Vec<u8> = Vec::new();
 
     loop {
         let mut buf: [u8; 10] = [0; 10];
         match uart.read(&mut buf, NON_BLOCK) {
-            Ok(x) => {
-                if x > 0 {
-                    uart_buf.push(buf[0]);
-                    if uart_buf[uart_buf.len() - 1] == 13 {
-                        match uart.write(&uart_buf) {
-                            Ok(_) => println!("{:?} written", buf),
+            Ok(bytes_read) => {
+                if bytes_read > 0 {
+                    let b = buf[0];
+                    cli_buf.push(b);
+                    if b == CR {
+                        match uart.write(&cli_buf) {
+                            Ok(_) => println!("{:?} written", cli_buf),
                             Err(_) => {}
                         }
-                        uart_buf.clear();
+                        cli_buf.clear();
                     }
                 }
             }
