@@ -1,4 +1,5 @@
-use arrayvec::ArrayVec;
+mod cli;
+
 use esp_idf_hal::{
     delay::{FreeRtos, NON_BLOCK},
     gpio,
@@ -6,7 +7,7 @@ use esp_idf_hal::{
     prelude::*,
     uart::*,
 };
-use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
+use esp_idf_sys as _;
 
 fn main() -> anyhow::Result<()> {
     esp_idf_sys::link_patches();
@@ -47,6 +48,8 @@ fn main() -> anyhow::Result<()> {
                     Ok(_) => uart_buf.clear(),
                     Err(_) => {}
                 }
+
+                cli::cli_hello("world");
             }
         }
 

@@ -19,7 +19,7 @@ pio = ["esp-idf-sys/pio"]
 esp-idf-sys = { version = "0.32", features = ["binstart"] }
 esp-idf-hal = "0.40"
 anyhow = "1"
-arrayvec = "0.7.2"
+lazy_static = "1.4.0"
 
 [build-dependencies]
 embuild = "0.30.4"
