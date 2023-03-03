@@ -1,10 +1,10 @@
 # ESP32-C3 Rust Tutorials
 
-This will be a series of `embedded Rust tutorials` using the [Olimex ESP32-C3 Dev kit](https://www.olimex.com/Products/IoT/ESP32-C3/ESP32-C3-DevKit-Lipo/open-source-hardware). After implementing various peripherals we will build a larger project: `ESP32-C3 Data Logger Application`.
+This will be a series of `embedded Rust tutorials` using the [ESP32-C3](https://www.espressif.com/en/products/socs/esp32-c3). We'll work towards making a `remote data logger` by implementing various peripherals we will build the larger project.
 
-We tutorial below has a `YouTube video` link where I will start with a blank project and implement a peripherals using the latest [esp-idf-hal](https://github.com/esp-rs/esp-idf-hal) version. 
+Each tutorial below has a `YouTube video` link where I will start with a blank project and implement a peripherals using the latest [esp-idf-hal](https://github.com/esp-rs/esp-idf-hal) version. 
 
-## Project 0: Data Logger
+## Project 0: Remote Data Logger
 This inroductory project will cover basic peripheral usage for the ESP32-C3 to implement the following features:
 
 - 4 ADC's
@@ -22,6 +22,12 @@ This inroductory project will cover basic peripheral usage for the ESP32-C3 to i
 - [p5-i2c](https://youtu.be/NvEnHJPpavo): Configure and use a [SX1509 GPIO Expander](https://www.sparkfun.com/products/13601) through [I2C](https://learn.sparkfun.com/tutorials/i2c)
 - [p6-spi](https://youtu.be/PUL8ehH6eUg): Write a string to a uSD card over SPI using [embedded-sdmmc](https://github.com/rust-embedded-community/embedded-sdmmc-rs) crate
 - [p7-uart](https://youtu.be/-xEivxWe29M): Receiver characters from the UART and send them back when we detect a [carriage return](https://developer.mozilla.org/en-US/docs/Glossary/CRLF)
+
+### Project Tutorials
+- [p8-cli-shell](): Create a simple [CLI shell](https://interrupt.memfault.com/blog/firmware-shell) to interact with the device
+- [p9-adc-stream](): Configure ADC's to continuously read and make that data available to other parts of the application through a mutex
+- [p10-log-values](): Log all the values read from the ADC's
+- [p11-digital-stream(): Continuously read the SX1509 inputs and log to SD card
 
 <details>
   <summary>Development environment setup</summary>
