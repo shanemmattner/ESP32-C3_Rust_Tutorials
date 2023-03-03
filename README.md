@@ -12,7 +12,6 @@ This inroductory project will cover basic peripheral usage for the ESP32-C3 to i
 - SD card logging
 - UART CLI Shell
 - Neopixel status indicator
-- Unit tests
 
 ### Peripheral Tutorials
 - [p0-output](https://youtu.be/vUSHaogHs1s): Make the "Hellow World" of embedded systems: a `Blinky application` to periodically turn an LED on and off
@@ -22,7 +21,7 @@ This inroductory project will cover basic peripheral usage for the ESP32-C3 to i
 - [p4-neopixel](https://youtu.be/VIVML4cioIo): Use the ADC reading to change the color of a [neopixel](https://www.adafruit.com/category/168) 
 - [p5-i2c](https://youtu.be/NvEnHJPpavo): Configure and use a [SX1509 GPIO Expander](https://www.sparkfun.com/products/13601) through [I2C](https://learn.sparkfun.com/tutorials/i2c)
 - [p6-spi](https://youtu.be/PUL8ehH6eUg): Write a string to a uSD card over SPI using [embedded-sdmmc](https://github.com/rust-embedded-community/embedded-sdmmc-rs) crate
-- [p7-uart](tbd): Receiver characters from the UART and send them back when we detect a [carriage return](https://developer.mozilla.org/en-US/docs/Glossary/CRLF)
+- [p7-uart](https://youtu.be/-xEivxWe29M): Receiver characters from the UART and send them back when we detect a [carriage return](https://developer.mozilla.org/en-US/docs/Glossary/CRLF)
 
 <details>
   <summary>Development environment setup</summary>
