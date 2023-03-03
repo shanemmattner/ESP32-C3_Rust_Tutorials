@@ -17,10 +17,13 @@ fn main() {
     loop {
         let mut dht11_delay = Ets;
         match dht11.perform_measurement(&mut dht11_delay) {
-            Ok(measurement) => println!("{:?}", measurement),
+            Ok(measurement) => println!(
+                "temp: {}C, humidity: {}%",
+                (measurement.temperature as f32 / 10.0),
+                (measurement.humidity as f32 / 10.0)
+            ),
             Err(e) => println!("{:?}", e),
         }
-        FreeRtos::delay_ms(1000);
+        FreeRtos::delay_ms(2000);
     }
 }
-
