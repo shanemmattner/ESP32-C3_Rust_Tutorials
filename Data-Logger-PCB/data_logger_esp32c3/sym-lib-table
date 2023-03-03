@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name "1_project_specific")(type "KiCad")(uri "${KIPRJMOD}/../kicad_libraries/remote_data_logger.kicad_sym")(options "")(descr ""))
+  (lib (name "1_espressif")(type "KiCad")(uri "${KIPRJMOD}/../../submodules/kicad-libraries/libraries/Espressif.kicad_sym")(options "")(descr ""))
+)

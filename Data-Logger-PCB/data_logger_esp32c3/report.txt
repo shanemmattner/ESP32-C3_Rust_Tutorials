@@ -1,0 +1,13 @@
+Plotted to '/home/shane/Desktop/remote_data_logger/hardware/data_logger_esp32c3/gerbers/data_logger_esp32c3-F_Cu.gbr'.
+Plotted to '/home/shane/Desktop/remote_data_logger/hardware/data_logger_esp32c3/gerbers/data_logger_esp32c3-In1_Cu.gbr'.
+Plotted to '/home/shane/Desktop/remote_data_logger/hardware/data_logger_esp32c3/gerbers/data_logger_esp32c3-In2_Cu.gbr'.
+Plotted to '/home/shane/Desktop/remote_data_logger/hardware/data_logger_esp32c3/gerbers/data_logger_esp32c3-B_Cu.gbr'.
+Plotted to '/home/shane/Desktop/remote_data_logger/hardware/data_logger_esp32c3/gerbers/data_logger_esp32c3-F_Paste.gbr'.
+Plotted to '/home/shane/Desktop/remote_data_logger/hardware/data_logger_esp32c3/gerbers/data_logger_esp32c3-B_Paste.gbr'.
+Plotted to '/home/shane/Desktop/remote_data_logger/hardware/data_logger_esp32c3/gerbers/data_logger_esp32c3-F_Silkscreen.gbr'.
+Plotted to '/home/shane/Desktop/remote_data_logger/hardware/data_logger_esp32c3/gerbers/data_logger_esp32c3-B_Silkscreen.gbr'.
+Plotted to '/home/shane/Desktop/remote_data_logger/hardware/data_logger_esp32c3/gerbers/data_logger_esp32c3-F_Mask.gbr'.
+Plotted to '/home/shane/Desktop/remote_data_logger/hardware/data_logger_esp32c3/gerbers/data_logger_esp32c3-B_Mask.gbr'.
+Plotted to '/home/shane/Desktop/remote_data_logger/hardware/data_logger_esp32c3/gerbers/data_logger_esp32c3-Edge_Cuts.gbr'.
+Created Gerber job file '/home/shane/Desktop/remote_data_logger/hardware/data_logger_esp32c3/gerbers/data_logger_esp32c3-job.gbrjob'.
+Info: Done.
