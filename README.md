@@ -18,7 +18,7 @@ This inroductory project will cover basic peripheral usage for the ESP32-C3 to i
 - [p1-input](https://youtu.be/2IY27b9TT2k): Add a button to turn the blinking logic on and off
 - [p2-threads](https://youtu.be/ht5t39dEa4E): Move the button logic and LED logic to their own thread and pass messages between threads with [crossbeams channel](https://docs.rs/crossbeam/latest/crossbeam/channel/index.html)
 - [p3-adc](https://youtu.be/07SVj6R_AhA): Read an [analog-to-digital converter channel](https://en.wikipedia.org/wiki/Analog-to-digital_converter) and print out the value
-- [p4-neopixel](https://youtu.be/VIVML4cioIo): Use the ADC reading to change the color of a [neopixel](https://www.adafruit.com/category/168) 
+- [p4-dht11](tbd): Read a [DHT11](https://www.mouser.com/datasheet/2/758/DHT11-Technical-Data-Sheet-Translated-Version-1143054.pdf) for temperature and humidity data  
 - [p5-i2c](https://youtu.be/NvEnHJPpavo): Configure and use a [SX1509 GPIO Expander](https://www.sparkfun.com/products/13601) through [I2C](https://learn.sparkfun.com/tutorials/i2c)
 - [p6-spi](https://youtu.be/PUL8ehH6eUg): Write a string to a uSD card over SPI using [embedded-sdmmc](https://github.com/rust-embedded-community/embedded-sdmmc-rs) crate
 - [p7-uart](https://youtu.be/-xEivxWe29M): Receiver characters from the UART and send them back when we detect a [carriage return](https://developer.mozilla.org/en-US/docs/Glossary/CRLF)
