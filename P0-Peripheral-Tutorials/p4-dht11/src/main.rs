@@ -1,30 +1,50 @@
-use dht11::Dht11;
+use anyhow::Result;
 use esp_idf_hal::{
     delay::{Ets, FreeRtos},
     gpio::*,
-    peripherals::Peripherals,
-    prelude::*,
+    prelude::Peripherals,
 };
-use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
+use tracing::{event, Level};
 
-fn main() {
-    // It is necessary to call this function once. Otherwise some patches to the runtime
-    // implemented by esp-idf-sys might not link properly. See https://github.com/esp-rs/esp-idf-template/issues/71
+fn main() -> Result<()> {
     esp_idf_sys::link_patches();
+    tracing_subscriber::fmt::init();
 
     let peripherals = Peripherals::take().unwrap();
-    let dht11_pin = PinDriver::output_od(peripherals.pins.gpio5).unwrap();
 
-    let mut dht11 = Dht11::new(dht11_pin);
+    //let dht11_pin = PinDriver::input_output(peripherals.pins.gpio5.downgrade()).unwrap();
+    let dht11_pin = PinDriver::output(peripherals.pins.gpio5.downgrade_output()).unwrap();
+
+    let _blinky_thread = std::thread::Builder::new()
+        .stack_size(5000)
+        .spawn(move || dht11_thread_function(dht11_pin))
+        .unwrap();
 
     loop {
-        println!("starting measurements");
-        let mut delay = Ets;
-        match dht11.perform_measurement(&mut delay) {
-            Ok(measurement) => println!("measurement: {measurement}"),
-            Err(e) => println!("err: {e}"),
-        }
+        //event!(Level::DEBUG, "starting mesurements");
 
+        //  let measurement = dht11.measure()?;
+        //let measurement = 0;
+        //event!(Level::INFO, %measurement);
         FreeRtos::delay_ms(1000);
     }
 }
+
+// Thread function that will blink the LED on/off every 500ms
+fn dht11_thread_function(mut led_pin: PinDriver<AnyOutputPin, Output>) {
+    led_pin.set_low().unwrap();
+
+    loop {
+        // attempt to read the dht11
+        //
+        // 1. MCU sets pin low for >18ms
+        //led_pin.set_low().unwrap();
+        println!("LED ON");
+        FreeRtos::delay_ms(1000);
+
+        //led_pin.set_high().unwrap();
+        println!("LED OFF");
+        FreeRtos::delay_ms(1000);
+    }
+}
+

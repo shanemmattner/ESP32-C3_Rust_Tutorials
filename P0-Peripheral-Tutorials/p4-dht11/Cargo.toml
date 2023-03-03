@@ -16,11 +16,12 @@ opt-level = "z"
 pio = ["esp-idf-sys/pio"]
 
 [dependencies]
-esp-idf-sys = { version = "0.32", features = ["binstart"] }
-esp-idf-hal = "0.40"
-anyhow = "1"
+anyhow = "1.0.68"
 embedded-hal = "0.2.7"
-dht11 = "0.3.1"
+esp-idf-hal = "0.40.1"
+esp-idf-sys = { version = "0.32.1", features = ["binstart"] }
+tracing = "0.1.37"
+tracing-subscriber = "0.3.16"
 
 [build-dependencies]
 embuild = "0.30.4"
