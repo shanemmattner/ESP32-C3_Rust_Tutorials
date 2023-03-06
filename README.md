@@ -1,17 +1,28 @@
 # ESP32-C3 Rust Tutorials
 
-This will be a series of `embedded Rust tutorials` using the [ESP32-C3](https://www.espressif.com/en/products/socs/esp32-c3). We'll work towards making a `remote data logger` by implementing various peripherals we will build the larger project.
+Various `embedded Rust tutorials` using the [ESP32-C3](https://www.espressif.com/en/products/socs/esp32-c3). We'll work towards making a `remote data logger` by first implementing peripherals we will need to build the larger project.
 
 Each tutorial below has a `YouTube video` link where I will start with a blank project and implement a peripherals using the latest [esp-idf-hal](https://github.com/esp-rs/esp-idf-hal) version. 
 
-## Project 0: Remote Data Logger
-This inroductory project will cover basic peripheral usage for the ESP32-C3 to implement the following features:
+## Repo organization
 
+- [P0-Peripheral-Tutorials](https://github.com/shanemmattner/ESP32-C3_Rust_Tutorials/tree/main/P0-Peripheral-Tutorials): Short tutorials on using various peripherals. This is the code for the [YouTube playlist](https://youtube.com/playlist?list=PLkch9g9DEE0Lkm1LqcD7pZNDmXEczOo-a)
+- [P0-Project-Tutorials](https://github.com/shanemmattner/ESP32-C3_Rust_Tutorials/tree/main/P0-Project-Tutorials): Longer tutorials implementing some feature that will go into our data logger project
+- [WIP](https://github.com/shanemmattner/ESP32-C3_Rust_Tutorials/tree/main/WIP): Half-baked crates that may have some useful code in the future
+- [docs](https://github.com/shanemmattner/ESP32-C3_Rust_Tutorials/tree/main/docs): Various datasheets, books, and technical manuals
+- [submodules](https://github.com/shanemmattner/ESP32-C3_Rust_Tutorials/tree/main/docs): All of the submodules for this repository.
+   - <b>[referecnce projects](https://github.com/shanemmattner/ESP32-C3_Rust_Tutorials/tree/main/submodules/reference_projects)</b>: A huge collection of embedded Rust projects that I copy code from
+- [Data-Logger-PCB](https://github.com/shanemmattner/ESP32-C3_Rust_Tutorials/tree/main/Data-Logger-PCB): KiCAD hardware designs for ESP32-C3 data logger PCB
+
+
+
+## Project P0: Remote Data Logger MVP
+[Minimum viable product](https://en.wikipedia.org/wiki/Minimum_viable_product) project where we'll implement all the peripherals and features we need for the data logger
 - 4 ADC's
-- 16 Digital IO
+- 16 Digital I/O
+- DHT11
 - SD card logging
 - UART CLI Shell
-- Neopixel status indicator
 
 ### Peripheral Tutorials
 - [p0-output](https://youtu.be/vUSHaogHs1s): Make the "Hellow World" of embedded systems: a `Blinky application` to periodically turn an LED on and off
@@ -28,6 +39,21 @@ This inroductory project will cover basic peripheral usage for the ESP32-C3 to i
 - [p9-adc-stream](): Configure ADC's to continuously read and make that data available to other parts of the application through a mutex
 - [p10-log-values](): Log all the values read from the ADC's
 - [p11-digital-stream(): Continuously read the SX1509 inputs and log to SD card
+
+## Project P1: 
+For the next part of this project (`P1`) we will add in features listed below:
+- Debugging
+- Logging
+- FSM/HSM
+- Wifi
+- MQTT
+- OTA
+- Pub/sub
+- Crash dumps & diagnostics
+
+Other features I'd like to add but don't have a clear example for yet:
+- DMA
+- Timer usage
 
 <details>
   <summary>Development environment setup</summary>
@@ -57,25 +83,6 @@ espflash /dev/ttyACM0 target/riscv32imc-esp-espidf/debug/project
 espmonitor /dev/ttyACM0
 ```
  </details>
-
-<details>
-  <summary>Roadmap</summary>
-
-For the second project I'm thinking to add in more advanced features and ideas listed below.  Any input is welcome.
-- Debugging
-- Logging
-- FSM/HSM
-- Wifi
-- MQTT
-- OTA
-- Pub/sub
-- Crash dumps & diagnostics
-
-Other features I'd like to add but don't have a clear example for yet:
-- DMA
-- Timer usage
-  
-</details>
 
 
 <details>
