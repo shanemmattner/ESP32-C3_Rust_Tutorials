@@ -6,8 +6,7 @@ Each tutorial below has a `YouTube video` link where I will start with a blank p
 
 ## Repo organization
 
-- [P0-Peripheral-Tutorials](https://github.com/shanemmattner/ESP32-C3_Rust_Tutorials/tree/main/P0-Peripheral-Tutorials): Short tutorials on using various peripherals. This is the code for the [YouTube playlist](https://youtube.com/playlist?list=PLkch9g9DEE0Lkm1LqcD7pZNDmXEczOo-a)
-- [P0-Project-Tutorials](https://github.com/shanemmattner/ESP32-C3_Rust_Tutorials/tree/main/P0-Project-Tutorials): Longer tutorials implementing some feature that will go into our data logger project
+- [Tutorials](https://github.com/shanemmattner/ESP32-C3_Rust_Tutorials/tree/main/Tutorials): Source code for the [YouTube tutorials](https://youtube.com/playlist?list=PLkch9g9DEE0Lkm1LqcD7pZNDmXEczOo-a)
 - [WIP](https://github.com/shanemmattner/ESP32-C3_Rust_Tutorials/tree/main/WIP): Half-baked crates that may have some useful code in the future
 - [docs](https://github.com/shanemmattner/ESP32-C3_Rust_Tutorials/tree/main/docs): Various datasheets, books, and technical manuals
 - [submodules](https://github.com/shanemmattner/ESP32-C3_Rust_Tutorials/tree/main/docs): All of the submodules for this repository.
@@ -16,7 +15,7 @@ Each tutorial below has a `YouTube video` link where I will start with a blank p
 
 
 
-## Project P0: Remote Data Logger MVP
+## Part 1: Remote Data Logger MVP
 [Minimum viable product](https://en.wikipedia.org/wiki/Minimum_viable_product) project where we'll implement all the peripherals and features we need for the data logger
 - 4 ADC's
 - 16 Digital I/O
@@ -34,11 +33,11 @@ Each tutorial below has a `YouTube video` link where I will start with a blank p
 - [p6-spi](https://youtu.be/PUL8ehH6eUg): Write a string to a uSD card over SPI using [embedded-sdmmc](https://github.com/rust-embedded-community/embedded-sdmmc-rs) crate
 - [p7-uart](https://youtu.be/-xEivxWe29M): Receiver characters from the UART and send them back when we detect a [carriage return](https://developer.mozilla.org/en-US/docs/Glossary/CRLF)
 
-### Project Tutorials
-- [p8-cli-shell](): Create a simple [CLI shell](https://interrupt.memfault.com/blog/firmware-shell) to interact with the device
+### Application Tutorials
+- [p8-cli-shell](): Create a simple [CLI shell](https://interrupt.memfault.com/blog/firmware-shell) to interact with the ESP32-C3 over UART 
 - [p9-adc-stream](): Configure ADC's to continuously read and make that data available to other parts of the application through a mutex
 - [p10-log-values](): Log all the values read from the ADC's
-- [p11-digital-stream(): Continuously read the SX1509 inputs and log to SD card
+- [p11-digital-stream](): Continuously read the SX1509 inputs and log to SD card
 
 ## Project P1: 
 For the next part of this project (`P1`) we will add in features listed below:
@@ -58,8 +57,7 @@ Other features I'd like to add but don't have a clear example for yet:
 <details>
   <summary>Development environment setup</summary>
   
-1. [Install](https://github.com/esp-rs/rust-build) Rust and Xtensa build tools
-    - Make sure to `sudo chmod +x export-esp.sh`
+1. [Install Rust](https://esp-rs.github.io/book/installation/installation.html) and associated build tools
 2. Start a project using the [esp-idf-template](https://github.com/esp-rs/esp-idf-template) from the private repo home `dir`. I chose all the default options
 ```
 # STD Project
