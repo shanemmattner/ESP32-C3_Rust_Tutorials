@@ -15,7 +15,7 @@ Each tutorial below has a `YouTube video` link where I will start with a blank p
 
 
 
-## Part 1: Remote Data Logger MVP
+## Part 0: Remote Data Logger MVP
 [Minimum viable product](https://en.wikipedia.org/wiki/Minimum_viable_product) project where we'll implement all the peripherals and features we need for the data logger
 - 4 ADC's
 - 16 Digital I/O
@@ -39,8 +39,8 @@ Each tutorial below has a `YouTube video` link where I will start with a blank p
 - [p10-log-values](): Log all the values read from the ADC's
 - [p11-digital-stream](): Continuously read the SX1509 inputs and log to SD card
 
-## Project P1: 
-For the next part of this project (`P1`) we will add in features listed below:
+## Part 1: 
+For the next part of the project we will add in features listed below:
 - Debugging
 - Logging
 - FSM/HSM
