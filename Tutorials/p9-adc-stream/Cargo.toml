@@ -21,6 +21,9 @@ esp-idf-hal = "0.40"
 anyhow = "1"
 lazy_static = "1.4.0"
 shell-words = "1.0.0"
+statig = "0.2.0"
+esp-println = { version = "0.3.1", features = ["esp32c3"] }
+
 
 [build-dependencies]
 embuild = "0.30.4"
