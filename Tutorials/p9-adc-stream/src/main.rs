@@ -37,6 +37,7 @@ fn main() -> anyhow::Result<()> {
         &adc::config::Config::new().calibration(true),
     )
     .unwrap();
+
     let mut a1_ch0 =
         adc::AdcChannelDriver::<_, adc::Atten11dB<adc::ADC1>>::new(peripherals.pins.gpio0).unwrap();
     let mut a1_ch2 =
@@ -46,7 +47,7 @@ fn main() -> anyhow::Result<()> {
     let mut a1_ch4 =
     adc::AdcChannelDriver::<_, adc::Atten11dB<adc::ADC1>>::new(peripherals.pins.gpio4).unwrap();
 
-    // let adc_channels:[adc::AdcChannelDriver<gpio::AnyIOPin,adc::Attenuation>;ADC_CHANNEL_SIZE] = [a1_ch0,a1_ch2,a1_ch3,a1_ch4];
+    let adc_channels:[adc::AdcChannelDriver<_, adc::Atten11dB<adc::ADC1>>;ADC_CHANNEL_SIZE] = [a1_ch0,a1_ch2,a1_ch3,a1_ch4];
     
     loop {
         FreeRtos::delay_ms(100);
