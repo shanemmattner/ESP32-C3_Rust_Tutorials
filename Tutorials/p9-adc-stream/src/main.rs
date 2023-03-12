@@ -35,39 +35,68 @@ fn main() -> anyhow::Result<()> {
     // Create ADC channel driver
     let a1_ch0 =
         adc::AdcChannelDriver::<_, adc::Atten11dB<adc::ADC1>>::new(peripherals.pins.gpio0).unwrap();
+    let a1_ch2 =
+    adc::AdcChannelDriver::<_, adc::Atten11dB<adc::ADC1>>::new(peripherals.pins.gpio2).unwrap();
+    let a1_ch3 =
+    adc::AdcChannelDriver::<_, adc::Atten11dB<adc::ADC1>>::new(peripherals.pins.gpio3).unwrap();
+    let a1_ch4 =
+    adc::AdcChannelDriver::<_, adc::Atten11dB<adc::ADC1>>::new(peripherals.pins.gpio4).unwrap();
+   
     let adc1 = adc::AdcDriver::new(
         peripherals.adc1,
         &adc::config::Config::new().calibration(true),
     )
     .unwrap();
 
+    print_type_of(&a1_ch0);
+    print_type_of(&a1_ch2);
+    print_type_of(&a1_ch3);
+    print_type_of(&a1_ch4);
     // print_type_of(&peripherals.pins.gpio0);
 
-    let mut test = adc_driver::adc_stream_t {
+    let mut test = adc_driver::adc_stream {
         adc :  adc1,
-        pin :  a1_ch0
+        a1_ch0 :  a1_ch0,
+        a1_ch2 :  a1_ch2,
+        a1_ch3 :  a1_ch3,
+        a1_ch4 :  a1_ch4,
     };
-    match test.adc.read(&mut test.pin)
-    {
-        Ok(x) => {
-            println!("reading: {x}\n");
-        }
-
-        Err(e) => println!("err reading ADC: {e}\n"),
-        }
-    // adc_driver::adc_init(adc1,a1_ch0);
-    // let mut a1_ch0 =
-    //     adc::AdcChannelDriver::<_, adc::Atten11dB<adc::ADC1>>::new(peripherals.pins.gpio0).unwrap();
-    // let mut a1_ch2 =
-    // adc::AdcChannelDriver::<_, adc::Atten11dB<adc::ADC1>>::new(peripherals.pins.gpio2).unwrap();
-    // let mut a1_ch3 =
-    // adc::AdcChannelDriver::<_, adc::Atten11dB<adc::ADC1>>::new(peripherals.pins.gpio3).unwrap();
-    // let mut a1_ch4 =
-    // adc::AdcChannelDriver::<_, adc::Atten11dB<adc::ADC1>>::new(peripherals.pins.gpio4).unwrap();
 
     
     loop {
-        FreeRtos::delay_ms(100);
+        FreeRtos::delay_ms(1000);
+        match test.adc.read(&mut test.a1_ch0)
+        {
+            Ok(x) => {
+                println!("a1_ch0: {x}\n");
+            }
+    
+            Err(e) => println!("err reading a1_ch0: {e}\n"),
+        }
+        match test.adc.read(&mut test.a1_ch2)
+        {
+            Ok(x) => {
+                println!("a1_ch2: {x}\n");
+            }
+    
+            Err(e) => println!("err reading a1_ch2: {e}\n"),
+        }
+        match test.adc.read(&mut test.a1_ch3)
+        {
+            Ok(x) => {
+                println!("a1_ch3: {x}\n");
+            }
+    
+            Err(e) => println!("err reading a1_ch3: {e}\n"),
+        }
+        match test.adc.read(&mut test.a1_ch4)
+        {
+            Ok(x) => {
+                println!("a1_ch4: {x}\n");
+            }
+    
+            Err(e) => println!("err reading a1_ch4: {e}\n"),
+        }
     }
 }
 
