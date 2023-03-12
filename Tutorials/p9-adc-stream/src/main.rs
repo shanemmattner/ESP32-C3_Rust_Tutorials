@@ -2,7 +2,13 @@ mod cli;
 mod adc_driver;
 
 
-use esp_idf_hal::{delay::FreeRtos, adc, gpio::{self,AnyIOPin, AnyOutputPin, IOPin, Input, Output, OutputPin, PinDriver, Pull}, peripherals::Peripherals, prelude::*, uart};
+use esp_idf_hal::{
+    delay::FreeRtos, 
+    adc, 
+    gpio::{self,AnyIOPin, AnyOutputPin, IOPin, Input, Output, OutputPin, PinDriver, Pull}, 
+    peripherals::Peripherals, 
+    prelude::*, 
+    uart};
 use esp_idf_sys as _;
 
 static CLI_STACK_SIZE: usize = 5000;
@@ -48,13 +54,7 @@ fn main() -> anyhow::Result<()> {
     )
     .unwrap();
 
-    print_type_of(&a1_ch0);
-    print_type_of(&a1_ch2);
-    print_type_of(&a1_ch3);
-    print_type_of(&a1_ch4);
-    // print_type_of(&peripherals.pins.gpio0);
-
-    let mut test = adc_driver::adc_stream {
+    let mut adc_streamer = adc_driver::AdcStream {
         adc :  adc1,
         a1_ch0 :  a1_ch0,
         a1_ch2 :  a1_ch2,
@@ -64,39 +64,13 @@ fn main() -> anyhow::Result<()> {
 
     
     loop {
+        adc_streamer.read(adc_driver::AdcChannel::A1CH0);
+        adc_streamer.read(adc_driver::AdcChannel::A1CH2);
+        adc_streamer.read(adc_driver::AdcChannel::A1CH3);
+        adc_streamer.read(adc_driver::AdcChannel::A1CH4);
+
         FreeRtos::delay_ms(1000);
-        match test.adc.read(&mut test.a1_ch0)
-        {
-            Ok(x) => {
-                println!("a1_ch0: {x}\n");
-            }
-    
-            Err(e) => println!("err reading a1_ch0: {e}\n"),
-        }
-        match test.adc.read(&mut test.a1_ch2)
-        {
-            Ok(x) => {
-                println!("a1_ch2: {x}\n");
-            }
-    
-            Err(e) => println!("err reading a1_ch2: {e}\n"),
-        }
-        match test.adc.read(&mut test.a1_ch3)
-        {
-            Ok(x) => {
-                println!("a1_ch3: {x}\n");
-            }
-    
-            Err(e) => println!("err reading a1_ch3: {e}\n"),
-        }
-        match test.adc.read(&mut test.a1_ch4)
-        {
-            Ok(x) => {
-                println!("a1_ch4: {x}\n");
-            }
-    
-            Err(e) => println!("err reading a1_ch4: {e}\n"),
-        }
+
     }
 }
 
