@@ -1,14 +1,7 @@
 use esp_idf_hal::{
     delay::FreeRtos, 
     adc::{self,*}, 
-    gpio::{*,self,
-        AnyIOPin, 
-        AnyOutputPin, 
-        IOPin, Input, 
-        Output, OutputPin, PinDriver, Pull, InputOutput}, 
-        peripherals::{Peripherals, self}, 
-        prelude::*, 
-        uart
+    gpio::*,
     };
 
 
@@ -76,5 +69,17 @@ impl AdcStream<'_>{
         }
         ret
 
+    }
+}
+
+pub fn adc_thread(mut adc_stream : AdcStream)
+{
+
+    loop{
+        adc_stream.read(AdcChannel::A1CH0);
+        adc_stream.read(AdcChannel::A1CH2);
+        adc_stream.read(AdcChannel::A1CH3);
+        adc_stream.read(AdcChannel::A1CH4);
+        FreeRtos::delay_ms(1000);
     }
 }
