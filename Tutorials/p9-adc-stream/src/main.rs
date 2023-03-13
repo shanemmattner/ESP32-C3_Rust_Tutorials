@@ -1,6 +1,5 @@
 mod cli;
-mod adc_driver;
-
+mod adc_thread;
 
 use esp_idf_hal::{
     delay::FreeRtos, 
@@ -74,7 +73,7 @@ fn initialization(peripherals : Peripherals){
     .unwrap();
 
     let a2 = arc_data.clone();
-    let adc_streamer = adc_driver::AdcStream {
+    let adc_streamer = adc_thread::AdcStream {
         adc :  adc1,
         a1_ch0 :  a1_ch0,
         a1_ch2 :  a1_ch2,
@@ -85,7 +84,7 @@ fn initialization(peripherals : Peripherals){
 
     let _adc_thread = std::thread::Builder::new()
         .stack_size(ADC_STACK_SIZE)
-        .spawn(move || adc_driver::adc_thread(adc_streamer))
+        .spawn(move || adc_thread::adc_thread(adc_streamer))
         .unwrap();
     
 }

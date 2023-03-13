@@ -4,8 +4,7 @@ use esp_idf_hal::{
     gpio::*,
     };
 use crossbeam_utils::atomic::AtomicCell;
-use std::sync::Arc;
-
+use std::{sync::Arc};
 
 pub enum AdcChannel{
     A1CH0,
@@ -13,6 +12,7 @@ pub enum AdcChannel{
     A1CH3,
     A1CH4,
 }
+
 // #[derive(Debug)]
 pub struct AdcStream<'a> {
     pub adc: AdcDriver<'a, adc::ADC1>,
@@ -80,6 +80,6 @@ pub fn adc_thread(mut adc_stream : AdcStream)
         adc_stream.read(AdcChannel::A1CH2);
         adc_stream.read(AdcChannel::A1CH3);
         adc_stream.read(AdcChannel::A1CH4);
-        FreeRtos::delay_ms(1000);
+        FreeRtos::delay_ms(10);
     }
 }

@@ -75,8 +75,9 @@ pub fn uart_thread(uart: uart::UartDriver, adc_atomic: Arc<AtomicCell<[u16;4]>>)
         if adc_stream_buffer == 100{
             adc_stream_buffer = 0;
             let adc_values = adc_atomic.load();
-            let to_send = adc_values[0];
-            match uart.write(to_send.to_string().as_bytes()){
+            let mut to_send = adc_values[0].to_string();
+            to_send.push('\n');
+            match uart.write(to_send.as_bytes()){
                 Ok(_) => {},
                 Err(_) => {}
             }
