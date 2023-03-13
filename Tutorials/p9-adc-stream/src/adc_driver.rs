@@ -3,6 +3,8 @@ use esp_idf_hal::{
     adc::{self,*}, 
     gpio::*,
     };
+use crossbeam_utils::atomic::AtomicCell;
+use std::sync::Arc;
 
 
 pub enum AdcChannel{
@@ -13,25 +15,28 @@ pub enum AdcChannel{
 }
 // #[derive(Debug)]
 pub struct AdcStream<'a> {
-     pub adc: AdcDriver<'a, adc::ADC1>,
-     pub a1_ch0: adc::AdcChannelDriver<'a, Gpio0, adc::Atten11dB<adc::ADC1>>,
-     pub a1_ch2: adc::AdcChannelDriver<'a, Gpio2, adc::Atten11dB<adc::ADC1>>,
-     pub a1_ch3: adc::AdcChannelDriver<'a, Gpio3, adc::Atten11dB<adc::ADC1>>,
-     pub a1_ch4: adc::AdcChannelDriver<'a, Gpio4, adc::Atten11dB<adc::ADC1>>,
+    pub adc: AdcDriver<'a, adc::ADC1>,
+    pub a1_ch0: adc::AdcChannelDriver<'a, Gpio0, adc::Atten11dB<adc::ADC1>>,
+    pub a1_ch2: adc::AdcChannelDriver<'a, Gpio2, adc::Atten11dB<adc::ADC1>>,
+    pub a1_ch3: adc::AdcChannelDriver<'a, Gpio3, adc::Atten11dB<adc::ADC1>>,
+    pub a1_ch4: adc::AdcChannelDriver<'a, Gpio4, adc::Atten11dB<adc::ADC1>>,
+    pub adc_atomic: Arc<AtomicCell<[u16;4]>>,
 }
 
 impl AdcStream<'_>{
     pub fn read(&mut self, channel: AdcChannel) -> u16{
         let mut ret:u16 = 0;
+        
         match channel{
             AdcChannel::A1CH0 => {
                 match self.adc.read(&mut self.a1_ch0)
                 {
                     Ok(x) => {
-                        println!("A1CH0: {x}\n");
+                        let mut new:[u16;4] = self.adc_atomic.load();
+                        new[AdcChannel::A1CH0 as usize] = x;
+                        self.adc_atomic.store(new);
                         ret = x;
                     }
-            
                     Err(e) => println!("err reading A1CH0: {:?}\n",e),
                 }
             }
@@ -39,10 +44,8 @@ impl AdcStream<'_>{
                 match self.adc.read(&mut self.a1_ch2)
                 {
                     Ok(x) => {
-                        println!("A1CH2: {x}\n");
                         ret = x;
                     }
-            
                     Err(e) => println!("err reading A1CH2: {:?}\n",e),
                 }
             }
@@ -50,7 +53,6 @@ impl AdcStream<'_>{
                 match self.adc.read(&mut self.a1_ch3)
                 {
                     Ok(x) => {
-                        println!("A1CH3: {x}\n");
                         ret = x;
                     }
                     Err(e) => println!("err reading A1CH3: {:?}\n",e),
@@ -60,7 +62,6 @@ impl AdcStream<'_>{
                 match self.adc.read(&mut self.a1_ch4)
                 {
                     Ok(x) => {
-                        println!("A1CH4: {x}\n");
                         ret = x;
                     }
                     Err(e) => println!("err reading A1CH4: {:?}\n",e),
@@ -68,7 +69,6 @@ impl AdcStream<'_>{
             }
         }
         ret
-
     }
 }
 

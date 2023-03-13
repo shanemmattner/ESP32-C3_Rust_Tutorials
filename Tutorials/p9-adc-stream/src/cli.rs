@@ -5,6 +5,8 @@ use esp_idf_hal::{
 use lazy_static::lazy_static; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
 use shell_words::*;
 use std::{collections::HashMap, str};
+use crossbeam_utils::atomic::AtomicCell;
+use std::sync::Arc;
 
 pub struct SShellCommand<'a> {
     handler: fn(Vec<String>) -> &'static str,
@@ -39,8 +41,9 @@ const MAX_UART_BUFFER: usize = 100;
 const HELP_KEYWORD: &str = "help";
 const MENU_KEYWORD: &str = "menu";
 
-pub fn uart_thread(uart: uart::UartDriver) {
+pub fn uart_thread(uart: uart::UartDriver, adc_atomic: Arc<AtomicCell<[u16;4]>>) {
     let mut uart_buf: Vec<u8> = Vec::new();
+    let mut adc_stream_buffer:u32 = 0;
 
     loop {
         let mut buf: [u8; 10] = [0; 10];
@@ -66,6 +69,17 @@ pub fn uart_thread(uart: uart::UartDriver) {
                 }
             }
             None => {}
+        }
+
+        adc_stream_buffer += 1;
+        if adc_stream_buffer == 100{
+            adc_stream_buffer = 0;
+            let adc_values = adc_atomic.load();
+            let to_send = adc_values[0];
+            match uart.write(to_send.to_string().as_bytes()){
+                Ok(_) => {},
+                Err(_) => {}
+            }
         }
 
         FreeRtos::delay_ms(50);

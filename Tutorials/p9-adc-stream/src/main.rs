@@ -10,6 +10,8 @@ use esp_idf_hal::{
     prelude::*, 
     uart};
 use esp_idf_sys as _;
+use crossbeam_utils::atomic::AtomicCell;
+use std::sync::Arc;
 
 static CLI_STACK_SIZE: usize = 5000;
 static ADC_STACK_SIZE: usize = 5000;
@@ -29,6 +31,12 @@ fn main() -> anyhow::Result<()> {
 }
 
 fn initialization(peripherals : Peripherals){
+
+
+    let atomic_value: AtomicCell<[u16;4]> = AtomicCell::new([0;4]);
+    let arc_data = Arc::new(atomic_value);
+
+    // UART and CLI initialization
     let tx = peripherals.pins.gpio21;
     let rx = peripherals.pins.gpio20;
 
@@ -43,9 +51,10 @@ fn initialization(peripherals : Peripherals){
     )
     .unwrap();
 
+    let a1 = arc_data.clone();
     let _cli_thread = std::thread::Builder::new()
         .stack_size(CLI_STACK_SIZE)
-        .spawn(move || cli::uart_thread(uart))
+        .spawn(move || cli::uart_thread(uart, a1))
         .unwrap();
 
     // Create ADC channel driver
@@ -64,12 +73,14 @@ fn initialization(peripherals : Peripherals){
     )
     .unwrap();
 
+    let a2 = arc_data.clone();
     let adc_streamer = adc_driver::AdcStream {
         adc :  adc1,
         a1_ch0 :  a1_ch0,
         a1_ch2 :  a1_ch2,
         a1_ch3 :  a1_ch3,
         a1_ch4 :  a1_ch4,
+        adc_atomic: a2
     };
 
     let _adc_thread = std::thread::Builder::new()
