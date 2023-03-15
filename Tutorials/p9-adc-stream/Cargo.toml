@@ -22,6 +22,7 @@ anyhow = "1"
 lazy_static = "1.4.0"
 shell-words = "1.0.0"
 crossbeam-utils = "0.8"
+crossbeam-queue = "0.3.8"
 
 [build-dependencies]
 embuild = "0.30.4"

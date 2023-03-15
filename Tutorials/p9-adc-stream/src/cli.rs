@@ -1,11 +1,12 @@
 use esp_idf_hal::{
-    delay::{FreeRtos, NON_BLOCK},
+    delay::{Ets, FreeRtos, NON_BLOCK},
     uart,
 };
 use lazy_static::lazy_static; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
 use shell_words::*;
 use std::{collections::HashMap, str};
 use crossbeam_utils::atomic::AtomicCell;
+use crossbeam_queue::ArrayQueue;
 use std::sync::Arc;
 
 pub struct SShellCommand<'a> {
@@ -41,7 +42,10 @@ const MAX_UART_BUFFER: usize = 100;
 const HELP_KEYWORD: &str = "help";
 const MENU_KEYWORD: &str = "menu";
 
-pub fn uart_thread(uart: uart::UartDriver, adc_atomic: Arc<AtomicCell<[u16;4]>>) {
+pub fn uart_thread(uart: uart::UartDriver, 
+                    adc_atomic: Arc<AtomicCell<[u16;4]>>, 
+                    cli_msgs: Arc<ArrayQueue::<String>>
+) {
     let mut uart_buf: Vec<u8> = Vec::new();
     let mut adc_stream_buffer:u32 = 0;
 
@@ -71,19 +75,33 @@ pub fn uart_thread(uart: uart::UartDriver, adc_atomic: Arc<AtomicCell<[u16;4]>>)
             None => {}
         }
 
-        adc_stream_buffer += 1;
-        if adc_stream_buffer == 100{
-            adc_stream_buffer = 0;
-            let adc_values = adc_atomic.load();
-            let mut to_send = adc_values[0].to_string();
-            to_send.push('\n');
-            match uart.write(to_send.as_bytes()){
-                Ok(_) => {},
-                Err(_) => {}
+        // adc_stream_buffer += 1;
+        // if adc_stream_buffer == 100{
+        //     adc_stream_buffer = 0;
+        //     let adc_values = adc_atomic.load();
+        //     let mut to_send = adc_values[0].to_string();
+        //     to_send.push('\n');
+        //     match uart.write(to_send.as_bytes()){
+        //         Ok(_) => {},
+        //         Err(_) => {}
+        //     }
+        // }
+
+        while !cli_msgs.is_empty(){
+            match cli_msgs.pop(){
+                Some(x) => {
+                    match uart.write(x.as_bytes()){
+                        Ok(_) => {},
+                        Err(_) => {}
+                    }   
+                },
+                None => {},
             }
         }
 
-        FreeRtos::delay_ms(50);
+
+
+        Ets::delay_us(1000);
     }
 }
 

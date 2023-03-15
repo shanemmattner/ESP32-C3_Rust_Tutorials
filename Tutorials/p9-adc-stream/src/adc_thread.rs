@@ -4,6 +4,7 @@ use esp_idf_hal::{
     gpio::*,
     };
 use crossbeam_utils::atomic::AtomicCell;
+use crossbeam_queue::ArrayQueue;
 use std::{sync::Arc};
 
 pub enum AdcChannel{
@@ -21,6 +22,7 @@ pub struct AdcStream<'a> {
     pub a1_ch3: adc::AdcChannelDriver<'a, Gpio3, adc::Atten11dB<adc::ADC1>>,
     pub a1_ch4: adc::AdcChannelDriver<'a, Gpio4, adc::Atten11dB<adc::ADC1>>,
     pub adc_atomic: Arc<AtomicCell<[u16;4]>>,
+    pub cli_msgs: Arc<ArrayQueue::<String>>, 
 }
 
 impl AdcStream<'_>{
@@ -34,6 +36,7 @@ impl AdcStream<'_>{
                     Ok(x) => {
                         let mut new:[u16;4] = self.adc_atomic.load();
                         new[AdcChannel::A1CH0 as usize] = x;
+
                         self.adc_atomic.store(new);
                         ret = x;
                     }
@@ -76,10 +79,15 @@ pub fn adc_thread(mut adc_stream : AdcStream)
 {
 
     loop{
-        adc_stream.read(AdcChannel::A1CH0);
+        let a1ch0 = adc_stream.read(AdcChannel::A1CH0);
         adc_stream.read(AdcChannel::A1CH2);
         adc_stream.read(AdcChannel::A1CH3);
         adc_stream.read(AdcChannel::A1CH4);
+
+        let mut send_buf = a1ch0.to_string();
+        send_buf.push('\n');
+
+        adc_stream.cli_msgs.push(send_buf);
         FreeRtos::delay_ms(10);
     }
 }
