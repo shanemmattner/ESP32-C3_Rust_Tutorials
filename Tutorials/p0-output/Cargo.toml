@@ -1,5 +1,5 @@
 [package]
-name = "input"
+name = "output"
 version = "0.1.0"
 authors = ["Shane"]
 edition = "2021"
