@@ -9,15 +9,15 @@ resolver = "2"
 opt-level = "s"
 
 [profile.dev]
-debug = true # Symbols are nice and they don't increase the size on Flash
+debug = true    # Symbols are nice and they don't increase the size on Flash
 opt-level = "z"
 
 [features]
 pio = ["esp-idf-sys/pio"]
 
 [dependencies]
-esp-idf-sys = { version = "0.32", features = ["binstart"] }
-esp-idf-hal = "0.40"
+esp-idf-sys = { version = "0.33.7", features = ["binstart"] }
+esp-idf-hal = "0.42.5"
 esp-println = { version = "0.3.1", features = ["esp32c3"] }
 
 [build-dependencies]
