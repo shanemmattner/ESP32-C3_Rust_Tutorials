@@ -7,7 +7,7 @@ fn main() {
     // implemented by esp-idf-sys might not link properly. See https://github.com/esp-rs/esp-idf-template/issues/71
     esp_idf_sys::link_patches();
 
-    println!("Starting 0-input\nThis application is a basic blinky program that turns an LED on and off every 1 second.\n");
+    println!("Starting 0-output\nThis application is a basic blinky program that turns an LED on and off every 1 second.\n");
 
     // Get all the peripherals
     let peripherals = Peripherals::take().unwrap();
