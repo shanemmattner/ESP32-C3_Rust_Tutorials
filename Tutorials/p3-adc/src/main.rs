@@ -24,7 +24,8 @@ fn main() {
     )
     .unwrap();
     let mut a1_ch0 =
-        adc::AdcChannelDriver::<_, adc::Atten11dB<adc::ADC1>>::new(peripherals.pins.gpio0).unwrap();
+        adc::AdcChannelDriver::<{ adc::attenuation::DB_11 }, _>::new(peripherals.pins.gpio0)
+            .unwrap();
 
     loop {
         match adc1.read(&mut a1_ch0) {
